@@ -1,0 +1,389 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.6 Chrome/140.0.7339.249 Electron/38.8.0 Safari/537.36" version="29.3.6" pages="2">
+  <diagram name="1. システム全体構成" id="system-overview">
+    <mxGraphModel dx="946" dy="1559" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="user" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;fontStyle=0" value="User&#xa;（エンドユーザー）" vertex="1">
+          <mxGeometry height="60" width="120" x="80" y="-50" as="geometry" />
+        </mxCell>
+        <mxCell id="client-spa" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100" value="SPA&#xa;（PKCE必須）" vertex="1">
+          <mxGeometry height="50" width="120" x="80" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="client-mobile" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100" value="モバイルアプリ&#xa;（PKCE必須）" vertex="1">
+          <mxGeometry height="50" width="120" x="80" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="client-confidential" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100" value="Confidential&#xa;Client&#xa;（CC Flow）" vertex="1">
+          <mxGeometry height="50" width="120" x="80" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="auth-server" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;fontStyle=0" value="認証サーバー&#xa;（Auth Server）" vertex="1">
+          <mxGeometry height="60" width="400" x="380" y="-50" as="geometry" />
+        </mxCell>
+        <mxCell id="backend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C" value="Go + Echo&#xa;（バックエンド）" vertex="1">
+          <mxGeometry height="50" width="180" x="380" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="frontend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C" value="React + Vite&#xa;（フロントエンド）" vertex="1">
+          <mxGeometry height="50" width="180" x="600" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="endpoints" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F9A825;align=left;spacingLeft=10" value="エンドポイント&#xa;• /authorize&#xa;• /token&#xa;• /userinfo&#xa;• /logout&#xa;• /.well-known/openid-configuration" vertex="1">
+          <mxGeometry height="120" width="400" x="380" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow1" edge="1" parent="1" source="user" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="auth-server">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow2" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="140" y="60" />
+              <mxPoint x="580" y="60" />
+            </Array>
+            <mxPoint x="140" y="110" as="sourcePoint" />
+            <mxPoint x="580" y="10" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow3" edge="1" parent="1" source="auth-server" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="backend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow4" edge="1" parent="1" source="auth-server" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="frontend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow5" edge="1" parent="1" source="backend" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.6;entryDx=0;entryDy=0;entryPerimeter=0;" target="uYSrojX_qYIYKWoi7GuU-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="225" />
+              <mxPoint x="300" y="430" />
+              <mxPoint x="420" y="430" />
+              <mxPoint x="420" y="540" />
+            </Array>
+            <mxPoint x="580" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="principles" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;align=left;spacingLeft=10" value="設計方針&#xa;• セキュリティ最優先&#xa;• OIDC厳密準拠&#xa;• token_versionによる即時失効&#xa;• 将来拡張（MFA, 外部ID連携）" vertex="1">
+          <mxGeometry height="100" width="240" x="80" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="uYSrojX_qYIYKWoi7GuU-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;spacingLeft=10" value="&lt;span&gt;&lt;span style=&quot;text-align: center; float: none; color: rgb(0, 0, 0); display: inline !important;&quot;&gt;データベース&lt;/span&gt;&lt;br style=&quot;text-align: center; color: rgb(0, 0, 0);&quot;&gt;&lt;span style=&quot;text-align: center; float: none; color: rgb(0, 0, 0); display: inline !important;&quot;&gt;（users, sessions, credentials,&lt;/span&gt;&lt;br style=&quot;text-align: center; color: rgb(0, 0, 0);&quot;&gt;&lt;span style=&quot;text-align: center; float: none; color: rgb(0, 0, 0); display: inline !important;&quot;&gt;clients, authorization_codes,&lt;/span&gt;&lt;br style=&quot;text-align: center; color: rgb(0, 0, 0);&quot;&gt;&lt;span style=&quot;text-align: center; float: none; color: rgb(0, 0, 0); display: inline !important;&quot;&gt;refresh_tokens, signing_keys, audit_logs）&lt;/span&gt;&lt;/span&gt;" vertex="1">
+          <mxGeometry height="100" width="240" x="470" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="uYSrojX_qYIYKWoi7GuU-3" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=18;fontStyle=1" value="OAuth2.1 / OIDC 認証基盤 - システム全体構成" vertex="1">
+          <mxGeometry height="40" width="500" x="340" y="-170" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="2. クリーンアーキテクチャ" id="clean-arch">
+    <mxGraphModel dx="2070" dy="1997" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="1300" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title2" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=18;fontStyle=1" value="Clean Architecture レイヤー構成一覧" vertex="1">
+          <mxGeometry height="40" width="400" x="370" y="-120" as="geometry" />
+        </mxCell>
+        <mxCell id="layer4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#EF6C00;fontStyle=1" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Layer 4: Router&lt;/font&gt;" vertex="1">
+          <mxGeometry height="210" width="1169" x="-40" y="-30" as="geometry" />
+        </mxCell>
+        <mxCell id="route-register" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCC80" value="POST;&#xa;新規登録" vertex="1">
+          <mxGeometry height="45" width="85" x="180" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="route-login" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCC80" value="POST;&#xa;ログイン" vertex="1">
+          <mxGeometry height="45" width="85" x="280" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="route-authorize" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCC80" value="GET/POST;&#xa;認可" vertex="1">
+          <mxGeometry height="45" width="85" x="380" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="route-token" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCC80" value="POST;&#xa;トークン" vertex="1">
+          <mxGeometry height="45" width="85" x="480" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="route-userinfo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCC80" value="GET;&#xa;ユーザー情報" vertex="1">
+          <mxGeometry height="45" width="85" x="580" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="route-logout" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCC80" value="POST;&#xa;ログアウト" vertex="1">
+          <mxGeometry height="45" width="85" x="680" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="route-discovery" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCC80" value="GET;&#xa;Discovery" vertex="1">
+          <mxGeometry height="45" width="85" x="780" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="layer3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F9A825;fontStyle=1" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Layer 3: Controller&lt;/font&gt;" vertex="1">
+          <mxGeometry height="200" width="1169" x="-40" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="handler-register" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D" value="RegisterHandler" vertex="1">
+          <mxGeometry height="35" width="95" x="110" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="handler-login" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D" value="LoginHandler" vertex="1">
+          <mxGeometry height="35" width="95" x="220" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="handler-authorize" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D" value="AuthorizeHandler" vertex="1">
+          <mxGeometry height="35" width="110" x="330" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="handler-token" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D" value="TokenHandler" vertex="1">
+          <mxGeometry height="35" width="95" x="455" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="handler-userinfo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D" value="UserInfoHandler" vertex="1">
+          <mxGeometry height="35" width="105" x="565" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="handler-logout" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D" value="LogoutHandler" vertex="1">
+          <mxGeometry height="35" width="95" x="685" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="handler-discovery" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D" value="DiscoveryHandler" vertex="1">
+          <mxGeometry height="35" width="110" x="795" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="request-validator-only" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;align=left;spacingLeft=5" value="RequestValidator（Controller層）&lt;br&gt;• 型チェック&lt;br&gt;• 必須項目&lt;br&gt;※入出力の整形のみ" vertex="1">
+          <mxGeometry height="90" width="150" x="-30" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="ifc-register-uc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#F9A825;fontStyle=2" value="RegisterUseCase&#xa;interface" vertex="1">
+          <mxGeometry height="28" width="100" x="122.5" y="355" as="geometry" />
+        </mxCell>
+        <mxCell id="ifc-login-uc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#F9A825;fontStyle=2" value="LoginUseCase&#xa;interface" vertex="1">
+          <mxGeometry height="28" width="100" x="230" y="355" as="geometry" />
+        </mxCell>
+        <mxCell id="ifc-authorize-uc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#F9A825;fontStyle=2" value="AuthorizationUseCase&#xa;interface" vertex="1">
+          <mxGeometry height="28" width="130" x="340" y="355" as="geometry" />
+        </mxCell>
+        <mxCell id="ifc-token-uc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#F9A825;fontStyle=2" value="TokenExchangeUseCase&#xa;interface" vertex="1">
+          <mxGeometry height="28" width="140" x="480" y="355" as="geometry" />
+        </mxCell>
+        <mxCell id="ifc-refresh-uc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#F9A825;fontStyle=2" value="RefreshUseCase&#xa;interface" vertex="1">
+          <mxGeometry height="28" width="100" x="630" y="355" as="geometry" />
+        </mxCell>
+        <mxCell id="ifc-userinfo-uc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#F9A825;fontStyle=2" value="UserInfoUseCase&#xa;interface" vertex="1">
+          <mxGeometry height="28" width="100" x="740" y="355" as="geometry" />
+        </mxCell>
+        <mxCell id="ifc-logout-uc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#F9A825;fontStyle=2" value="LogoutUseCase&#xa;interface" vertex="1">
+          <mxGeometry height="28" width="100" x="855" y="355" as="geometry" />
+        </mxCell>
+        <mxCell id="ctrl-validator-interface" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#F9A825;fontStyle=0;align=left;spacingLeft=5" value="Validator Interface（Controller層が依存）&#xa;• RequestValidator" vertex="1">
+          <mxGeometry height="45" width="180" x="940" y="277.5" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-r1" edge="1" parent="1" source="route-register" target="handler-register">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-r2" edge="1" parent="1" source="route-login" target="handler-login">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-r3" edge="1" parent="1" source="route-authorize" target="handler-authorize">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-r4" edge="1" parent="1" source="route-token" target="handler-token">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-r5" edge="1" parent="1" source="route-userinfo" target="handler-userinfo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-r6" edge="1" parent="1" source="route-logout" target="handler-logout">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-r7" edge="1" parent="1" source="route-discovery" target="handler-discovery">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="layer2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;fontStyle=1" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Layer 2: Use Case (Application)&amp;nbsp;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="240" width="1169" x="-40" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-register" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7" value="RegisterUseCase" vertex="1">
+          <mxGeometry height="40" width="102.5" x="97.5" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-login" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7" value="LoginUseCase" vertex="1">
+          <mxGeometry height="40" width="100" x="222.5" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-authorize" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;align=left;spacingLeft=5" value="AuthorizationUseCase&#xa;認証・Consent・Code発行・Session生成" vertex="1">
+          <mxGeometry height="60" width="170" x="330" y="442.5" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-token" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;align=left;spacingLeft=5" value="TokenExchangeUseCase&#xa;PKCE検証・Code消費・Token発行" vertex="1">
+          <mxGeometry height="60" width="200" x="510" y="442.5" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-refresh" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;align=left;spacingLeft=5" value="RefreshUseCase" vertex="1">
+          <mxGeometry height="50" width="110" x="720" y="442.5" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-userinfo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7" value="UserInfoUseCase" vertex="1">
+          <mxGeometry height="40" width="110" x="840" y="442.5" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-logout" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7" value="LogoutUseCase" vertex="1">
+          <mxGeometry height="40" width="100" x="960" y="442.5" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-uow" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontStyle=0;align=left;spacingLeft=5" value="UnitOfWork&#xa;commit() → EventDispatcher" vertex="1">
+          <mxGeometry height="50" width="100" x="890" y="515" as="geometry" />
+        </mxCell>
+        <mxCell id="ifc-user-repo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontStyle=2" value="UserRepository&#xa;interface" vertex="1">
+          <mxGeometry height="32" width="90" x="70" y="613" as="geometry" />
+        </mxCell>
+        <mxCell id="ifc-credentials-repo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontStyle=2" value="CredentialsRepository&#xa;interface" vertex="1">
+          <mxGeometry height="32" width="130" x="180" y="613" as="geometry" />
+        </mxCell>
+        <mxCell id="ifc-client-repo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontStyle=2" value="ClientRepository&#xa;interface" vertex="1">
+          <mxGeometry height="32" width="120" x="785" y="613" as="geometry" />
+        </mxCell>
+        <mxCell id="ifc-authcode-repo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontStyle=2" value="AuthCodeRepository&#xa;interface" vertex="1">
+          <mxGeometry height="32" width="125" x="335" y="613" as="geometry" />
+        </mxCell>
+        <mxCell id="ifc-session-repo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontStyle=2" value="SessionRepository&#xa;interface" vertex="1">
+          <mxGeometry height="32" width="110" x="470" y="613" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-claim-mgmt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;strokeColor=#388E3C;align=left;spacingLeft=5" value="クレーム管理&#xa;sub,sid,ver,exp" vertex="1">
+          <mxGeometry height="50" width="120" x="700" y="515" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-signing-interface" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;align=left;spacingLeft=5" value="SigningService&#xa;interface" vertex="1">
+          <mxGeometry height="45" width="120" x="660" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-repo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B2DFDB;strokeColor=#00695C;fontStyle=1" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Layer: Repository&lt;/font&gt;" vertex="1">
+          <mxGeometry height="150" width="1169" x="-40" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="user-repo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#80CBC4;fontStyle=0;align=left;spacingLeft=5" value="UserRepository&#xa;FindByID/Save" vertex="1">
+          <mxGeometry height="40" width="100" x="60" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="credentials-repo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#80CBC4;fontStyle=0;align=left;spacingLeft=5" value="CredentialsRepository&#xa;FindByUserID/Verify" vertex="1">
+          <mxGeometry height="40" width="130" x="185" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="client-repo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#80CBC4;fontStyle=0;align=left;spacingLeft=5" value="ClientRepository&#xa;FindByID/ValidateRedirectURI" vertex="1">
+          <mxGeometry height="40" width="177.5" x="630" y="790" as="geometry" />
+        </mxCell>
+        <mxCell id="authcode-repo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#80CBC4;fontStyle=0;align=left;spacingLeft=5" value="AuthCodeRepository&#xa;Save/FindByCode/Delete" vertex="1">
+          <mxGeometry height="40" width="147.5" x="322.5" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="session-repo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#80CBC4;fontStyle=0;align=left;spacingLeft=5" value="SessionRepository&#xa;Save/FindByUserId" vertex="1">
+          <mxGeometry height="40" width="120.5" x="479.5" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="event-dispatcher" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCC80;strokeColor=#E65100;fontStyle=0;align=left;spacingLeft=5" value="EventDispatcher" vertex="1">
+          <mxGeometry height="50" width="120" x="810" y="705" as="geometry" />
+        </mxCell>
+        <mxCell id="audit-store" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCC80;strokeColor=#E65100;align=left;spacingLeft=5" value="AuditStore" vertex="1">
+          <mxGeometry height="50" width="100" x="950" y="705" as="geometry" />
+        </mxCell>
+        <mxCell id="key-provider" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCC80;strokeColor=#E65100;fontStyle=0;align=left;spacingLeft=5" value="KeyProvider" vertex="1">
+          <mxGeometry height="50" width="100" x="350" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="layer1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;fontStyle=1" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Layer 1: Domain&lt;/font&gt;" vertex="1">
+          <mxGeometry height="160" width="1169" x="-40" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="session-aggregate" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#90CAF9;strokeColor=#1565C0;fontStyle=0;align=left;spacingLeft=5" value="Session Aggregate&#xa;tokenVersion, RefreshToken, Device" vertex="1">
+          <mxGeometry height="55" width="180" x="60" y="865" as="geometry" />
+        </mxCell>
+        <mxCell id="signing-service" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#90CAF9;strokeColor=#1565C0;fontStyle=0;align=left;spacingLeft=5" value="SigningService interface&#xa;（Domain定義）" vertex="1">
+          <mxGeometry height="45" width="140" x="490" y="870" as="geometry" />
+        </mxCell>
+        <mxCell id="auth-domain-service" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#90CAF9;strokeColor=#1565C0;fontStyle=0;align=left;spacingLeft=5" value="AuthDomainService&#xa;PKCE/JWT/ver照合" vertex="1">
+          <mxGeometry height="45" width="140" x="690" y="875" as="geometry" />
+        </mxCell>
+        <mxCell id="ent-user" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB" value="User" vertex="1">
+          <mxGeometry height="35" width="50" x="260" y="960" as="geometry" />
+        </mxCell>
+        <mxCell id="ent-credentials" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB" value="Credentials" vertex="1">
+          <mxGeometry height="35" width="70" x="320" y="960" as="geometry" />
+        </mxCell>
+        <mxCell id="ent-client" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB" value="Client" vertex="1">
+          <mxGeometry height="35" width="50" x="400" y="960" as="geometry" />
+        </mxCell>
+        <mxCell id="ent-authcode" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB" value="AuthCode" vertex="1">
+          <mxGeometry height="35" width="60" x="460" y="960" as="geometry" />
+        </mxCell>
+        <mxCell id="domain-event" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B2DFDB;strokeColor=#00695C;align=left;spacingLeft=5" value="Domain Event" vertex="1">
+          <mxGeometry height="35" width="90" x="860" y="935" as="geometry" />
+        </mxCell>
+        <mxCell id="dep1" edge="1" parent="1" source="layer4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;dashed=1;strokeColor=#E91E63" target="layer3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep2" edge="1" parent="1" source="layer3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;dashed=1;strokeColor=#E91E63" target="layer2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep3" edge="1" parent="1" source="layer2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;dashed=1;strokeColor=#E91E63" target="layer-repo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep4" edge="1" parent="1" source="layer-repo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;dashed=1;strokeColor=#E91E63" target="layer1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-handler-register" edge="1" parent="1" source="handler-register" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=1;entryX=0.5;entryY=0" target="ifc-register-uc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-handler-login" edge="1" parent="1" source="handler-login" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=1;entryX=0.5;entryY=0" target="ifc-login-uc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-handler-authorize" edge="1" parent="1" source="handler-authorize" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=1;entryX=0.5;entryY=0" target="ifc-authorize-uc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-handler-token" edge="1" parent="1" source="handler-token" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=1;entryX=0.5;entryY=0" target="ifc-token-uc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-handler-token-refresh" edge="1" parent="1" source="handler-token" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.75;exitY=1;entryX=0.397;entryY=-0.025;entryDx=0;entryDy=0;entryPerimeter=0;exitDx=0;exitDy=0;" target="ifc-refresh-uc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-handler-userinfo" edge="1" parent="1" source="handler-userinfo" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=1;entryX=0.5;entryY=0" target="ifc-userinfo-uc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-handler-logout" edge="1" parent="1" source="handler-logout" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=1;entryX=0.5;entryY=0" target="ifc-logout-uc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-ifc-register" edge="1" parent="1" source="ifc-register-uc" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=1;entryX=0.5;entryY=0" target="uc-register">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-ifc-login" edge="1" parent="1" source="ifc-login-uc" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=1;entryX=0.5;entryY=0" target="uc-login">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-ifc-authorize" edge="1" parent="1" source="ifc-authorize-uc" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=1;entryX=0.5;entryY=0" target="uc-authorize">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-ifc-token" edge="1" parent="1" source="ifc-token-uc" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=1;entryX=0.5;entryY=0" target="uc-token">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-ifc-refresh" edge="1" parent="1" source="ifc-refresh-uc" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=1;entryX=0.5;entryY=0" target="uc-refresh">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-ifc-userinfo" edge="1" parent="1" source="ifc-userinfo-uc" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=1;entryX=0.5;entryY=0" target="uc-userinfo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-ifc-logout" edge="1" parent="1" source="ifc-logout-uc" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=1;entryX=0.5;entryY=0" target="uc-logout">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-handler-validator" edge="1" parent="1" source="handler-register" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.011;exitY=0.577;entryX=0.428;entryY=0.02;exitDx=0;exitDy=0;exitPerimeter=0;entryDx=0;entryDy=0;entryPerimeter=0;" target="request-validator-only">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-uc-token-session" edge="1" parent="1" source="uc-token" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=1;entryX=0.5;entryY=0" target="ifc-session-repo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-uc-register-user" edge="1" parent="1" source="uc-register" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="ifc-user-repo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-uc-authorize-authcode" edge="1" parent="1" source="uc-authorize" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="ifc-authcode-repo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-uc-signing" edge="1" parent="1" source="uc-token" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.75;exitY=1;entryX=0.197;entryY=-0.02;entryDx=0;entryDy=0;entryPerimeter=0;exitDx=0;exitDy=0;" target="uc-signing-interface">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="660" y="623" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dep-claim-signing" edge="1" parent="1" source="uc-claim-mgmt" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=1;entryX=0.5;entryY=0" target="uc-signing-interface">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-uc-uow" edge="1" parent="1" source="uc-token" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.994;exitY=0.889;entryX=0;entryY=0.25;entryDx=0;entryDy=0;exitDx=0;exitDy=0;exitPerimeter=0;" target="uc-uow">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-uow-event" edge="1" parent="1" source="uc-uow" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.885;exitY=1.023;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;exitPerimeter=0;" target="event-dispatcher">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-user-repo" edge="1" parent="1" source="user-repo" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=0;entryX=0.5;entryY=1" target="ifc-user-repo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-credentials-repo" edge="1" parent="1" source="credentials-repo" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=0;entryX=0.5;entryY=1" target="ifc-credentials-repo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-client-repo" edge="1" parent="1" source="client-repo" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=0;entryX=0.5;entryY=1" target="ifc-client-repo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-authcode-repo" edge="1" parent="1" source="authcode-repo" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=0;entryX=0.5;entryY=1" target="ifc-authcode-repo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-session-repo" edge="1" parent="1" source="session-repo" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=0;entryX=0.5;entryY=1" target="ifc-session-repo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-signing-domain" edge="1" parent="1" source="uc-signing-interface" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.5;exitY=1;entryX=0.5;entryY=0" target="signing-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-keyprovider-signing" edge="1" parent="1" source="key-provider" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.456;exitY=1.016;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitDx=0;exitDy=0;exitPerimeter=0;" target="signing-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep-uc-auth" edge="1" parent="1" source="uc-token" style="endArrow=classic;html=1;strokeColor=#E91E63;exitX=0.66;exitY=0.965;entryX=0.5;entryY=0;edgeStyle=orthogonalEdgeStyle;exitDx=0;exitDy=0;exitPerimeter=0;" target="auth-domain-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xL0VKMN9ntWapNjJUphc-3" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontStyle=0" value="※矢印（ピンク）= 依存関係の方向" vertex="1">
+          <mxGeometry height="20" width="220" x="429.75" y="-70" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
