@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -9,14 +10,18 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/labstack/echo/v4"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/handler"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/database"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/repository"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/router"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/authorize"
 )
 
 // App はアプリケーションの組み立てと起動を担当する。
 type App struct {
 	pool *pgxpool.Pool
+	e    *echo.Echo
 }
 
 // New は App を生成する。DI の入口。
@@ -44,16 +49,43 @@ func (a *App) Run() error {
 	clientRepo := repository.NewPostgresClientRepository(a.pool)
 
 	// Usecase 生成
-	_ = authorize.NewUseCase(authCodeRepo, sessionRepo, clientRepo)
-	// TODO: Router に authorizeUseCase を渡して起動
+	authorizeUseCase := authorize.NewUseCase(authCodeRepo, sessionRepo, clientRepo)
+
+	// Handler 生成
+	authorizeHandler := handler.NewAuthorizeHandler(authorizeUseCase)
+	tokenHandler := handler.NewTokenHandler()
+	healthHandler := handler.NewHealthHandler()
+
+	// Router 生成・登録
+	port := getEnv("SERVER_PORT", "8080")
+	a.e = echo.New()
+	router.New(a.e, &router.Config{
+		AuthorizeHandler: authorizeHandler,
+		TokenHandler:     tokenHandler,
+		HealthHandler:    healthHandler,
+	})
 
 	// Graceful shutdown
-	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
-	<-sigCh
+	go func() {
+		sigCh := make(chan os.Signal, 1)
+		signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+		<-sigCh
+		log.Println("Shutting down...")
+		if err := a.e.Shutdown(context.Background()); err != nil {
+			log.Printf("Shutdown error: %v", err)
+		}
+	}()
 
-	log.Println("Shutting down...")
-	return nil
+	addr := fmt.Sprintf(":%s", port)
+	log.Printf("Server starting on %s", addr)
+	return a.e.Start(addr)
+}
+
+func getEnv(key, defaultValue string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return defaultValue
 }
 
 // Close はリソースを解放する。
