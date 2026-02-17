@@ -38,7 +38,11 @@ func (c *Config) DSN() string {
 	)
 }
 
+// DefaultConnectTimeout はDB接続のデフォルトタイムアウト。
+const DefaultConnectTimeout = 5
+
 // NewPool creates a new pgx connection pool.
+// ctx にタイムアウトを設定すること（例: context.WithTimeout(..., 5*time.Second)）。
 func NewPool(ctx context.Context, cfg *Config) (*pgxpool.Pool, error) {
 	pool, err := pgxpool.New(ctx, cfg.DSN())
 	if err != nil {

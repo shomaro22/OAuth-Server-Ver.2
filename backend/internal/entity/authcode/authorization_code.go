@@ -99,6 +99,11 @@ func (a *AuthorizationCode) ExpiresAt() time.Time {
 	return a.expiresAt
 }
 
+// CreatedAt は作成日時を返す。
+func (a *AuthorizationCode) CreatedAt() time.Time {
+	return a.createdAt
+}
+
 // IsExpired は有効期限切れかどうかを判定する。
 func (a *AuthorizationCode) IsExpired(now time.Time) bool {
 	return now.After(a.expiresAt)

@@ -1,33 +1,19 @@
 package main
 
 import (
-	"context"
-	"fmt"
 	"log"
-	"os"
-	"os/signal"
-	"syscall"
 
-	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/database"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/app"
 )
 
 func main() {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	cfg := database.NewConfig()
-	pool, err := database.NewPool(ctx, cfg)
+	application, err := app.New()
 	if err != nil {
-		log.Fatalf("Database connection failed: %v", err)
+		log.Fatalf("Failed to initialize app: %v", err)
 	}
-	defer pool.Close()
+	defer application.Close()
 
-	log.Println("Successfully connected to PostgreSQL")
-
-	// Graceful shutdown
-	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
-	<-sigCh
-
-	fmt.Println("\nShutting down...")
+	if err := application.Run(); err != nil {
+		log.Fatalf("App error: %v", err)
+	}
 }

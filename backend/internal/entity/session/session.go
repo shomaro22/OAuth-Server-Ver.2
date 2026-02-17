@@ -53,9 +53,29 @@ func (s *Session) UserID() uuid.UUID {
 	return s.userID
 }
 
+// SessionTokenHash はセッショントークンのハッシュを返す。
+func (s *Session) SessionTokenHash() string {
+	return s.sessionTokenHash
+}
+
+// IPAddress はIPアドレスを返す。
+func (s *Session) IPAddress() string {
+	return s.ipAddress
+}
+
+// UserAgent はUser-Agentを返す。
+func (s *Session) UserAgent() string {
+	return s.userAgent
+}
+
 // TokenVersion はトークンバージョンを返す。
 func (s *Session) TokenVersion() int64 {
 	return s.tokenVersion
+}
+
+// CreatedAt は作成日時を返す。
+func (s *Session) CreatedAt() time.Time {
+	return s.createdAt
 }
 
 // ExpiresAt は有効期限を返す。
