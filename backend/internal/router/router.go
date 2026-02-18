@@ -9,6 +9,8 @@ import (
 type Config struct {
 	AuthorizeHandler *handler.AuthorizeHandler
 	TokenHandler     *handler.TokenHandler
+	UserInfoHandler  *handler.UserInfoHandler
+	LogoutHandler    *handler.LogoutHandler
 	HealthHandler    *handler.HealthHandler
 }
 
@@ -17,8 +19,10 @@ func New(e *echo.Echo, cfg *Config) {
 	// Health
 	e.GET("/health", cfg.HealthHandler.Get)
 
-	// OAuth 2.0 / OIDC
-	e.GET("/authorize", cfg.AuthorizeHandler.Get)
-	e.POST("/authorize", cfg.AuthorizeHandler.Post)
-	e.POST("/token", cfg.TokenHandler.Post)
+	// OAuth 2.0 / OIDC（OAS 準拠）
+	e.GET("/oauth/authorize", cfg.AuthorizeHandler.Get)
+	e.POST("/oauth/authorize", cfg.AuthorizeHandler.Post)
+	e.POST("/oauth/token", cfg.TokenHandler.Post)
+	e.GET("/oauth/userinfo", cfg.UserInfoHandler.Get)
+	e.POST("/oauth/logout", cfg.LogoutHandler.Post)
 }

@@ -12,6 +12,7 @@ import (
 
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/session"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
 )
 
 // 認可コードの有効期限（10分）
@@ -27,16 +28,16 @@ var (
 
 // UseCase は認可コード発行のユースケース。
 type UseCase struct {
-	authCodeRepo AuthCodeRepository
-	sessionRepo  SessionRepository
-	clientRepo   ClientRepository
+	authCodeRepo port.AuthCodeRepository
+	sessionRepo  port.SessionRepository
+	clientRepo   port.ClientRepository
 }
 
 // NewUseCase は UseCase を生成する。
 func NewUseCase(
-	authCodeRepo AuthCodeRepository,
-	sessionRepo SessionRepository,
-	clientRepo ClientRepository,
+	authCodeRepo port.AuthCodeRepository,
+	sessionRepo port.SessionRepository,
+	clientRepo port.ClientRepository,
 ) *UseCase {
 	return &UseCase{
 		authCodeRepo: authCodeRepo,
@@ -63,17 +64,16 @@ func (u *UseCase) IssueCode(ctx context.Context, in *IssueCodeInput) (*IssueCode
 	}
 	codeHash := hashCode(plainCode)
 
-	// 3. セッションの取得または作成
+	// 3. セッションの取得または作成（FindBySessionTokenHash でデバイス単位の既存セッションを再利用）
 	tokenVersion := int64(1)
 	expiresAt := time.Now().Add(sessionExpiryHours * time.Hour)
-	var sess *session.Session
 
-	existing, err := u.sessionRepo.FindByUserID(ctx, in.UserID)
+	existing, err := u.sessionRepo.FindBySessionTokenHash(ctx, in.SessionTokenHash)
 	if err == nil && existing != nil && existing.IsValid(time.Now()) {
-		sess = existing
-		tokenVersion = existing.TokenVersion()
+		// 既存セッションを再利用（新規作成しない）
+		_ = existing
 	} else {
-		sess = session.New(
+		sess := session.New(
 			in.UserID,
 			in.SessionTokenHash,
 			in.IPAddress,

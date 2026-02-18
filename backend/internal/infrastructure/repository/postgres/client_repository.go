@@ -1,4 +1,4 @@
-package repository
+package postgres
 
 import (
 	"context"
@@ -6,12 +6,11 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
 )
 
-// ClientRepository はOAuthクライアントの取得・検証インターフェース。
-type ClientRepository interface {
-	ValidateRedirectURI(ctx context.Context, clientID uuid.UUID, redirectURI string) (bool, error)
-}
+// Ensure PostgresClientRepository implements port.ClientRepository.
+var _ port.ClientRepository = (*PostgresClientRepository)(nil)
 
 // PostgresClientRepository は PostgreSQL による ClientRepository の実装。
 type PostgresClientRepository struct {

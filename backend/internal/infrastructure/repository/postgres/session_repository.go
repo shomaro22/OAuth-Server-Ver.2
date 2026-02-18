@@ -1,4 +1,4 @@
-package repository
+package postgres
 
 import (
 	"context"
@@ -7,13 +7,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/session"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
 )
 
-// SessionRepository はセッションの永続化インターフェース。
-type SessionRepository interface {
-	Save(ctx context.Context, s *session.Session) error
-	FindByUserID(ctx context.Context, userID uuid.UUID) (*session.Session, error)
-}
+// Ensure PostgresSessionRepository implements port.SessionRepository.
+var _ port.SessionRepository = (*PostgresSessionRepository)(nil)
 
 // PostgresSessionRepository は PostgreSQL による SessionRepository の実装。
 type PostgresSessionRepository struct {
@@ -50,11 +48,10 @@ func (r *PostgresSessionRepository) Save(ctx context.Context, s *session.Session
 	return err
 }
 
-// FindByUserID はユーザーIDでセッションを取得する。
-func (r *PostgresSessionRepository) FindByUserID(ctx context.Context, userID uuid.UUID) (*session.Session, error) {
+// FindBySessionTokenHash はデバイス識別（cookie等）のトークンハッシュでセッションを取得する。
+func (r *PostgresSessionRepository) FindBySessionTokenHash(ctx context.Context, tokenHash string) (*session.Session, error) {
 	query := `SELECT id, user_id, session_token_hash, ip_address, user_agent, token_version, expires_at, created_at, revoked
-		FROM sessions WHERE user_id = $1 AND revoked = false
-		ORDER BY created_at DESC LIMIT 1`
+		FROM sessions WHERE session_token_hash = $1 AND revoked = false`
 	var (
 		id               uuid.UUID
 		uid              uuid.UUID
@@ -66,7 +63,7 @@ func (r *PostgresSessionRepository) FindByUserID(ctx context.Context, userID uui
 		createdAt        time.Time
 		revoked          bool
 	)
-	err := r.pool.QueryRow(ctx, query, userID).Scan(
+	err := r.pool.QueryRow(ctx, query, tokenHash).Scan(
 		&id,
 		&uid,
 		&sessionTokenHash,
@@ -81,4 +78,18 @@ func (r *PostgresSessionRepository) FindByUserID(ctx context.Context, userID uui
 		return nil, err
 	}
 	return session.Reconstruct(id, uid, sessionTokenHash, ipAddress, userAgent, tokenVersion, expiresAt, createdAt, revoked), nil
+}
+
+// IncrementTokenVersion は token_version をインクリメントする。
+func (r *PostgresSessionRepository) IncrementTokenVersion(ctx context.Context, sid uuid.UUID) error {
+	query := `UPDATE sessions SET token_version = token_version + 1 WHERE id = $1`
+	_, err := r.pool.Exec(ctx, query, sid)
+	return err
+}
+
+// Revoke はセッションを失効させる。
+func (r *PostgresSessionRepository) Revoke(ctx context.Context, sid uuid.UUID) error {
+	query := `UPDATE sessions SET revoked = true WHERE id = $1`
+	_, err := r.pool.Exec(ctx, query, sid)
+	return err
 }

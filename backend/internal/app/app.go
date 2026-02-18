@@ -13,9 +13,12 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/handler"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/database"
-	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/repository"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/repository/postgres"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/router"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/authorize"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/logout"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/token"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/userinfo"
 )
 
 // App はアプリケーションの組み立てと起動を担当する。
@@ -43,17 +46,24 @@ func New() (*App, error) {
 
 // Run はアプリケーションを起動する。
 func (a *App) Run() error {
-	// Repository 生成
-	authCodeRepo := repository.NewPostgresAuthCodeRepository(a.pool)
-	sessionRepo := repository.NewPostgresSessionRepository(a.pool)
-	clientRepo := repository.NewPostgresClientRepository(a.pool)
+	// Repository 生成（port を実装する postgres adapter）
+	authCodeRepo := postgres.NewPostgresAuthCodeRepository(a.pool)
+	sessionRepo := postgres.NewPostgresSessionRepository(a.pool)
+	clientRepo := postgres.NewPostgresClientRepository(a.pool)
+	tokenRepo := postgres.NewPostgresTokenRepository(a.pool)
+	userRepo := postgres.NewPostgresUserRepository(a.pool)
 
 	// Usecase 生成
 	authorizeUseCase := authorize.NewUseCase(authCodeRepo, sessionRepo, clientRepo)
+	tokenUseCase := token.NewUseCase(authCodeRepo, tokenRepo, clientRepo)
+	userInfoUseCase := userinfo.NewUseCase(tokenRepo, userRepo)
+	logoutUseCase := logout.NewUseCase(sessionRepo)
 
 	// Handler 生成
 	authorizeHandler := handler.NewAuthorizeHandler(authorizeUseCase)
-	tokenHandler := handler.NewTokenHandler()
+	tokenHandler := handler.NewTokenHandler(tokenUseCase)
+	userInfoHandler := handler.NewUserInfoHandler(userInfoUseCase)
+	logoutHandler := handler.NewLogoutHandler(logoutUseCase)
 	healthHandler := handler.NewHealthHandler()
 
 	// Router 生成・登録
@@ -62,6 +72,8 @@ func (a *App) Run() error {
 	router.New(a.e, &router.Config{
 		AuthorizeHandler: authorizeHandler,
 		TokenHandler:     tokenHandler,
+		UserInfoHandler:  userInfoHandler,
+		LogoutHandler:    logoutHandler,
 		HealthHandler:    healthHandler,
 	})
 

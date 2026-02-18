@@ -23,22 +23,34 @@ func (m *mockAuthCodeRepo) FindByCodeHash(ctx context.Context, codeHash string) 
 	return nil, nil
 }
 
+func (m *mockAuthCodeRepo) MarkConsumed(ctx context.Context, id uuid.UUID) error {
+	return nil
+}
+
 func (m *mockAuthCodeRepo) Delete(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
 type mockSessionRepo struct {
-	saveErr     error
-	findByUser  *session.Session
-	findByErr   error
+	saveErr                error
+	findBySessionToken     *session.Session
+	findBySessionTokenErr  error
 }
 
 func (m *mockSessionRepo) Save(ctx context.Context, s *session.Session) error {
 	return m.saveErr
 }
 
-func (m *mockSessionRepo) FindByUserID(ctx context.Context, userID uuid.UUID) (*session.Session, error) {
-	return m.findByUser, m.findByErr
+func (m *mockSessionRepo) FindBySessionTokenHash(ctx context.Context, tokenHash string) (*session.Session, error) {
+	return m.findBySessionToken, m.findBySessionTokenErr
+}
+
+func (m *mockSessionRepo) IncrementTokenVersion(ctx context.Context, sid uuid.UUID) error {
+	return nil
+}
+
+func (m *mockSessionRepo) Revoke(ctx context.Context, sid uuid.UUID) error {
+	return nil
 }
 
 type mockClientRepo struct {
@@ -127,7 +139,7 @@ func TestUseCase_IssueCode_UseExistingSession(t *testing.T) {
 
 	uc := NewUseCase(
 		&mockAuthCodeRepo{},
-		&mockSessionRepo{findByUser: existingSession},
+		&mockSessionRepo{findBySessionToken: existingSession},
 		&mockClientRepo{valid: true},
 	)
 

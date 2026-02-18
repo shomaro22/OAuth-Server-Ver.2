@@ -1,4 +1,4 @@
-package repository
+package postgres
 
 import (
 	"context"
@@ -6,39 +6,12 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/token"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
 )
 
-// TokenRepository はアクセストークン・リフレッシュトークンの永続化インターフェース。
-type TokenRepository interface {
-	SaveAccessToken(ctx context.Context, userID, clientID uuid.UUID, tokenJTI, scopes string, expiresAt time.Time) (uuid.UUID, error)
-	SaveRefreshToken(ctx context.Context, accessTokenID uuid.UUID, tokenHash string, expiresAt time.Time) (uuid.UUID, error)
-	FindAccessTokenByJTI(ctx context.Context, tokenJTI string) (*AccessTokenRow, error)
-	FindRefreshTokenByHash(ctx context.Context, tokenHash string) (*RefreshTokenRow, error)
-	RevokeAccessToken(ctx context.Context, id uuid.UUID) error
-	RevokeRefreshToken(ctx context.Context, id uuid.UUID) error
-}
-
-// AccessTokenRow は access_tokens テーブルの行。
-type AccessTokenRow struct {
-	ID        uuid.UUID
-	UserID    uuid.UUID
-	ClientID  uuid.UUID
-	TokenJTI  string
-	Scopes    string
-	IssuedAt  time.Time
-	ExpiresAt time.Time
-	Revoked   bool
-}
-
-// RefreshTokenRow は refresh_tokens テーブルの行。
-type RefreshTokenRow struct {
-	ID            uuid.UUID
-	AccessTokenID uuid.UUID
-	TokenHash     string
-	ExpiresAt     time.Time
-	Revoked       bool
-	Rotated       bool
-}
+// Ensure PostgresTokenRepository implements port.TokenRepository.
+var _ port.TokenRepository = (*PostgresTokenRepository)(nil)
 
 // PostgresTokenRepository は PostgreSQL による TokenRepository の実装。
 type PostgresTokenRepository struct {
@@ -69,43 +42,89 @@ func (r *PostgresTokenRepository) SaveRefreshToken(ctx context.Context, accessTo
 }
 
 // FindAccessTokenByJTI はJTIでアクセストークンを取得する。
-func (r *PostgresTokenRepository) FindAccessTokenByJTI(ctx context.Context, tokenJTI string) (*AccessTokenRow, error) {
+func (r *PostgresTokenRepository) FindAccessTokenByJTI(ctx context.Context, tokenJTI string) (*token.AccessToken, error) {
 	query := `SELECT id, user_id, client_id, token_jti, scopes, issued_at, expires_at, revoked
 		FROM access_tokens WHERE token_jti = $1`
-	var row AccessTokenRow
+	var (
+		id        uuid.UUID
+		userID    uuid.UUID
+		clientID  uuid.UUID
+		jti       string
+		scopes    string
+		issuedAt  time.Time
+		expiresAt time.Time
+		revoked   bool
+	)
 	err := r.pool.QueryRow(ctx, query, tokenJTI).Scan(
-		&row.ID,
-		&row.UserID,
-		&row.ClientID,
-		&row.TokenJTI,
-		&row.Scopes,
-		&row.IssuedAt,
-		&row.ExpiresAt,
-		&row.Revoked,
+		&id,
+		&userID,
+		&clientID,
+		&jti,
+		&scopes,
+		&issuedAt,
+		&expiresAt,
+		&revoked,
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &row, nil
+	return token.NewAccessToken(id, userID, clientID, jti, scopes, issuedAt, expiresAt, revoked), nil
+}
+
+// FindAccessTokenByID はIDでアクセストークンを取得する。
+func (r *PostgresTokenRepository) FindAccessTokenByID(ctx context.Context, id uuid.UUID) (*token.AccessToken, error) {
+	query := `SELECT id, user_id, client_id, token_jti, scopes, issued_at, expires_at, revoked
+		FROM access_tokens WHERE id = $1`
+	var (
+		rowID     uuid.UUID
+		userID    uuid.UUID
+		clientID  uuid.UUID
+		jti       string
+		scopes    string
+		issuedAt  time.Time
+		expiresAt time.Time
+		revoked   bool
+	)
+	err := r.pool.QueryRow(ctx, query, id).Scan(
+		&rowID,
+		&userID,
+		&clientID,
+		&jti,
+		&scopes,
+		&issuedAt,
+		&expiresAt,
+		&revoked,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return token.NewAccessToken(rowID, userID, clientID, jti, scopes, issuedAt, expiresAt, revoked), nil
 }
 
 // FindRefreshTokenByHash はハッシュでリフレッシュトークンを取得する。
-func (r *PostgresTokenRepository) FindRefreshTokenByHash(ctx context.Context, tokenHash string) (*RefreshTokenRow, error) {
+func (r *PostgresTokenRepository) FindRefreshTokenByHash(ctx context.Context, tokenHash string) (*token.RefreshToken, error) {
 	query := `SELECT id, access_token_id, token_hash, expires_at, revoked, rotated
 		FROM refresh_tokens WHERE token_hash = $1`
-	var row RefreshTokenRow
+	var (
+		id            uuid.UUID
+		accessTokenID uuid.UUID
+		hash          string
+		expiresAt     time.Time
+		revoked       bool
+		rotated       bool
+	)
 	err := r.pool.QueryRow(ctx, query, tokenHash).Scan(
-		&row.ID,
-		&row.AccessTokenID,
-		&row.TokenHash,
-		&row.ExpiresAt,
-		&row.Revoked,
-		&row.Rotated,
+		&id,
+		&accessTokenID,
+		&hash,
+		&expiresAt,
+		&revoked,
+		&rotated,
 	)
 	if err != nil {
 		return nil, err
 	}
-	return &row, nil
+	return token.NewRefreshToken(id, accessTokenID, hash, expiresAt, revoked, rotated), nil
 }
 
 // RevokeAccessToken はアクセストークンを失効させる。
@@ -118,6 +137,13 @@ func (r *PostgresTokenRepository) RevokeAccessToken(ctx context.Context, id uuid
 // RevokeRefreshToken はリフレッシュトークンを失効させる。
 func (r *PostgresTokenRepository) RevokeRefreshToken(ctx context.Context, id uuid.UUID) error {
 	query := `UPDATE refresh_tokens SET revoked = true WHERE id = $1`
+	_, err := r.pool.Exec(ctx, query, id)
+	return err
+}
+
+// MarkRefreshTokenRotated はリフレッシュトークンをローテーション済みにする。
+func (r *PostgresTokenRepository) MarkRefreshTokenRotated(ctx context.Context, id uuid.UUID) error {
+	query := `UPDATE refresh_tokens SET rotated = true, revoked = true WHERE id = $1`
 	_, err := r.pool.Exec(ctx, query, id)
 	return err
 }

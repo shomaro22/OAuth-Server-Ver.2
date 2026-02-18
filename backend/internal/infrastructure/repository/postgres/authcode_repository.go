@@ -1,4 +1,4 @@
-package repository
+package postgres
 
 import (
 	"context"
@@ -7,14 +7,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
 )
 
-// AuthCodeRepository は認可コードの永続化インターフェース。
-type AuthCodeRepository interface {
-	Save(ctx context.Context, code *authcode.AuthorizationCode) error
-	FindByCodeHash(ctx context.Context, codeHash string) (*authcode.AuthorizationCode, error)
-	Delete(ctx context.Context, id uuid.UUID) error
-}
+// Ensure PostgresAuthCodeRepository implements port.AuthCodeRepository.
+var _ port.AuthCodeRepository = (*PostgresAuthCodeRepository)(nil)
 
 // PostgresAuthCodeRepository は PostgreSQL による AuthCodeRepository の実装。
 type PostgresAuthCodeRepository struct {
@@ -80,6 +77,13 @@ func (r *PostgresAuthCodeRepository) FindByCodeHash(ctx context.Context, codeHas
 		return nil, err
 	}
 	return authcode.Reconstruct(id, userID, clientID, hash, codeChallenge, codeChallengeMethod, redirectURI, scopes, expiresAt, consumed, createdAt), nil
+}
+
+// MarkConsumed は認可コードを消費済みにする。
+func (r *PostgresAuthCodeRepository) MarkConsumed(ctx context.Context, id uuid.UUID) error {
+	query := `UPDATE authorization_codes SET consumed = true WHERE id = $1`
+	_, err := r.pool.Exec(ctx, query, id)
+	return err
 }
 
 // Delete は認可コードを削除する。
