@@ -7,7 +7,9 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/session"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/token"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
 )
 
 type mockAuthCodeRepo struct {
@@ -36,7 +38,7 @@ type mockTokenRepo struct {
 	err           error
 }
 
-func (m *mockTokenRepo) SaveAccessToken(ctx context.Context, userID, clientID uuid.UUID, tokenJTI, scopes string, expiresAt time.Time) (uuid.UUID, error) {
+func (m *mockTokenRepo) SaveAccessToken(ctx context.Context, userID, clientID, sessionID uuid.UUID, tokenJTI, scopes string, expiresAt time.Time) (uuid.UUID, error) {
 	return m.accessTokenID, m.err
 }
 
@@ -51,7 +53,8 @@ func (m *mockTokenRepo) FindAccessTokenByJTI(ctx context.Context, tokenJTI strin
 func (m *mockTokenRepo) FindAccessTokenByID(ctx context.Context, id uuid.UUID) (*token.AccessToken, error) {
 	uid := uuid.New()
 	cid := uuid.New()
-	return token.NewAccessToken(id, uid, cid, "", "openid", time.Now(), time.Now().Add(time.Hour), false), m.err
+	sid := uuid.New()
+	return token.NewAccessToken(id, uid, cid, sid, "", "openid", time.Now(), time.Now().Add(time.Hour), false), m.err
 }
 
 func (m *mockTokenRepo) FindRefreshTokenByHash(ctx context.Context, tokenHash string) (*token.RefreshToken, error) {
@@ -78,11 +81,39 @@ func (m *mockClientRepo) ValidateRedirectURI(ctx context.Context, clientID uuid.
 	return m.valid, nil
 }
 
+type mockJWTSigner struct{}
+
+func (m *mockJWTSigner) Sign(sub, sid, aud uuid.UUID, ver int64, jti string, expiresIn time.Duration) (string, error) {
+	return "mock-jwt", nil
+}
+func (m *mockJWTSigner) Verify(tokenString string) (*port.AccessTokenClaims, error) {
+	return nil, nil
+}
+
+type mockSessionRepo struct {
+	findByID *session.Session
+}
+
+func (m *mockSessionRepo) Save(ctx context.Context, s *session.Session) error { return nil }
+func (m *mockSessionRepo) FindByID(ctx context.Context, sid uuid.UUID) (*session.Session, error) {
+	if m.findByID != nil {
+		return m.findByID, nil
+	}
+	return session.New(uuid.New(), "hash", "127.0.0.1", "test", 1, time.Now().Add(time.Hour)), nil
+}
+func (m *mockSessionRepo) FindBySessionTokenHash(ctx context.Context, tokenHash string) (*session.Session, error) {
+	return nil, nil
+}
+func (m *mockSessionRepo) IncrementTokenVersion(ctx context.Context, sid uuid.UUID) error { return nil }
+func (m *mockSessionRepo) Revoke(ctx context.Context, sid uuid.UUID) error { return nil }
+
 func TestUseCase_Exchange_InvalidCode(t *testing.T) {
 	uc := NewUseCase(
 		&mockAuthCodeRepo{code: nil, err: nil},
 		&mockTokenRepo{},
 		&mockClientRepo{},
+		&mockSessionRepo{findByID: nil},
+		&mockJWTSigner{},
 	)
 
 	_, err := uc.Exchange(context.Background(), &ExchangeInput{

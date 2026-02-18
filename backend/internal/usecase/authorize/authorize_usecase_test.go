@@ -45,6 +45,10 @@ func (m *mockSessionRepo) FindBySessionTokenHash(ctx context.Context, tokenHash 
 	return m.findBySessionToken, m.findBySessionTokenErr
 }
 
+func (m *mockSessionRepo) FindByID(ctx context.Context, sid uuid.UUID) (*session.Session, error) {
+	return nil, nil
+}
+
 func (m *mockSessionRepo) IncrementTokenVersion(ctx context.Context, sid uuid.UUID) error {
 	return nil
 }
@@ -94,6 +98,35 @@ func TestUseCase_IssueCode_Success(t *testing.T) {
 	}
 	if out.State != in.State {
 		t.Errorf("IssueCode: state = %s, want %s", out.State, in.State)
+	}
+}
+
+func TestUseCase_IssueCode_UnsupportedPKCE(t *testing.T) {
+	uc := NewUseCase(
+		&mockAuthCodeRepo{},
+		&mockSessionRepo{},
+		&mockClientRepo{valid: true},
+	)
+
+	in := &IssueCodeInput{
+		UserID:              uuid.New(),
+		ClientID:            uuid.New(),
+		RedirectURI:         "https://example.com/callback",
+		Scopes:              "openid",
+		State:               "xyz",
+		CodeChallenge:       "challenge",
+		CodeChallengeMethod: "plain",
+		SessionTokenHash:    "hash",
+		IPAddress:           "127.0.0.1",
+		UserAgent:           "test",
+	}
+
+	_, err := uc.IssueCode(context.Background(), in)
+	if err == nil {
+		t.Fatal("IssueCode: expected error for plain PKCE")
+	}
+	if !errors.Is(err, ErrUnsupportedPKCE) {
+		t.Errorf("IssueCode: expected ErrUnsupportedPKCE, got %v", err)
 	}
 }
 

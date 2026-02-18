@@ -13,6 +13,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/handler"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/database"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/jwt"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/repository/postgres"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/router"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/authorize"
@@ -53,10 +54,17 @@ func (a *App) Run() error {
 	tokenRepo := postgres.NewPostgresTokenRepository(a.pool)
 	userRepo := postgres.NewPostgresUserRepository(a.pool)
 
+	// JWT Signer（RS256、開発用は起動時に鍵生成）
+	jwtKey, err := jwt.GenerateKey()
+	if err != nil {
+		return fmt.Errorf("generate jwt key: %w", err)
+	}
+	jwtSigner := jwt.NewSigner(jwtKey)
+
 	// Usecase 生成
 	authorizeUseCase := authorize.NewUseCase(authCodeRepo, sessionRepo, clientRepo)
-	tokenUseCase := token.NewUseCase(authCodeRepo, tokenRepo, clientRepo)
-	userInfoUseCase := userinfo.NewUseCase(tokenRepo, userRepo)
+	tokenUseCase := token.NewUseCase(authCodeRepo, tokenRepo, clientRepo, sessionRepo, jwtSigner)
+	userInfoUseCase := userinfo.NewUseCase(tokenRepo, userRepo, sessionRepo, jwtSigner)
 	logoutUseCase := logout.NewUseCase(sessionRepo)
 
 	// Handler 生成

@@ -2,9 +2,11 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
@@ -25,12 +27,13 @@ func NewPostgresAuthCodeRepository(pool *pgxpool.Pool) *PostgresAuthCodeReposito
 
 // Save は認可コードを保存する。
 func (r *PostgresAuthCodeRepository) Save(ctx context.Context, code *authcode.AuthorizationCode) error {
-	query := `INSERT INTO authorization_codes (id, user_id, client_id, code_hash, code_challenge, code_challenge_method, redirect_uri, scopes, expires_at, consumed, created_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
+	query := `INSERT INTO authorization_codes (id, user_id, client_id, session_id, code_hash, code_challenge, code_challenge_method, redirect_uri, scopes, expires_at, consumed, created_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`
 	_, err := r.pool.Exec(ctx, query,
 		code.ID(),
 		code.UserID(),
 		code.ClientID(),
+		code.SessionID(),
 		code.CodeHash(),
 		code.CodeChallenge(),
 		code.CodeChallengeMethod(),
@@ -45,12 +48,13 @@ func (r *PostgresAuthCodeRepository) Save(ctx context.Context, code *authcode.Au
 
 // FindByCodeHash はコードハッシュで認可コードを取得する。
 func (r *PostgresAuthCodeRepository) FindByCodeHash(ctx context.Context, codeHash string) (*authcode.AuthorizationCode, error) {
-	query := `SELECT id, user_id, client_id, code_hash, code_challenge, code_challenge_method, redirect_uri, scopes, expires_at, consumed, created_at
+	query := `SELECT id, user_id, client_id, session_id, code_hash, code_challenge, code_challenge_method, redirect_uri, scopes, expires_at, consumed, created_at
 		FROM authorization_codes WHERE code_hash = $1`
 	var (
 		id                  uuid.UUID
 		userID              uuid.UUID
 		clientID            uuid.UUID
+		sessionID           uuid.UUID
 		hash                string
 		codeChallenge       string
 		codeChallengeMethod string
@@ -64,6 +68,7 @@ func (r *PostgresAuthCodeRepository) FindByCodeHash(ctx context.Context, codeHas
 		&id,
 		&userID,
 		&clientID,
+		&sessionID,
 		&hash,
 		&codeChallenge,
 		&codeChallengeMethod,
@@ -74,9 +79,12 @@ func (r *PostgresAuthCodeRepository) FindByCodeHash(ctx context.Context, codeHas
 		&createdAt,
 	)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
 		return nil, err
 	}
-	return authcode.Reconstruct(id, userID, clientID, hash, codeChallenge, codeChallengeMethod, redirectURI, scopes, expiresAt, consumed, createdAt), nil
+	return authcode.Reconstruct(id, userID, clientID, sessionID, hash, codeChallenge, codeChallengeMethod, redirectURI, scopes, expiresAt, consumed, createdAt), nil
 }
 
 // MarkConsumed は認可コードを消費済みにする。

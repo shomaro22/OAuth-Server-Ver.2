@@ -118,6 +118,12 @@ func (h *AuthorizeHandler) Post(c echo.Context) error {
 				"error_description": "redirect_uri mismatch",
 			})
 		}
+		if err == authorize.ErrUnsupportedPKCE {
+			return c.JSON(http.StatusBadRequest, map[string]string{
+				"error": "invalid_request",
+				"error_description": "PKCE: only S256 is supported",
+			})
+		}
 		return c.JSON(http.StatusInternalServerError, map[string]string{
 			"error": "server_error",
 		})

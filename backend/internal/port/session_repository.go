@@ -11,6 +11,9 @@ import (
 type SessionRepository interface {
 	Save(ctx context.Context, s *session.Session) error
 
+	// FindByID はセッションIDでセッションを取得する（JWT の ver 照合用）。
+	FindByID(ctx context.Context, sid uuid.UUID) (*session.Session, error)
+
 	// FindBySessionTokenHash はデバイス識別（cookie等）のトークンハッシュでセッションを取得する。
 	FindBySessionTokenHash(ctx context.Context, tokenHash string) (*session.Session, error)
 

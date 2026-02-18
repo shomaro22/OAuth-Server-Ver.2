@@ -3,8 +3,8 @@ package userinfo
 import (
 	"context"
 	"errors"
-	"time"
 
+	"github.com/google/uuid"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
 )
 
@@ -14,15 +14,19 @@ var (
 
 // UseCase はユーザー情報取得のユースケース。
 type UseCase struct {
-	tokenRepo port.TokenRepository
-	userRepo  port.UserRepository
+	tokenRepo   port.TokenRepository
+	userRepo    port.UserRepository
+	sessionRepo port.SessionRepository
+	jwtSigner   port.JWTSigner
 }
 
 // NewUseCase は UseCase を生成する。
-func NewUseCase(tokenRepo port.TokenRepository, userRepo port.UserRepository) *UseCase {
+func NewUseCase(tokenRepo port.TokenRepository, userRepo port.UserRepository, sessionRepo port.SessionRepository, jwtSigner port.JWTSigner) *UseCase {
 	return &UseCase{
-		tokenRepo: tokenRepo,
-		userRepo:  userRepo,
+		tokenRepo:   tokenRepo,
+		userRepo:    userRepo,
+		sessionRepo: sessionRepo,
+		jwtSigner:   jwtSigner,
 	}
 }
 
@@ -39,24 +43,42 @@ type GetOutput struct {
 	PreferredUsername string `json:"preferred_username,omitempty"`
 }
 
-// Get はアクセストークンからユーザー情報を取得する。
+// Get はアクセストークン（JWT）からユーザー情報を取得する。
 func (u *UseCase) Get(ctx context.Context, in *GetInput) (*GetOutput, error) {
-	// 1. アクセストークン検証
-	accessToken, err := u.tokenRepo.FindAccessTokenByJTI(ctx, in.AccessToken)
-	if err != nil || accessToken == nil {
+	// 1. JWT 検証（署名・有効期限）
+	claims, err := u.jwtSigner.Verify(in.AccessToken)
+	if err != nil || claims == nil {
 		return nil, ErrInvalidToken
 	}
 
+	// 2. access_token の失効チェック（jti で検索）
+	accessToken, err := u.tokenRepo.FindAccessTokenByJTI(ctx, claims.Jti)
+	if err != nil || accessToken == nil {
+		return nil, ErrInvalidToken
+	}
 	if accessToken.Revoked() {
 		return nil, ErrInvalidToken
 	}
 
-	if time.Now().After(accessToken.ExpiresAt()) {
+	// 3. Token Version 照合（sid → session → ver）
+	sid, err := uuid.Parse(claims.Sid)
+	if err != nil {
+		return nil, ErrInvalidToken
+	}
+	sess, err := u.sessionRepo.FindByID(ctx, sid)
+	if err != nil || sess == nil {
+		return nil, ErrInvalidToken
+	}
+	if sess.TokenVersion() != claims.Ver {
 		return nil, ErrInvalidToken
 	}
 
-	// 2. ユーザー情報取得
-	usr, err := u.userRepo.FindByID(ctx, accessToken.UserID())
+	// 4. ユーザー情報取得
+	userID, err := uuid.Parse(claims.Sub)
+	if err != nil {
+		return nil, ErrInvalidToken
+	}
+	usr, err := u.userRepo.FindByID(ctx, userID)
 	if err != nil || usr == nil {
 		return nil, ErrInvalidToken
 	}

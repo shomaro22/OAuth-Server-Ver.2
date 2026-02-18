@@ -12,6 +12,7 @@ func TestAuthorizationCode_IsExpired(t *testing.T) {
 	code := New(
 		uuid.New(),
 		uuid.New(),
+		uuid.New(),
 		"hash",
 		"challenge",
 		CodeChallengeMethodS256,
@@ -27,6 +28,7 @@ func TestAuthorizationCode_IsExpired(t *testing.T) {
 
 func TestAuthorizationCode_IsConsumed(t *testing.T) {
 	code := New(
+		uuid.New(),
 		uuid.New(),
 		uuid.New(),
 		"hash",
@@ -49,6 +51,7 @@ func TestAuthorizationCode_IsConsumed(t *testing.T) {
 
 func TestAuthorizationCode_IsValid(t *testing.T) {
 	code := New(
+		uuid.New(),
 		uuid.New(),
 		uuid.New(),
 		"hash",

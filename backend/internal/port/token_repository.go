@@ -10,7 +10,7 @@ import (
 
 // TokenRepository はアクセストークン・リフレッシュトークンの永続化インターフェース。
 type TokenRepository interface {
-	SaveAccessToken(ctx context.Context, userID, clientID uuid.UUID, tokenJTI, scopes string, expiresAt time.Time) (uuid.UUID, error)
+	SaveAccessToken(ctx context.Context, userID, clientID, sessionID uuid.UUID, tokenJTI, scopes string, expiresAt time.Time) (uuid.UUID, error)
 	SaveRefreshToken(ctx context.Context, accessTokenID uuid.UUID, tokenHash string, expiresAt time.Time) (uuid.UUID, error)
 	FindAccessTokenByJTI(ctx context.Context, tokenJTI string) (*token.AccessToken, error)
 	FindAccessTokenByID(ctx context.Context, id uuid.UUID) (*token.AccessToken, error)

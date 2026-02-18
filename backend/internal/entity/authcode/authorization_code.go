@@ -6,21 +6,20 @@ import (
 	"github.com/google/uuid"
 )
 
-// CodeChallengeMethod PKCEのコードチャレンジ方式
-const (
-	CodeChallengeMethodS256 = "S256"
-	CodeChallengeMethodPlain = "plain"
-)
+// CodeChallengeMethod PKCEのコードチャレンジ方式（S256 のみサポート）
+const CodeChallengeMethodS256 = "S256"
 
 // AuthorizationCode は認可コードのドメインエンティティ。
 // PKCE、有効期限、再利用防止をサポートする。
+// sessionID は Token Version 方式で JWT に sid/ver を入れるために必要。
 type AuthorizationCode struct {
 	id                 uuid.UUID
 	userID             uuid.UUID
 	clientID           uuid.UUID
+	sessionID          uuid.UUID
 	codeHash           string
-	codeChallenge       string // PKCE: code_verifier から生成した challenge
-	codeChallengeMethod string // PKCE: S256 または plain
+	codeChallenge      string // PKCE: code_verifier から生成した challenge
+	codeChallengeMethod string // PKCE: S256 のみ
 	redirectURI        string
 	scopes             string
 	expiresAt          time.Time
@@ -32,6 +31,7 @@ type AuthorizationCode struct {
 func New(
 	userID uuid.UUID,
 	clientID uuid.UUID,
+	sessionID uuid.UUID,
 	codeHash string,
 	codeChallenge string,
 	codeChallengeMethod string,
@@ -43,6 +43,7 @@ func New(
 		id:                  uuid.New(),
 		userID:              userID,
 		clientID:            clientID,
+		sessionID:           sessionID,
 		codeHash:            codeHash,
 		codeChallenge:       codeChallenge,
 		codeChallengeMethod: codeChallengeMethod,
@@ -67,6 +68,11 @@ func (a *AuthorizationCode) UserID() uuid.UUID {
 // ClientID はクライアントIDを返す。
 func (a *AuthorizationCode) ClientID() uuid.UUID {
 	return a.clientID
+}
+
+// SessionID はセッションIDを返す（Token Version 照合用）。
+func (a *AuthorizationCode) SessionID() uuid.UUID {
+	return a.sessionID
 }
 
 // CodeHash はコードのハッシュを返す。
@@ -130,6 +136,7 @@ func Reconstruct(
 	id uuid.UUID,
 	userID uuid.UUID,
 	clientID uuid.UUID,
+	sessionID uuid.UUID,
 	codeHash string,
 	codeChallenge string,
 	codeChallengeMethod string,
@@ -143,6 +150,7 @@ func Reconstruct(
 		id:                  id,
 		userID:              userID,
 		clientID:            clientID,
+		sessionID:           sessionID,
 		codeHash:            codeHash,
 		codeChallenge:       codeChallenge,
 		codeChallengeMethod: codeChallengeMethod,

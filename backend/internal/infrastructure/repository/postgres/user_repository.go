@@ -2,9 +2,11 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/user"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
@@ -46,6 +48,9 @@ func (r *PostgresUserRepository) FindByID(ctx context.Context, id uuid.UUID) (*u
 		&updatedAt,
 	)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
 		return nil, err
 	}
 	return user.NewUser(rowID, email, username, emailVerified, status, createdAt, updatedAt), nil

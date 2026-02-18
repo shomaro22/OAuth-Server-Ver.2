@@ -2,9 +2,11 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/session"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
@@ -75,6 +77,44 @@ func (r *PostgresSessionRepository) FindBySessionTokenHash(ctx context.Context, 
 		&revoked,
 	)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return session.Reconstruct(id, uid, sessionTokenHash, ipAddress, userAgent, tokenVersion, expiresAt, createdAt, revoked), nil
+}
+
+// FindByID はセッションIDでセッションを取得する。
+func (r *PostgresSessionRepository) FindByID(ctx context.Context, sid uuid.UUID) (*session.Session, error) {
+	query := `SELECT id, user_id, session_token_hash, ip_address, user_agent, token_version, expires_at, created_at, revoked
+		FROM sessions WHERE id = $1`
+	var (
+		id               uuid.UUID
+		uid              uuid.UUID
+		sessionTokenHash string
+		ipAddress        string
+		userAgent        string
+		tokenVersion     int64
+		expiresAt        time.Time
+		createdAt        time.Time
+		revoked          bool
+	)
+	err := r.pool.QueryRow(ctx, query, sid).Scan(
+		&id,
+		&uid,
+		&sessionTokenHash,
+		&ipAddress,
+		&userAgent,
+		&tokenVersion,
+		&expiresAt,
+		&createdAt,
+		&revoked,
+	)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
 		return nil, err
 	}
 	return session.Reconstruct(id, uid, sessionTokenHash, ipAddress, userAgent, tokenVersion, expiresAt, createdAt, revoked), nil

@@ -34,6 +34,8 @@ type UseCase struct {
 	authCodeRepo port.AuthCodeRepository
 	tokenRepo    port.TokenRepository
 	clientRepo   port.ClientRepository
+	sessionRepo  port.SessionRepository
+	jwtSigner    port.JWTSigner
 }
 
 // NewUseCase は UseCase を生成する。
@@ -41,11 +43,15 @@ func NewUseCase(
 	authCodeRepo port.AuthCodeRepository,
 	tokenRepo port.TokenRepository,
 	clientRepo port.ClientRepository,
+	sessionRepo port.SessionRepository,
+	jwtSigner port.JWTSigner,
 ) *UseCase {
 	return &UseCase{
 		authCodeRepo: authCodeRepo,
 		tokenRepo:    tokenRepo,
 		clientRepo:   clientRepo,
+		sessionRepo:  sessionRepo,
+		jwtSigner:    jwtSigner,
 	}
 }
 
@@ -91,9 +97,12 @@ func (u *UseCase) Exchange(ctx context.Context, in *ExchangeInput) (*TokenOutput
 		return nil, ErrInvalidCode
 	}
 
-	// 5. PKCE 検証
+	// 5. PKCE 検証（S256 のみ、code_challenge がある場合は必須）
 	if authCodeEntity.CodeChallenge() != "" {
-		expectedChallenge := computeCodeChallenge(in.CodeVerifier, authCodeEntity.CodeChallengeMethod())
+		if authCodeEntity.CodeChallengeMethod() != authcode.CodeChallengeMethodS256 {
+			return nil, ErrInvalidPKCE
+		}
+		expectedChallenge := computeCodeChallengeS256(in.CodeVerifier)
 		if expectedChallenge != authCodeEntity.CodeChallenge() {
 			return nil, ErrInvalidPKCE
 		}
@@ -104,8 +113,8 @@ func (u *UseCase) Exchange(ctx context.Context, in *ExchangeInput) (*TokenOutput
 		return nil, fmt.Errorf("mark code consumed: %w", err)
 	}
 
-	// 7. トークン発行
-	return u.issueTokens(ctx, authCodeEntity.UserID(), authCodeEntity.ClientID(), authCodeEntity.Scopes())
+	// 7. トークン発行（session_id を渡して JWT に sid/ver を入れる準備）
+	return u.issueTokens(ctx, authCodeEntity.UserID(), authCodeEntity.ClientID(), authCodeEntity.SessionID(), authCodeEntity.Scopes())
 }
 
 // RefreshInput はリフレッシュトークン交換の入力。
@@ -124,6 +133,17 @@ func (u *UseCase) Refresh(ctx context.Context, in *RefreshInput) (*TokenOutput, 
 	}
 
 	if refreshToken.Revoked() {
+		return nil, ErrInvalidRefreshToken
+	}
+
+	// 再利用検知（rotated 済み＝盗難の可能性）
+	if refreshToken.Rotated() {
+		accessToken, _ := u.tokenRepo.FindAccessTokenByID(ctx, refreshToken.AccessTokenID())
+		if accessToken != nil && accessToken.SessionID() != uuid.Nil {
+			sid := accessToken.SessionID()
+			_ = u.sessionRepo.IncrementTokenVersion(ctx, sid)
+			_ = u.sessionRepo.Revoke(ctx, sid) // 疑わしい＝セッション強制失効
+		}
 		return nil, ErrInvalidRefreshToken
 	}
 
@@ -152,15 +172,33 @@ func (u *UseCase) Refresh(ctx context.Context, in *RefreshInput) (*TokenOutput, 
 		return nil, fmt.Errorf("revoke access token: %w", err)
 	}
 
-	// 6. 新トークン発行
-	return u.issueTokens(ctx, accessToken.UserID(), accessToken.ClientID(), accessToken.Scopes())
+	// 6. 新トークン発行（session_id を引き継ぐ）
+	return u.issueTokens(ctx, accessToken.UserID(), accessToken.ClientID(), accessToken.SessionID(), accessToken.Scopes())
 }
 
-// issueTokens はアクセストークンとリフレッシュトークンを発行する。
-func (u *UseCase) issueTokens(ctx context.Context, userID, clientID uuid.UUID, scopes string) (*TokenOutput, error) {
+// issueTokens はアクセストークン（RS256 JWT）とリフレッシュトークンを発行する。
+func (u *UseCase) issueTokens(ctx context.Context, userID, clientID, sessionID uuid.UUID, scopes string) (*TokenOutput, error) {
 	accessJTI, err := generateSecureToken()
 	if err != nil {
 		return nil, fmt.Errorf("generate access token: %w", err)
+	}
+
+	// token_version を取得（JWT claims に含める）
+	sess, err := u.sessionRepo.FindByID(ctx, sessionID)
+	if err != nil || sess == nil {
+		return nil, fmt.Errorf("session not found: %w", err)
+	}
+
+	expiresIn := accessTokenExpiryMinutes * time.Minute
+	jwtString, err := u.jwtSigner.Sign(userID, sessionID, clientID, sess.TokenVersion(), accessJTI, expiresIn)
+	if err != nil {
+		return nil, fmt.Errorf("sign jwt: %w", err)
+	}
+
+	expiresAt := time.Now().Add(expiresIn)
+	accessTokenID, err := u.tokenRepo.SaveAccessToken(ctx, userID, clientID, sessionID, accessJTI, scopes, expiresAt)
+	if err != nil {
+		return nil, fmt.Errorf("save access token: %w", err)
 	}
 
 	refreshToken, err := generateSecureToken()
@@ -169,21 +207,14 @@ func (u *UseCase) issueTokens(ctx context.Context, userID, clientID uuid.UUID, s
 	}
 	refreshHash := hashString(refreshToken)
 
-	expiresAt := time.Now().Add(accessTokenExpiryMinutes * time.Minute)
-	accessTokenID, err := u.tokenRepo.SaveAccessToken(ctx, userID, clientID, accessJTI, scopes, expiresAt)
-	if err != nil {
-		return nil, fmt.Errorf("save access token: %w", err)
-	}
-
 	refreshExpiresAt := time.Now().Add(refreshTokenExpiryDays * 24 * time.Hour)
 	_, err = u.tokenRepo.SaveRefreshToken(ctx, accessTokenID, refreshHash, refreshExpiresAt)
 	if err != nil {
 		return nil, fmt.Errorf("save refresh token: %w", err)
 	}
 
-	// アクセストークンは JTI をそのまま返す（JWT 化は別途）
 	return &TokenOutput{
-		AccessToken:  accessJTI,
+		AccessToken:  jwtString,
 		TokenType:    "Bearer",
 		ExpiresIn:    accessTokenExpiryMinutes * 60,
 		RefreshToken: refreshToken,
@@ -196,10 +227,7 @@ func hashString(s string) string {
 	return hex.EncodeToString(h[:])
 }
 
-func computeCodeChallenge(verifier, method string) string {
-	if method == authcode.CodeChallengeMethodPlain {
-		return verifier
-	}
+func computeCodeChallengeS256(verifier string) string {
 	// S256: BASE64URL(SHA256(verifier))
 	h := sha256.Sum256([]byte(verifier))
 	return base64.URLEncoding.WithPadding(base64.NoPadding).EncodeToString(h[:])

@@ -22,8 +22,9 @@ const codeExpiryMinutes = 10
 const sessionExpiryHours = 24
 
 var (
-	ErrInvalidRedirectURI = errors.New("invalid redirect_uri")
-	ErrClientNotFound     = errors.New("client not found")
+	ErrInvalidRedirectURI   = errors.New("invalid redirect_uri")
+	ErrClientNotFound       = errors.New("client not found")
+	ErrUnsupportedPKCE      = errors.New("PKCE: only S256 is supported")
 )
 
 // UseCase は認可コード発行のユースケース。
@@ -57,23 +58,51 @@ func (u *UseCase) IssueCode(ctx context.Context, in *IssueCodeInput) (*IssueCode
 		return nil, ErrInvalidRedirectURI
 	}
 
-	// 2. 認可コードの生成（平文を生成し、ハッシュをDBに保存）
+	// 2. PKCE: code_challenge がある場合は S256 必須
+	if in.CodeChallenge != "" && in.CodeChallengeMethod != authcode.CodeChallengeMethodS256 {
+		return nil, ErrUnsupportedPKCE
+	}
+
+	// 3. 認可コードの生成（平文を生成し、ハッシュをDBに保存）
 	plainCode, err := generateSecureCode()
 	if err != nil {
 		return nil, fmt.Errorf("generate code: %w", err)
 	}
 	codeHash := hashCode(plainCode)
 
-	// 3. セッションの取得または作成（FindBySessionTokenHash でデバイス単位の既存セッションを再利用）
+	// 4. セッションの取得または作成（FindBySessionTokenHash でデバイス単位の既存セッションを再利用）
 	tokenVersion := int64(1)
 	expiresAt := time.Now().Add(sessionExpiryHours * time.Hour)
+	var sess *session.Session
 
 	existing, err := u.sessionRepo.FindBySessionTokenHash(ctx, in.SessionTokenHash)
-	if err == nil && existing != nil && existing.IsValid(time.Now()) {
-		// 既存セッションを再利用（新規作成しない）
-		_ = existing
+	if err != nil {
+		return nil, fmt.Errorf("find session: %w", err)
+	}
+	if existing != nil {
+		if existing.IsValid(time.Now()) {
+			// 既存セッションを再利用
+			sess = existing
+		} else {
+			// 無効なセッションは Revoke してから新規作成
+			if err := u.sessionRepo.Revoke(ctx, existing.ID()); err != nil {
+				return nil, fmt.Errorf("revoke invalid session: %w", err)
+			}
+			sess = session.New(
+				in.UserID,
+				in.SessionTokenHash,
+				in.IPAddress,
+				in.UserAgent,
+				tokenVersion,
+				expiresAt,
+			)
+			if err := u.sessionRepo.Save(ctx, sess); err != nil {
+				return nil, fmt.Errorf("save session: %w", err)
+			}
+		}
 	} else {
-		sess := session.New(
+		// 見つからない＝新規作成
+		sess = session.New(
 			in.UserID,
 			in.SessionTokenHash,
 			in.IPAddress,
@@ -86,11 +115,12 @@ func (u *UseCase) IssueCode(ctx context.Context, in *IssueCodeInput) (*IssueCode
 		}
 	}
 
-	// 4. 認可コードの作成と保存
+	// 5. 認可コードの作成と保存（session_id を紐付け）
 	codeExpiresAt := time.Now().Add(codeExpiryMinutes * time.Minute)
 	authCodeEntity := authcode.New(
 		in.UserID,
 		in.ClientID,
+		sess.ID(),
 		codeHash,
 		in.CodeChallenge,
 		in.CodeChallengeMethod,
