@@ -7,11 +7,12 @@ import (
 
 // Config はルーターの設定。
 type Config struct {
-	AuthorizeHandler *handler.AuthorizeHandler
-	TokenHandler     *handler.TokenHandler
-	UserInfoHandler  *handler.UserInfoHandler
-	LogoutHandler    *handler.LogoutHandler
-	HealthHandler    *handler.HealthHandler
+	AuthorizeHandler   *handler.AuthorizeHandler
+	TokenHandler      *handler.TokenHandler
+	UserInfoHandler   *handler.UserInfoHandler
+	LogoutHandler     *handler.LogoutHandler
+	IntrospectHandler *handler.IntrospectHandler
+	HealthHandler     *handler.HealthHandler
 }
 
 // New はルーターを生成し、ルートを登録する。
@@ -25,4 +26,5 @@ func New(e *echo.Echo, cfg *Config) {
 	e.POST("/oauth/token", cfg.TokenHandler.Post)
 	e.GET("/oauth/userinfo", cfg.UserInfoHandler.Get)
 	e.POST("/oauth/logout", cfg.LogoutHandler.Post)
+	e.POST("/oauth/introspect", cfg.IntrospectHandler.Post)
 }

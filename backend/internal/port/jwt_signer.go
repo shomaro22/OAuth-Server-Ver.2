@@ -13,10 +13,13 @@ type AccessTokenClaims struct {
 	Ver int64  // token_version
 	Aud string // client_id
 	Jti string // token id
+	Exp int64  // 有効期限（Unix秒）
+	Iat int64  // 発行日時（Unix秒）
 }
 
 // JWTSigner は JWT の署名・検証インターフェース。
 type JWTSigner interface {
 	Sign(sub, sid, aud uuid.UUID, ver int64, jti string, expiresIn time.Duration) (string, error)
+	SignIDToken(iss, sub, aud string, nonce string, authTime time.Time, expiresIn time.Duration) (string, error)
 	Verify(tokenString string) (*AccessTokenClaims, error)
 }

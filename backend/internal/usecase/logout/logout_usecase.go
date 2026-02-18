@@ -12,6 +12,9 @@ var (
 )
 
 // UseCase はログアウトのユースケース。
+// Interactor を実装する。
+var _ Interactor = (*UseCase)(nil)
+
 type UseCase struct {
 	sessionRepo port.SessionRepository
 }

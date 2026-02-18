@@ -22,6 +22,7 @@ type AuthorizationCode struct {
 	codeChallengeMethod string // PKCE: S256 のみ
 	redirectURI        string
 	scopes             string
+	nonce              string // OIDC: ID Token の nonce claim 用
 	expiresAt          time.Time
 	consumed           bool
 	createdAt          time.Time
@@ -37,6 +38,7 @@ func New(
 	codeChallengeMethod string,
 	redirectURI string,
 	scopes string,
+	nonce string,
 	expiresAt time.Time,
 ) *AuthorizationCode {
 	return &AuthorizationCode{
@@ -49,6 +51,7 @@ func New(
 		codeChallengeMethod: codeChallengeMethod,
 		redirectURI:         redirectURI,
 		scopes:              scopes,
+		nonce:               nonce,
 		expiresAt:           expiresAt,
 		consumed:            false,
 		createdAt:           time.Now(),
@@ -100,6 +103,11 @@ func (a *AuthorizationCode) Scopes() string {
 	return a.scopes
 }
 
+// Nonce は OIDC の nonce（ID Token の nonce claim 用）を返す。
+func (a *AuthorizationCode) Nonce() string {
+	return a.nonce
+}
+
 // ExpiresAt は有効期限を返す。
 func (a *AuthorizationCode) ExpiresAt() time.Time {
 	return a.expiresAt
@@ -142,6 +150,7 @@ func Reconstruct(
 	codeChallengeMethod string,
 	redirectURI string,
 	scopes string,
+	nonce string,
 	expiresAt time.Time,
 	consumed bool,
 	createdAt time.Time,
@@ -156,6 +165,7 @@ func Reconstruct(
 		codeChallengeMethod: codeChallengeMethod,
 		redirectURI:         redirectURI,
 		scopes:              scopes,
+		nonce:               nonce,
 		expiresAt:           expiresAt,
 		consumed:            consumed,
 		createdAt:           createdAt,

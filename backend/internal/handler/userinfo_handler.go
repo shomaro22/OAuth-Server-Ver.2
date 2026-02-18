@@ -10,11 +10,11 @@ import (
 
 // UserInfoHandler はユーザー情報エンドポイントのハンドラ。
 type UserInfoHandler struct {
-	userInfoUseCase *userinfo.UseCase
+	userInfoUseCase userinfo.Interactor
 }
 
 // NewUserInfoHandler は UserInfoHandler を生成する。
-func NewUserInfoHandler(userInfoUseCase *userinfo.UseCase) *UserInfoHandler {
+func NewUserInfoHandler(userInfoUseCase userinfo.Interactor) *UserInfoHandler {
 	return &UserInfoHandler{userInfoUseCase: userInfoUseCase}
 }
 

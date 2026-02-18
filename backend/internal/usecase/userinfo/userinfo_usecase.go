@@ -13,6 +13,9 @@ var (
 )
 
 // UseCase はユーザー情報取得のユースケース。
+// Interactor を実装する。
+var _ Interactor = (*UseCase)(nil)
+
 type UseCase struct {
 	tokenRepo   port.TokenRepository
 	userRepo    port.UserRepository

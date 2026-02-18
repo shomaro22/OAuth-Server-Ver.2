@@ -18,6 +18,7 @@ func TestAuthorizationCode_IsExpired(t *testing.T) {
 		CodeChallengeMethodS256,
 		"https://example.com/callback",
 		"openid",
+		"",
 		expiresAt,
 	)
 
@@ -36,6 +37,7 @@ func TestAuthorizationCode_IsConsumed(t *testing.T) {
 		CodeChallengeMethodS256,
 		"https://example.com/callback",
 		"openid",
+		"",
 		time.Now().Add(time.Minute),
 	)
 
@@ -59,6 +61,7 @@ func TestAuthorizationCode_IsValid(t *testing.T) {
 		CodeChallengeMethodS256,
 		"https://example.com/callback",
 		"openid",
+		"",
 		time.Now().Add(time.Minute),
 	)
 

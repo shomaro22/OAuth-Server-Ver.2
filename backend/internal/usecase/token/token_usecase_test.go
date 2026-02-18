@@ -12,6 +12,12 @@ import (
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
 )
 
+type mockTxRunner struct{}
+
+func (m *mockTxRunner) Transaction(ctx context.Context, fn func(ctx context.Context) error) error {
+	return fn(ctx)
+}
+
 type mockAuthCodeRepo struct {
 	code *authcode.AuthorizationCode
 	err  error
@@ -25,8 +31,15 @@ func (m *mockAuthCodeRepo) FindByCodeHash(ctx context.Context, codeHash string) 
 	return m.code, m.err
 }
 
-func (m *mockAuthCodeRepo) MarkConsumed(ctx context.Context, id uuid.UUID) error {
-	return nil
+func (m *mockAuthCodeRepo) FindByCodeHashForUpdate(ctx context.Context, codeHash string) (*authcode.AuthorizationCode, error) {
+	return m.code, m.err
+}
+
+func (m *mockAuthCodeRepo) MarkConsumed(ctx context.Context, id uuid.UUID) (int64, error) {
+	if m.code == nil {
+		return 0, nil
+	}
+	return 1, nil
 }
 
 func (m *mockAuthCodeRepo) Delete(ctx context.Context, id uuid.UUID) error {
@@ -74,11 +87,24 @@ func (m *mockTokenRepo) MarkRefreshTokenRotated(ctx context.Context, id uuid.UUI
 }
 
 type mockClientRepo struct {
-	valid bool
+	exists bool
+	valid  bool
+}
+
+func (m *mockClientRepo) Exists(ctx context.Context, clientID uuid.UUID) (bool, error) {
+	return m.exists, nil
 }
 
 func (m *mockClientRepo) ValidateRedirectURI(ctx context.Context, clientID uuid.UUID, redirectURI string) (bool, error) {
 	return m.valid, nil
+}
+
+func (m *mockClientRepo) ValidateClientCredentials(ctx context.Context, clientID uuid.UUID, clientSecret string) (bool, error) {
+	return false, nil
+}
+
+func (m *mockClientRepo) GetAllowedScopes(ctx context.Context, clientID uuid.UUID) ([]string, error) {
+	return []string{"openid", "profile", "email"}, nil
 }
 
 type mockJWTSigner struct{}
@@ -86,6 +112,11 @@ type mockJWTSigner struct{}
 func (m *mockJWTSigner) Sign(sub, sid, aud uuid.UUID, ver int64, jti string, expiresIn time.Duration) (string, error) {
 	return "mock-jwt", nil
 }
+
+func (m *mockJWTSigner) SignIDToken(iss, sub, aud string, nonce string, authTime time.Time, expiresIn time.Duration) (string, error) {
+	return "mock-id-token", nil
+}
+
 func (m *mockJWTSigner) Verify(tokenString string) (*port.AccessTokenClaims, error) {
 	return nil, nil
 }
@@ -109,17 +140,20 @@ func (m *mockSessionRepo) Revoke(ctx context.Context, sid uuid.UUID) error { ret
 
 func TestUseCase_Exchange_InvalidCode(t *testing.T) {
 	uc := NewUseCase(
+		&mockTxRunner{},
 		&mockAuthCodeRepo{code: nil, err: nil},
 		&mockTokenRepo{},
-		&mockClientRepo{},
+		&mockClientRepo{exists: true, valid: true},
 		&mockSessionRepo{findByID: nil},
 		&mockJWTSigner{},
+		"https://test",
 	)
 
 	_, err := uc.Exchange(context.Background(), &ExchangeInput{
-		Code:        "invalid",
-		RedirectURI: "https://example.com/cb",
-		ClientID:    uuid.New(),
+		Code:         "invalid",
+		RedirectURI:  "https://example.com/cb",
+		ClientID:     uuid.New(),
+		CodeVerifier: "verifier",
 	})
 	if err != ErrInvalidCode {
 		t.Errorf("expected ErrInvalidCode, got %v", err)

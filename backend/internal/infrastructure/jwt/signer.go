@@ -49,6 +49,13 @@ func ParsePrivateKey(pemBytes []byte) (*rsa.PrivateKey, error) {
 	return key, nil
 }
 
+// idTokenClaims は ID Token の claims 構造。
+type idTokenClaims struct {
+	jwt.RegisteredClaims
+	AuthTime *jwt.NumericDate `json:"auth_time"`
+	Nonce   string            `json:"nonce,omitempty"`
+}
+
 // Sign はアクセストークン JWT を署名して返す。
 func (s *Signer) Sign(sub, sid, aud uuid.UUID, ver int64, jti string, expiresIn time.Duration) (string, error) {
 	now := time.Now()
@@ -64,6 +71,25 @@ func (s *Signer) Sign(sub, sid, aud uuid.UUID, ver int64, jti string, expiresIn 
 		Ver: ver,
 	}
 
+	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+	return token.SignedString(s.privateKey)
+}
+
+// SignIDToken は ID Token JWT を署名して返す。
+// iss, sub, aud, exp, iat, auth_time, nonce を含む。
+func (s *Signer) SignIDToken(iss, sub, aud string, nonce string, authTime time.Time, expiresIn time.Duration) (string, error) {
+	now := time.Now()
+	claims := idTokenClaims{
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    iss,
+			Subject:   sub,
+			Audience:  jwt.ClaimStrings{aud},
+			ExpiresAt: jwt.NewNumericDate(now.Add(expiresIn)),
+			IssuedAt:  jwt.NewNumericDate(now),
+		},
+		AuthTime: jwt.NewNumericDate(authTime),
+		Nonce:    nonce,
+	}
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 	return token.SignedString(s.privateKey)
 }
@@ -88,11 +114,21 @@ func (s *Signer) Verify(tokenString string) (*port.AccessTokenClaims, error) {
 	if len(aud) > 0 {
 		audStr = aud[0]
 	}
+	exp := int64(0)
+	if claims.ExpiresAt != nil {
+		exp = claims.ExpiresAt.Unix()
+	}
+	iat := int64(0)
+	if claims.IssuedAt != nil {
+		iat = claims.IssuedAt.Unix()
+	}
 	return &port.AccessTokenClaims{
 		Sub: claims.Subject,
 		Sid: claims.Sid,
 		Ver: claims.Ver,
 		Aud: audStr,
 		Jti: claims.ID,
+		Exp: exp,
+		Iat: iat,
 	}, nil
 }

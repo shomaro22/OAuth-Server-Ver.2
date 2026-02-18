@@ -9,11 +9,11 @@ import (
 
 // LogoutHandler はログアウトエンドポイントのハンドラ。
 type LogoutHandler struct {
-	logoutUseCase *logout.UseCase
+	logoutUseCase logout.Interactor
 }
 
 // NewLogoutHandler は LogoutHandler を生成する。
-func NewLogoutHandler(logoutUseCase *logout.UseCase) *LogoutHandler {
+func NewLogoutHandler(logoutUseCase logout.Interactor) *LogoutHandler {
 	return &LogoutHandler{logoutUseCase: logoutUseCase}
 }
 

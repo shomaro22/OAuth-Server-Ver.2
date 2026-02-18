@@ -23,8 +23,12 @@ func (m *mockAuthCodeRepo) FindByCodeHash(ctx context.Context, codeHash string) 
 	return nil, nil
 }
 
-func (m *mockAuthCodeRepo) MarkConsumed(ctx context.Context, id uuid.UUID) error {
-	return nil
+func (m *mockAuthCodeRepo) FindByCodeHashForUpdate(ctx context.Context, codeHash string) (*authcode.AuthorizationCode, error) {
+	return nil, nil
+}
+
+func (m *mockAuthCodeRepo) MarkConsumed(ctx context.Context, id uuid.UUID) (int64, error) {
+	return 0, nil
 }
 
 func (m *mockAuthCodeRepo) Delete(ctx context.Context, id uuid.UUID) error {
@@ -58,27 +62,42 @@ func (m *mockSessionRepo) Revoke(ctx context.Context, sid uuid.UUID) error {
 }
 
 type mockClientRepo struct {
-	valid bool
-	err   error
+	valid  bool
+	exists bool
+	err    error
+}
+
+func (m *mockClientRepo) Exists(ctx context.Context, clientID uuid.UUID) (bool, error) {
+	return m.exists, m.err
 }
 
 func (m *mockClientRepo) ValidateRedirectURI(ctx context.Context, clientID uuid.UUID, redirectURI string) (bool, error) {
 	return m.valid, m.err
 }
 
+func (m *mockClientRepo) ValidateClientCredentials(ctx context.Context, clientID uuid.UUID, clientSecret string) (bool, error) {
+	return false, nil
+}
+
+func (m *mockClientRepo) GetAllowedScopes(ctx context.Context, clientID uuid.UUID) ([]string, error) {
+	return []string{"openid", "profile", "email"}, nil
+}
+
 func TestUseCase_IssueCode_Success(t *testing.T) {
 	uc := NewUseCase(
 		&mockAuthCodeRepo{},
 		&mockSessionRepo{},
-		&mockClientRepo{valid: true},
+		&mockClientRepo{valid: true, exists: true},
 	)
 
 	in := &IssueCodeInput{
+		ResponseType:        "code",
 		UserID:              uuid.New(),
 		ClientID:            uuid.New(),
 		RedirectURI:         "https://example.com/callback",
 		Scopes:              "openid",
 		State:               "xyz",
+		Nonce:               "n-123",
 		CodeChallenge:       "challenge",
 		CodeChallengeMethod: authcode.CodeChallengeMethodS256,
 		SessionTokenHash:    "hash",
@@ -105,15 +124,17 @@ func TestUseCase_IssueCode_UnsupportedPKCE(t *testing.T) {
 	uc := NewUseCase(
 		&mockAuthCodeRepo{},
 		&mockSessionRepo{},
-		&mockClientRepo{valid: true},
+		&mockClientRepo{valid: true, exists: true},
 	)
 
 	in := &IssueCodeInput{
+		ResponseType:        "code",
 		UserID:              uuid.New(),
 		ClientID:            uuid.New(),
 		RedirectURI:         "https://example.com/callback",
 		Scopes:              "openid",
 		State:               "xyz",
+		Nonce:               "",
 		CodeChallenge:       "challenge",
 		CodeChallengeMethod: "plain",
 		SessionTokenHash:    "hash",
@@ -134,15 +155,17 @@ func TestUseCase_IssueCode_InvalidRedirectURI(t *testing.T) {
 	uc := NewUseCase(
 		&mockAuthCodeRepo{},
 		&mockSessionRepo{},
-		&mockClientRepo{valid: false},
+		&mockClientRepo{valid: false, exists: true},
 	)
 
 	in := &IssueCodeInput{
+		ResponseType:        "code",
 		UserID:              uuid.New(),
 		ClientID:            uuid.New(),
 		RedirectURI:         "https://evil.com/callback",
 		Scopes:              "openid",
 		State:               "xyz",
+		Nonce:               "",
 		CodeChallenge:       "challenge",
 		CodeChallengeMethod: authcode.CodeChallengeMethodS256,
 		SessionTokenHash:    "hash",
@@ -173,15 +196,17 @@ func TestUseCase_IssueCode_UseExistingSession(t *testing.T) {
 	uc := NewUseCase(
 		&mockAuthCodeRepo{},
 		&mockSessionRepo{findBySessionToken: existingSession},
-		&mockClientRepo{valid: true},
+		&mockClientRepo{valid: true, exists: true},
 	)
 
 	in := &IssueCodeInput{
+		ResponseType:        "code",
 		UserID:              userID,
 		ClientID:            uuid.New(),
 		RedirectURI:         "https://example.com/callback",
 		Scopes:              "openid",
 		State:               "xyz",
+		Nonce:               "n-456",
 		CodeChallenge:       "challenge",
 		CodeChallengeMethod: authcode.CodeChallengeMethodS256,
 		SessionTokenHash:    "hash",
