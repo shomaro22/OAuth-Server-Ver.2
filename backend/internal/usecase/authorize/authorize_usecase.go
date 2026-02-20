@@ -88,7 +88,7 @@ func (u *UseCase) ValidateAuthorizeRequest(ctx context.Context, in *ValidateAuth
 	return u.validateScope(ctx, in.ClientID, scope)
 }
 
-// StoredAuthParams は CreateLoginChallenge の入力。
+// StoredAuthParams は CreateLoginChallenge / GetAndConsumeChallenge の入出力。
 type StoredAuthParams struct {
 	ClientID            string
 	RedirectURI         string
@@ -98,7 +98,8 @@ type StoredAuthParams struct {
 	Nonce               string
 	CodeChallenge       string
 	CodeChallengeMethod string
-	LoginURL            string // React ログイン画面の URL
+	Prompt              string // login, consent, none
+	LoginURL            string // React ログイン画面の URL（CreateLoginChallenge 入力のみ）
 }
 
 // CreateLoginChallenge は未ログイン時に authorize リクエストを保存し、login_challenge を発行する。
@@ -116,11 +117,39 @@ func (u *UseCase) CreateLoginChallenge(ctx context.Context, params *StoredAuthPa
 		Nonce:               params.Nonce,
 		CodeChallenge:       params.CodeChallenge,
 		CodeChallengeMethod: params.CodeChallengeMethod,
+		Prompt:              params.Prompt,
 	}
 	if err := u.authReqRepo.Save(ctx, challenge, req, loginChallengeTTL); err != nil {
 		return "", "", fmt.Errorf("save auth request: %w", err)
 	}
 	return challenge, params.LoginURL + "?login_challenge=" + challenge, nil
+}
+
+// GetChallenge は challenge に紐づく認可リクエストを取得する（消費しない）。
+func (u *UseCase) GetChallenge(ctx context.Context, challenge string) (*StoredAuthParams, error) {
+	req, err := u.authReqRepo.Get(ctx, challenge)
+	if err != nil {
+		return nil, fmt.Errorf("get auth request: %w", err)
+	}
+	if req == nil {
+		return nil, ErrChallengeNotFound
+	}
+	return &StoredAuthParams{
+		ClientID:            req.ClientID,
+		RedirectURI:         req.RedirectURI,
+		ResponseType:        req.ResponseType,
+		Scope:               req.Scope,
+		State:               req.State,
+		Nonce:               req.Nonce,
+		CodeChallenge:       req.CodeChallenge,
+		CodeChallengeMethod: req.CodeChallengeMethod,
+		Prompt:              req.Prompt,
+	}, nil
+}
+
+// ConsumeChallenge は challenge を削除する（deny 時用）。
+func (u *UseCase) ConsumeChallenge(ctx context.Context, challenge string) error {
+	return u.authReqRepo.Delete(ctx, challenge)
 }
 
 // GetAndConsumeChallenge は challenge に紐づく認可リクエストを取得し、challenge を削除する（one-time）。
@@ -144,6 +173,7 @@ func (u *UseCase) GetAndConsumeChallenge(ctx context.Context, challenge string) 
 		Nonce:               req.Nonce,
 		CodeChallenge:       req.CodeChallenge,
 		CodeChallengeMethod: req.CodeChallengeMethod,
+		Prompt:              req.Prompt,
 	}, nil
 }
 

@@ -27,6 +27,7 @@ type authorizeParams struct {
 	Nonce               string
 	CodeChallenge       string
 	CodeChallengeMethod string
+	Prompt              string // login, consent, none
 }
 
 // SessionResolver はセッション解決のインターフェース（authorize は code 発行のみのため分離）。
@@ -40,15 +41,17 @@ type AuthorizeHandler struct {
 	authorizeUseCase authorize.Interactor
 	sessionResolver  SessionResolver
 	loginURL         string
+	consentURL       string
 	serverBaseURL    string
 }
 
 // NewAuthorizeHandler は AuthorizeHandler を生成する。
-func NewAuthorizeHandler(authorizeUseCase authorize.Interactor, sessionResolver SessionResolver, loginURL, serverBaseURL string) *AuthorizeHandler {
+func NewAuthorizeHandler(authorizeUseCase authorize.Interactor, sessionResolver SessionResolver, loginURL, consentURL, serverBaseURL string) *AuthorizeHandler {
 	return &AuthorizeHandler{
 		authorizeUseCase: authorizeUseCase,
 		sessionResolver:  sessionResolver,
 		loginURL:         loginURL,
+		consentURL:       consentURL,
 		serverBaseURL:    serverBaseURL,
 	}
 }
@@ -112,6 +115,7 @@ func (h *AuthorizeHandler) Get(c echo.Context) error {
 		Nonce:               params.Nonce,
 		CodeChallenge:       params.CodeChallenge,
 		CodeChallengeMethod: params.CodeChallengeMethod,
+		Prompt:              params.Prompt,
 		LoginURL:            h.loginURL,
 	})
 	if err != nil {
@@ -144,6 +148,17 @@ func (h *AuthorizeHandler) GetContinue(c echo.Context) error {
 		return c.Redirect(http.StatusFound, redirectURL)
 	}
 
+	// prompt=consent かつ approved でない場合は同意画面へ（消費せず）
+	approved := c.QueryParam("approved") == "true"
+	if !approved {
+		storedPeek, err := h.authorizeUseCase.GetChallenge(c.Request().Context(), challenge)
+		if err == nil && storedPeek != nil && storedPeek.Prompt == "consent" && h.consentURL != "" {
+			redirectURL := h.consentURL + "?login_challenge=" + challenge + "&scope=" + url.QueryEscape(storedPeek.Scope)
+			return c.Redirect(http.StatusFound, redirectURL)
+		}
+	}
+
+	// 消費して code 発行
 	stored, err := h.authorizeUseCase.GetAndConsumeChallenge(c.Request().Context(), challenge)
 	if err != nil {
 		if errors.Is(err, authorize.ErrChallengeNotFound) {
@@ -188,6 +203,34 @@ func (h *AuthorizeHandler) GetContinue(c echo.Context) error {
 	return c.Redirect(http.StatusFound, u.String())
 }
 
+// GetDeny は同意拒否時のリダイレクト。redirect_uri?error=access_denied&state=... に遷移。
+// GET /oauth/authorize/deny?login_challenge=...
+func (h *AuthorizeHandler) GetDeny(c echo.Context) error {
+	challenge := c.QueryParam("login_challenge")
+	if challenge == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error":             "invalid_request",
+			"error_description": "login_challenge is required",
+		})
+	}
+	stored, err := h.authorizeUseCase.GetChallenge(c.Request().Context(), challenge)
+	if err != nil || stored == nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error":             "invalid_request",
+			"error_description": "login challenge not found or expired",
+		})
+	}
+	_ = h.authorizeUseCase.ConsumeChallenge(c.Request().Context(), challenge)
+	u, _ := url.Parse(stored.RedirectURI)
+	q := u.Query()
+	q.Set("error", "access_denied")
+	if stored.State != "" {
+		q.Set("state", stored.State)
+	}
+	u.RawQuery = q.Encode()
+	return c.Redirect(http.StatusFound, u.String())
+}
+
 func parseAuthorizeParams(c echo.Context) authorizeParams {
 	return authorizeParams{
 		ClientID:            c.QueryParam("client_id"),
@@ -198,6 +241,7 @@ func parseAuthorizeParams(c echo.Context) authorizeParams {
 		Nonce:               c.QueryParam("nonce"),
 		CodeChallenge:       c.QueryParam("code_challenge"),
 		CodeChallengeMethod: c.QueryParam("code_challenge_method"),
+		Prompt:              c.QueryParam("prompt"),
 	}
 }
 

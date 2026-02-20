@@ -18,7 +18,7 @@ func NewLogoutHandler(logoutUseCase logout.Interactor) *LogoutHandler {
 }
 
 // Post はログアウトを実行する（cookie の oauth_session でこの端末のセッションを失効）。
-// POST /oauth/logout
+// POST /sessions/logout
 func (h *LogoutHandler) Post(c echo.Context) error {
 	cookie, err := c.Cookie(sessionCookieName)
 	if err != nil || cookie == nil || cookie.Value == "" {

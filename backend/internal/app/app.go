@@ -21,8 +21,10 @@ import (
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/router"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/authorize"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/login"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/logout"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/session"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/token"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/userinfo"
 )
 
 // App はアプリケーションの組み立てと起動を担当する。
@@ -73,12 +75,12 @@ func (a *App) Run() error {
 	// TransactionRunner（code 交換の二重実行防止用）
 	txRunner := db.NewTransactionRunner(a.db)
 
-	// Issuer（ID Token の iss claim、環境変数で上書き可能）
-	issuer := getEnv("OAUTH_ISSUER", "https://localhost:8080")
+	// Issuer（ID Token の iss、Discovery、全 endpoint URL の起点。本番は https 必須）
+	issuer := getEnv("OAUTH_ISSUER", "http://localhost:8080")
 
 	// ログイン/認可URL（環境変数で上書き可能）
-	// LOGIN_URL: Vite 標準は 5173。CRA 等は 3000。
 	loginURL := getEnv("LOGIN_URL", "http://localhost:5173/login")
+	consentURL := getEnv("CONSENT_URL", "http://localhost:5173/consent")
 	serverBaseURL := getEnv("SERVER_BASE_URL", "http://localhost:8080")
 
 	// CORS: React（別オリジン）から credentials 付きで Cookie を受け取るために必須
@@ -90,12 +92,18 @@ func (a *App) Run() error {
 	sessionResolver := session.NewResolver(sessionRepo)
 	tokenUseCase := token.NewUseCase(txRunner, authCodeRepo, tokenRepo, clientRepo, sessionRepo, jwtSigner, issuer)
 	loginUseCase := login.NewUseCase(userRepo, sessionRepo, authReqRepo, serverBaseURL)
+	logoutUseCase := logout.NewUseCase(sessionRepo)
+	userInfoUseCase := userinfo.NewUseCase(tokenRepo, userRepo, sessionRepo, jwtSigner)
 
-	// Handler 生成（Step4 完了までは最小構成）
-	authorizeHandler := handler.NewAuthorizeHandler(authorizeUseCase, sessionResolver, loginURL, serverBaseURL)
-	tokenHandler := handler.NewTokenHandler(tokenUseCase)
+	// Handler 生成
+	authorizeHandler := handler.NewAuthorizeHandler(authorizeUseCase, sessionResolver, loginURL, consentURL, serverBaseURL)
+	tokenHandler := handler.NewTokenHandler(tokenUseCase, clientRepo, []string{corsOrigin})
 	loginHandler := handler.NewLoginHandler(loginUseCase)
+	logoutHandler := handler.NewLogoutHandler(logoutUseCase)
 	healthHandler := handler.NewHealthHandler()
+	discoveryHandler := handler.NewDiscoveryHandler(issuer)
+	jwksHandler := handler.NewJWKSHandler(jwtSigner) // *jwt.Signer は port.JWKSProvider を実装
+	userInfoHandler := handler.NewUserInfoHandler(userInfoUseCase)
 
 	port := getEnv("SERVER_PORT", "8080")
 	a.e = echo.New()
@@ -112,7 +120,11 @@ func (a *App) Run() error {
 		AuthorizeHandler: authorizeHandler,
 		TokenHandler:     tokenHandler,
 		LoginHandler:     loginHandler,
+		LogoutHandler:    logoutHandler,
 		HealthHandler:    healthHandler,
+		DiscoveryHandler: discoveryHandler,
+		JWKSHandler:      jwksHandler,
+		UserInfoHandler:  userInfoHandler,
 	})
 
 	// Graceful shutdown

@@ -1,15 +1,34 @@
 package handler
 
 import (
+	"encoding/base64"
 	"net/http"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/adapter/dto/request"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/adapter/dto/response"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/token"
 )
+
+// parseBasicAuth は Authorization: Basic base64(client_id:client_secret) をパースする。
+func parseBasicAuth(auth string) (clientID, clientSecret string, ok bool) {
+	if auth == "" || !strings.HasPrefix(auth, "Basic ") {
+		return "", "", false
+	}
+	decoded, err := base64.StdEncoding.DecodeString(strings.TrimPrefix(auth, "Basic "))
+	if err != nil {
+		return "", "", false
+	}
+	parts := strings.SplitN(string(decoded), ":", 2)
+	if len(parts) != 2 {
+		return "", "", false
+	}
+	return parts[0], parts[1], true
+}
 
 // RT Cookie 名（__Host- prefix で強めの制約）
 const rtCookieName = "__Host-rt"
@@ -19,12 +38,18 @@ const rtCookieMaxAge = 30 * 24 * 3600
 
 // TokenHandler はトークンエンドポイントのハンドラ。
 type TokenHandler struct {
-	tokenUseCase token.Interactor
+	tokenUseCase   token.Interactor
+	clientRepo     port.ClientRepository
+	allowedOrigins []string // CSRF 用（refresh_token の Origin チェック）
 }
 
 // NewTokenHandler は TokenHandler を生成する。
-func NewTokenHandler(tokenUseCase token.Interactor) *TokenHandler {
-	return &TokenHandler{tokenUseCase: tokenUseCase}
+func NewTokenHandler(tokenUseCase token.Interactor, clientRepo port.ClientRepository, allowedOrigins []string) *TokenHandler {
+	return &TokenHandler{
+		tokenUseCase:   tokenUseCase,
+		clientRepo:     clientRepo,
+		allowedOrigins: allowedOrigins,
+	}
 }
 
 // Post は認可コードまたはリフレッシュトークンをトークンに交換する。
@@ -64,6 +89,20 @@ func (h *TokenHandler) handleAuthorizationCode(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, response.ErrorResponse{Error: "invalid_request"})
 	}
 
+	// Confidential client: Authorization: Basic で client_secret が渡された場合に検証
+	if clientIDStr, clientSecret, ok := parseBasicAuth(c.Request().Header.Get("Authorization")); ok && clientSecret != "" {
+		parsedID, parseErr := uuid.Parse(clientIDStr)
+		if parseErr != nil || parsedID != clientID {
+			c.Response().Header().Set("WWW-Authenticate", "Bearer")
+			return c.JSON(http.StatusUnauthorized, response.ErrorResponse{Error: "invalid_client"})
+		}
+		valid, _ := h.clientRepo.ValidateClientCredentials(c.Request().Context(), clientID, clientSecret)
+		if !valid {
+			c.Response().Header().Set("WWW-Authenticate", "Bearer")
+			return c.JSON(http.StatusUnauthorized, response.ErrorResponse{Error: "invalid_client"})
+		}
+	}
+
 	out, err := h.tokenUseCase.Exchange(c.Request().Context(), &token.ExchangeInput{
 		Code:         req.Code,
 		RedirectURI:  req.RedirectURI,
@@ -95,6 +134,11 @@ func (h *TokenHandler) handleAuthorizationCode(c echo.Context) error {
 }
 
 func (h *TokenHandler) handleRefreshToken(c echo.Context) error {
+	// CSRF 対策: Origin / Referer が許可リストに含まれること（Cookie 送信のため）
+	if !h.checkOrigin(c) {
+		return c.JSON(http.StatusForbidden, response.ErrorResponse{Error: "invalid_request"})
+	}
+
 	// refresh_token は Cookie から取得（body には含めない）
 	refreshToken := ""
 	if cookie, err := c.Cookie(rtCookieName); err == nil && cookie != nil {
@@ -140,6 +184,31 @@ func (h *TokenHandler) handleRefreshToken(c echo.Context) error {
 		Scope:       out.Scope,
 		IDToken:     out.IDToken,
 	})
+}
+
+// checkOrigin は Origin または Referer が許可リストに含まれるか確認する（CSRF 対策）。
+func (h *TokenHandler) checkOrigin(c echo.Context) bool {
+	origin := c.Request().Header.Get("Origin")
+	if origin != "" {
+		for _, allowed := range h.allowedOrigins {
+			if origin == allowed {
+				return true
+			}
+		}
+	}
+	referer := c.Request().Header.Get("Referer")
+	if referer != "" {
+		for _, allowed := range h.allowedOrigins {
+			if strings.HasPrefix(referer, allowed+"/") || referer == allowed {
+				return true
+			}
+		}
+	}
+	// 同一オリジン（Origin なし＝同一オリジンリクエスト）は許可
+	if origin == "" && referer == "" {
+		return true
+	}
+	return false
 }
 
 // setRefreshTokenCookie は refresh_token を HttpOnly Cookie で設定する。

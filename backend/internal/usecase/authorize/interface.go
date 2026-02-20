@@ -7,6 +7,8 @@ import "context"
 type Interactor interface {
 	ValidateAuthorizeRequest(ctx context.Context, in *ValidateAuthorizeInput) error
 	CreateLoginChallenge(ctx context.Context, params *StoredAuthParams) (challenge, redirectURL string, err error)
+	GetChallenge(ctx context.Context, challenge string) (*StoredAuthParams, error)
 	GetAndConsumeChallenge(ctx context.Context, challenge string) (*StoredAuthParams, error)
+	ConsumeChallenge(ctx context.Context, challenge string) error
 	IssueCode(ctx context.Context, in *IssueCodeInput) (*IssueCodeOutput, error)
 }

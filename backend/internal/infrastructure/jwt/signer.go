@@ -4,14 +4,19 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
+	"encoding/base64"
+	"encoding/json"
 	"encoding/pem"
 	"fmt"
+	"math/big"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
 )
+
+const defaultKeyID = "default"
 
 // accessTokenClaims は JWT 内部の claims 構造。
 // sub/aud は RegisteredClaims に含まれるため重複しない。
@@ -21,7 +26,7 @@ type accessTokenClaims struct {
 	Ver int64  `json:"ver"`
 }
 
-// Signer は RS256 で JWT を署名する。
+// Signer は RS256 で JWT を署名する。port.JWTSigner と port.JWKSProvider を実装する。
 type Signer struct {
 	privateKey *rsa.PrivateKey
 }
@@ -72,6 +77,7 @@ func (s *Signer) Sign(sub, sid, aud uuid.UUID, ver int64, jti string, expiresIn 
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+	token.Header["kid"] = defaultKeyID
 	return token.SignedString(s.privateKey)
 }
 
@@ -91,7 +97,48 @@ func (s *Signer) SignIDToken(iss, sub, aud string, nonce string, authTime time.T
 		Nonce:    nonce,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+	token.Header["kid"] = defaultKeyID
 	return token.SignedString(s.privateKey)
+}
+
+// JWKS は JSON Web Key Set の構造。
+type JWKS struct {
+	Keys []JWK `json:"keys"`
+}
+
+// JWK は JSON Web Key の構造（RSA 用）。
+type JWK struct {
+	Kty string `json:"kty"`
+	Kid string `json:"kid"`
+	Use string `json:"use"`
+	Alg string `json:"alg"`
+	N   string `json:"n"`
+	E   string `json:"e"`
+}
+
+// ExportJWKS は公開鍵を JWKS 形式で返す。port.JWKSProvider を実装する。
+func (s *Signer) ExportJWKS() any {
+	return s.exportJWKS()
+}
+
+func (s *Signer) exportJWKS() *JWKS {
+	pub := s.privateKey.Public().(*rsa.PublicKey)
+	n := base64.RawURLEncoding.EncodeToString(pub.N.Bytes())
+	e := base64.RawURLEncoding.EncodeToString(big.NewInt(int64(pub.E)).Bytes())
+	return &JWKS{
+		Keys: []JWK{
+			{Kty: "RSA", Kid: defaultKeyID, Use: "sig", Alg: "RS256", N: n, E: e},
+		},
+	}
+}
+
+// ExportJWKSJSON は JWKS を JSON 文字列で返す。
+func (s *Signer) ExportJWKSJSON() (string, error) {
+	b, err := json.Marshal(s.exportJWKS())
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
 }
 
 // Verify は JWT を検証し claims を返す。

@@ -15,6 +15,7 @@ type StoredAuthorizationRequest struct {
 	Nonce               string
 	CodeChallenge       string
 	CodeChallengeMethod string
+	Prompt              string // login, consent, none
 }
 
 // AuthorizationRequestRepository は認可リクエストの一時保存（login_challenge 用）。

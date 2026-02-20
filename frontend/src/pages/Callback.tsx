@@ -27,15 +27,15 @@ export default function Callback() {
       ) : hasCode ? (
         <>
           <p style={{ color: "#0a0" }}>✅ 認可成功。code を控えて /oauth/token で交換してください。</p>
-          <div style={{ marginTop: 16, padding: 12, background: "#f5f5f5", borderRadius: 8 }}>
+          <div style={{ marginTop: 16, padding: 12, background: "#1e1e1e", borderRadius: 8, color: "#e0e0e0" }}>
             <div style={{ marginBottom: 8 }}>
               <strong>code:</strong>
               <br />
-              <code style={{ wordBreak: "break-all" }}>{code}</code>
+              <code style={{ wordBreak: "break-all", color: "#4fc3f7" }}>{code}</code>
             </div>
             {state && (
               <div>
-                <strong>state:</strong> <code>{state}</code>
+                <strong>state:</strong> <code style={{ color: "#81c784" }}>{state}</code>
               </div>
             )}
           </div>
