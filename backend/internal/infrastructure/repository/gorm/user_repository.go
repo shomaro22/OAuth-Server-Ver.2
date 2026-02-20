@@ -37,6 +37,19 @@ func (r *UserRepository) FindByID(ctx context.Context, id uuid.UUID) (*user.User
 	return toUser(&m), nil
 }
 
+// FindByUsername はユーザー名でユーザーを取得する（ログイン認証用、password_hash も返す）。
+func (r *UserRepository) FindByUsername(ctx context.Context, username string) (*user.User, string, error) {
+	var m models.UserModel
+	err := r.db.WithContext(ctx).Where("username = ?", username).First(&m).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, "", nil
+		}
+		return nil, "", err
+	}
+	return toUser(&m), m.PasswordHash, nil
+}
+
 // Save はユーザーを保存する。
 func (r *UserRepository) Save(ctx context.Context, u *user.User) error {
 	m := &models.UserModel{

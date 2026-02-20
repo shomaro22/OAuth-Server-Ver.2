@@ -27,10 +27,8 @@ func (h *LogoutHandler) Post(c echo.Context) error {
 		})
 	}
 
-	sessionTokenHash := hashString(cookie.Value)
-
 	err = h.logoutUseCase.Logout(c.Request().Context(), &logout.LogoutInput{
-		SessionTokenHash: sessionTokenHash,
+		SessionToken: cookie.Value,
 	})
 	if err != nil {
 		if err == logout.ErrSessionNotFound {

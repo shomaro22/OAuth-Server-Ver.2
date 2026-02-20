@@ -10,5 +10,6 @@ import (
 // UserRepository はユーザーの永続化インターフェース。
 type UserRepository interface {
 	FindByID(ctx context.Context, id uuid.UUID) (*user.User, error)
+	FindByUsername(ctx context.Context, username string) (*user.User, string, error) // User, passwordHash, error
 	Save(ctx context.Context, u *user.User) error
 }

@@ -15,9 +15,11 @@ type ValidateAuthorizeInput struct {
 }
 
 // IssueCodeInput は認可コード発行の入力。
+// セッションは /sessions/login で作成済みであること。SessionID は authcode に紐づける。
 type IssueCodeInput struct {
 	ResponseType        string // "code" 固定
 	UserID              uuid.UUID
+	SessionID           uuid.UUID // ログイン済みセッション（/sessions/login で作成）
 	ClientID            uuid.UUID
 	RedirectURI         string
 	Scopes              string
@@ -25,7 +27,4 @@ type IssueCodeInput struct {
 	Nonce               string
 	CodeChallenge       string
 	CodeChallengeMethod string
-	SessionTokenHash    string
-	IPAddress           string
-	UserAgent           string
 }

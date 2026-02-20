@@ -3,9 +3,10 @@ package authorize
 import "context"
 
 // Interactor は認可コード発行のユースケースインターフェース。
-// handler はこの interface に依存し、具象 *UseCase に依存しない。
+// 責務：code 生成、authcode 保存、redirect URI 作成。セッションは触らない。
 type Interactor interface {
-	// ValidateAuthorizeRequest は認可リクエストのパラメータを検証する（code 発行はしない）。
 	ValidateAuthorizeRequest(ctx context.Context, in *ValidateAuthorizeInput) error
+	CreateLoginChallenge(ctx context.Context, params *StoredAuthParams) (challenge, redirectURL string, err error)
+	GetAndConsumeChallenge(ctx context.Context, challenge string) (*StoredAuthParams, error)
 	IssueCode(ctx context.Context, in *IssueCodeInput) (*IssueCodeOutput, error)
 }

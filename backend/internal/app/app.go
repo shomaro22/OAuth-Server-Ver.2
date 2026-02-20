@@ -9,24 +9,27 @@ import (
 	"syscall"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	redis "github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/handler"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/jwt"
+	redisinfra "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/redis"
 	gormrepo "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/repository/gorm"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/router"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/authorize"
-	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/introspect"
-	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/logout"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/login"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/session"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/token"
-	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/userinfo"
 )
 
 // App はアプリケーションの組み立てと起動を担当する。
 type App struct {
-	db *gorm.DB
-	e  *echo.Echo
+	db    *gorm.DB
+	redis *redis.Client
+	e     *echo.Echo
 }
 
 // New は App を生成する。DI の入口。
@@ -51,6 +54,15 @@ func (a *App) Run() error {
 	tokenRepo := gormrepo.NewTokenRepository(a.db)
 	userRepo := gormrepo.NewUserRepository(a.db)
 
+	// Redis（login_challenge 用）
+	redisCfg := redisinfra.NewConfig()
+	redisClient, err := redisinfra.NewClient(redisCfg)
+	if err != nil {
+		return fmt.Errorf("redis: %w", err)
+	}
+	a.redis = redisClient
+	authReqRepo := redisinfra.NewAuthorizationRequestRepository(redisClient)
+
 	// JWT Signer（RS256、開発用は起動時に鍵生成）
 	jwtKey, err := jwt.GenerateKey()
 	if err != nil {
@@ -64,31 +76,43 @@ func (a *App) Run() error {
 	// Issuer（ID Token の iss claim、環境変数で上書き可能）
 	issuer := getEnv("OAUTH_ISSUER", "https://localhost:8080")
 
-	// Usecase 生成
-	authorizeUseCase := authorize.NewUseCase(authCodeRepo, sessionRepo, clientRepo)
-	tokenUseCase := token.NewUseCase(txRunner, authCodeRepo, tokenRepo, clientRepo, sessionRepo, jwtSigner, issuer)
-	userInfoUseCase := userinfo.NewUseCase(tokenRepo, userRepo, sessionRepo, jwtSigner)
-	logoutUseCase := logout.NewUseCase(sessionRepo)
-	introspectUseCase := introspect.NewUseCase(tokenRepo, sessionRepo, jwtSigner)
+	// ログイン/認可URL（環境変数で上書き可能）
+	// LOGIN_URL: Vite 標準は 5173。CRA 等は 3000。
+	loginURL := getEnv("LOGIN_URL", "http://localhost:5173/login")
+	serverBaseURL := getEnv("SERVER_BASE_URL", "http://localhost:8080")
 
-	// Handler 生成
-	authorizeHandler := handler.NewAuthorizeHandler(authorizeUseCase)
+	// CORS: React（別オリジン）から credentials 付きで Cookie を受け取るために必須
+	// AllowCredentials=true のとき AllowOrigins は * 不可。CORS_ORIGIN でフロントのオリジンを指定。
+	corsOrigin := getEnv("CORS_ORIGIN", "http://localhost:5173")
+
+	// Usecase 生成
+	authorizeUseCase := authorize.NewUseCase(authCodeRepo, clientRepo, authReqRepo)
+	sessionResolver := session.NewResolver(sessionRepo)
+	tokenUseCase := token.NewUseCase(txRunner, authCodeRepo, tokenRepo, clientRepo, sessionRepo, jwtSigner, issuer)
+	loginUseCase := login.NewUseCase(userRepo, sessionRepo, authReqRepo, serverBaseURL)
+
+	// Handler 生成（Step4 完了までは最小構成）
+	authorizeHandler := handler.NewAuthorizeHandler(authorizeUseCase, sessionResolver, loginURL, serverBaseURL)
 	tokenHandler := handler.NewTokenHandler(tokenUseCase)
-	userInfoHandler := handler.NewUserInfoHandler(userInfoUseCase)
-	logoutHandler := handler.NewLogoutHandler(logoutUseCase)
-	introspectHandler := handler.NewIntrospectHandler(introspectUseCase, clientRepo)
+	loginHandler := handler.NewLoginHandler(loginUseCase)
 	healthHandler := handler.NewHealthHandler()
 
-	// Router 生成・登録
 	port := getEnv("SERVER_PORT", "8080")
 	a.e = echo.New()
+
+	// CORS: credentials 付きリクエストで Cookie を返すために必須
+	a.e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{corsOrigin},
+		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
+		AllowHeaders:     []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+	}))
+
 	router.New(a.e, &router.Config{
-		AuthorizeHandler:   authorizeHandler,
-		TokenHandler:       tokenHandler,
-		UserInfoHandler:    userInfoHandler,
-		LogoutHandler:      logoutHandler,
-		IntrospectHandler:  introspectHandler,
-		HealthHandler:      healthHandler,
+		AuthorizeHandler: authorizeHandler,
+		TokenHandler:     tokenHandler,
+		LoginHandler:     loginHandler,
+		HealthHandler:    healthHandler,
 	})
 
 	// Graceful shutdown
@@ -116,6 +140,9 @@ func getEnv(key, defaultValue string) string {
 
 // Close はリソースを解放する。
 func (a *App) Close() {
+	if a.redis != nil {
+		a.redis.Close()
+	}
 	if a.db != nil {
 		if sqlDB, err := a.db.DB(); err == nil {
 			sqlDB.Close()

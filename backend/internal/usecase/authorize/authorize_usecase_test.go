@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode"
-	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/session"
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
 )
 
 type mockAuthCodeRepo struct {
@@ -35,32 +35,6 @@ func (m *mockAuthCodeRepo) Delete(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
-type mockSessionRepo struct {
-	saveErr                error
-	findBySessionToken     *session.Session
-	findBySessionTokenErr  error
-}
-
-func (m *mockSessionRepo) Save(ctx context.Context, s *session.Session) error {
-	return m.saveErr
-}
-
-func (m *mockSessionRepo) FindBySessionTokenHash(ctx context.Context, tokenHash string) (*session.Session, error) {
-	return m.findBySessionToken, m.findBySessionTokenErr
-}
-
-func (m *mockSessionRepo) FindByID(ctx context.Context, sid uuid.UUID) (*session.Session, error) {
-	return nil, nil
-}
-
-func (m *mockSessionRepo) IncrementTokenVersion(ctx context.Context, sid uuid.UUID) error {
-	return nil
-}
-
-func (m *mockSessionRepo) Revoke(ctx context.Context, sid uuid.UUID) error {
-	return nil
-}
-
 type mockClientRepo struct {
 	valid  bool
 	exists bool
@@ -83,16 +57,32 @@ func (m *mockClientRepo) GetAllowedScopes(ctx context.Context, clientID uuid.UUI
 	return []string{"openid", "profile", "email"}, nil
 }
 
+type mockAuthReqRepo struct{}
+
+func (m *mockAuthReqRepo) Save(ctx context.Context, challenge string, req *port.StoredAuthorizationRequest, ttl time.Duration) error {
+	return nil
+}
+
+func (m *mockAuthReqRepo) Get(ctx context.Context, challenge string) (*port.StoredAuthorizationRequest, error) {
+	return nil, nil
+}
+
+func (m *mockAuthReqRepo) Delete(ctx context.Context, challenge string) error {
+	return nil
+}
+
 func TestUseCase_IssueCode_Success(t *testing.T) {
 	uc := NewUseCase(
 		&mockAuthCodeRepo{},
-		&mockSessionRepo{},
 		&mockClientRepo{valid: true, exists: true},
+		&mockAuthReqRepo{},
 	)
 
+	sessionID := uuid.New()
 	in := &IssueCodeInput{
 		ResponseType:        "code",
 		UserID:              uuid.New(),
+		SessionID:           sessionID,
 		ClientID:            uuid.New(),
 		RedirectURI:         "https://example.com/callback",
 		Scopes:              "openid",
@@ -100,9 +90,6 @@ func TestUseCase_IssueCode_Success(t *testing.T) {
 		Nonce:               "n-123",
 		CodeChallenge:       "challenge",
 		CodeChallengeMethod: authcode.CodeChallengeMethodS256,
-		SessionTokenHash:    "hash",
-		IPAddress:           "127.0.0.1",
-		UserAgent:           "test",
 	}
 
 	out, err := uc.IssueCode(context.Background(), in)
@@ -123,13 +110,14 @@ func TestUseCase_IssueCode_Success(t *testing.T) {
 func TestUseCase_IssueCode_UnsupportedPKCE(t *testing.T) {
 	uc := NewUseCase(
 		&mockAuthCodeRepo{},
-		&mockSessionRepo{},
 		&mockClientRepo{valid: true, exists: true},
+		&mockAuthReqRepo{},
 	)
 
 	in := &IssueCodeInput{
 		ResponseType:        "code",
 		UserID:              uuid.New(),
+		SessionID:           uuid.New(),
 		ClientID:            uuid.New(),
 		RedirectURI:         "https://example.com/callback",
 		Scopes:              "openid",
@@ -137,9 +125,6 @@ func TestUseCase_IssueCode_UnsupportedPKCE(t *testing.T) {
 		Nonce:               "",
 		CodeChallenge:       "challenge",
 		CodeChallengeMethod: "plain",
-		SessionTokenHash:    "hash",
-		IPAddress:           "127.0.0.1",
-		UserAgent:           "test",
 	}
 
 	_, err := uc.IssueCode(context.Background(), in)
@@ -154,13 +139,14 @@ func TestUseCase_IssueCode_UnsupportedPKCE(t *testing.T) {
 func TestUseCase_IssueCode_InvalidRedirectURI(t *testing.T) {
 	uc := NewUseCase(
 		&mockAuthCodeRepo{},
-		&mockSessionRepo{},
 		&mockClientRepo{valid: false, exists: true},
+		&mockAuthReqRepo{},
 	)
 
 	in := &IssueCodeInput{
 		ResponseType:        "code",
 		UserID:              uuid.New(),
+		SessionID:           uuid.New(),
 		ClientID:            uuid.New(),
 		RedirectURI:         "https://evil.com/callback",
 		Scopes:              "openid",
@@ -168,9 +154,6 @@ func TestUseCase_IssueCode_InvalidRedirectURI(t *testing.T) {
 		Nonce:               "",
 		CodeChallenge:       "challenge",
 		CodeChallengeMethod: authcode.CodeChallengeMethodS256,
-		SessionTokenHash:    "hash",
-		IPAddress:           "127.0.0.1",
-		UserAgent:           "test",
 	}
 
 	_, err := uc.IssueCode(context.Background(), in)
@@ -182,36 +165,27 @@ func TestUseCase_IssueCode_InvalidRedirectURI(t *testing.T) {
 	}
 }
 
-func TestUseCase_IssueCode_UseExistingSession(t *testing.T) {
+func TestUseCase_IssueCode_WithSessionID(t *testing.T) {
 	userID := uuid.New()
-	existingSession := session.New(
-		userID,
-		"hash",
-		"127.0.0.1",
-		"Mozilla",
-		1,
-		time.Now().Add(time.Hour),
-	)
+	sessionID := uuid.New()
 
 	uc := NewUseCase(
 		&mockAuthCodeRepo{},
-		&mockSessionRepo{findBySessionToken: existingSession},
 		&mockClientRepo{valid: true, exists: true},
+		&mockAuthReqRepo{},
 	)
 
 	in := &IssueCodeInput{
 		ResponseType:        "code",
-		UserID:              userID,
-		ClientID:            uuid.New(),
-		RedirectURI:         "https://example.com/callback",
-		Scopes:              "openid",
+		UserID:             userID,
+		SessionID:          sessionID,
+		ClientID:           uuid.New(),
+		RedirectURI:        "https://example.com/callback",
+		Scopes:             "openid",
 		State:               "xyz",
 		Nonce:               "n-456",
 		CodeChallenge:       "challenge",
 		CodeChallengeMethod: authcode.CodeChallengeMethodS256,
-		SessionTokenHash:    "hash",
-		IPAddress:           "127.0.0.1",
-		UserAgent:           "test",
 	}
 
 	out, err := uc.IssueCode(context.Background(), in)

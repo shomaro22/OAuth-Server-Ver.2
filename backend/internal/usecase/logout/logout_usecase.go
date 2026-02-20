@@ -2,6 +2,8 @@ package logout
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
@@ -26,17 +28,23 @@ func NewUseCase(sessionRepo port.SessionRepository) *UseCase {
 	}
 }
 
-// LogoutInput はログアウトの入力（cookie の session token をハッシュ化した値）。
+// LogoutInput はログアウトの入力（cookie の session token 平文）。
 type LogoutInput struct {
-	SessionTokenHash string
+	SessionToken string
 }
 
 // Logout はセッションを失効させる（この端末だけログアウト）。
 func (u *UseCase) Logout(ctx context.Context, in *LogoutInput) error {
-	sess, err := u.sessionRepo.FindBySessionTokenHash(ctx, in.SessionTokenHash)
+	tokenHash := hashString(in.SessionToken)
+	sess, err := u.sessionRepo.FindBySessionTokenHash(ctx, tokenHash)
 	if err != nil || sess == nil {
 		return ErrSessionNotFound
 	}
 
 	return u.sessionRepo.Revoke(ctx, sess.ID())
+}
+
+func hashString(s string) string {
+	h := sha256.Sum256([]byte(s))
+	return hex.EncodeToString(h[:])
 }

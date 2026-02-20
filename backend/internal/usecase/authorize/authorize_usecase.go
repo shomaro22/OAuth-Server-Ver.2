@@ -13,24 +13,24 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode"
-	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/session"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
 )
 
 // 認可コードの有効期限（10分）
 const codeExpiryMinutes = 10
 
-// セッションの有効期限（24時間）
-const sessionExpiryHours = 24
+var loginChallengeTTL = 10 * time.Minute
 
 var (
-	ErrInvalidRedirectURI   = errors.New("invalid redirect_uri")
-	ErrClientNotFound       = errors.New("client not found")
-	ErrUnsupportedPKCE      = errors.New("PKCE: only S256 is supported")
-	ErrInvalidResponseType  = errors.New("response_type must be code")
+	ErrInvalidRedirectURI    = errors.New("invalid redirect_uri")
+	ErrClientNotFound        = errors.New("client not found")
+	ErrUnsupportedPKCE       = errors.New("PKCE: only S256 is supported")
+	ErrInvalidResponseType   = errors.New("response_type must be code")
 	ErrCodeChallengeRequired = errors.New("code_challenge is required")
-	ErrStateRequired        = errors.New("state is required")
-	ErrInvalidScope         = errors.New("scope is invalid or not allowed for client")
+	ErrStateRequired         = errors.New("state is required")
+	ErrInvalidScope          = errors.New("scope is invalid or not allowed for client")
+	ErrChallengeNotFound     = errors.New("login challenge not found or expired")
+	ErrSessionRequired       = errors.New("session required")
 )
 
 // UseCase は認可コード発行のユースケース。
@@ -39,20 +39,21 @@ var _ Interactor = (*UseCase)(nil)
 
 type UseCase struct {
 	authCodeRepo port.AuthCodeRepository
-	sessionRepo  port.SessionRepository
 	clientRepo   port.ClientRepository
+	authReqRepo  port.AuthorizationRequestRepository
 }
 
 // NewUseCase は UseCase を生成する。
+// セッションは触らない。sessionRepo は不要。
 func NewUseCase(
 	authCodeRepo port.AuthCodeRepository,
-	sessionRepo port.SessionRepository,
 	clientRepo port.ClientRepository,
+	authReqRepo port.AuthorizationRequestRepository,
 ) *UseCase {
 	return &UseCase{
 		authCodeRepo: authCodeRepo,
-		sessionRepo:  sessionRepo,
 		clientRepo:   clientRepo,
+		authReqRepo:  authReqRepo,
 	}
 }
 
@@ -87,7 +88,67 @@ func (u *UseCase) ValidateAuthorizeRequest(ctx context.Context, in *ValidateAuth
 	return u.validateScope(ctx, in.ClientID, scope)
 }
 
-// IssueCode は認可コードを発行し、セッションを生成する。
+// StoredAuthParams は CreateLoginChallenge の入力。
+type StoredAuthParams struct {
+	ClientID            string
+	RedirectURI         string
+	ResponseType        string
+	Scope               string
+	State               string
+	Nonce               string
+	CodeChallenge       string
+	CodeChallengeMethod string
+	LoginURL            string // React ログイン画面の URL
+}
+
+// CreateLoginChallenge は未ログイン時に authorize リクエストを保存し、login_challenge を発行する。
+func (u *UseCase) CreateLoginChallenge(ctx context.Context, params *StoredAuthParams) (challenge, redirectURL string, err error) {
+	challenge, err = generateSecureCode()
+	if err != nil {
+		return "", "", fmt.Errorf("generate challenge: %w", err)
+	}
+	req := &port.StoredAuthorizationRequest{
+		ClientID:            params.ClientID,
+		RedirectURI:         params.RedirectURI,
+		ResponseType:        params.ResponseType,
+		Scope:               params.Scope,
+		State:               params.State,
+		Nonce:               params.Nonce,
+		CodeChallenge:       params.CodeChallenge,
+		CodeChallengeMethod: params.CodeChallengeMethod,
+	}
+	if err := u.authReqRepo.Save(ctx, challenge, req, loginChallengeTTL); err != nil {
+		return "", "", fmt.Errorf("save auth request: %w", err)
+	}
+	return challenge, params.LoginURL + "?login_challenge=" + challenge, nil
+}
+
+// GetAndConsumeChallenge は challenge に紐づく認可リクエストを取得し、challenge を削除する（one-time）。
+func (u *UseCase) GetAndConsumeChallenge(ctx context.Context, challenge string) (*StoredAuthParams, error) {
+	req, err := u.authReqRepo.Get(ctx, challenge)
+	if err != nil {
+		return nil, fmt.Errorf("get auth request: %w", err)
+	}
+	if req == nil {
+		return nil, ErrChallengeNotFound
+	}
+	if err := u.authReqRepo.Delete(ctx, challenge); err != nil {
+		return nil, fmt.Errorf("delete challenge: %w", err)
+	}
+	return &StoredAuthParams{
+		ClientID:            req.ClientID,
+		RedirectURI:         req.RedirectURI,
+		ResponseType:        req.ResponseType,
+		Scope:               req.Scope,
+		State:               req.State,
+		Nonce:               req.Nonce,
+		CodeChallenge:       req.CodeChallenge,
+		CodeChallengeMethod: req.CodeChallengeMethod,
+	}, nil
+}
+
+// IssueCode は認可コードを発行する。
+// セッションは /sessions/login で作成済み。SessionID を authcode に紐づけるだけ。セッションは触らない。
 func (u *UseCase) IssueCode(ctx context.Context, in *IssueCodeInput) (*IssueCodeOutput, error) {
 	// 1. redirect_uri の検証（client 登録済み URI と完全一致）
 	valid, err := u.clientRepo.ValidateRedirectURI(ctx, in.ClientID, in.RedirectURI)
@@ -128,57 +189,12 @@ func (u *UseCase) IssueCode(ctx context.Context, in *IssueCodeInput) (*IssueCode
 	}
 	codeHash := hashCode(plainCode)
 
-	// 4. セッションの取得または作成（FindBySessionTokenHash でデバイス単位の既存セッションを再利用）
-	tokenVersion := int64(1)
-	expiresAt := time.Now().Add(sessionExpiryHours * time.Hour)
-	var sess *session.Session
-
-	existing, err := u.sessionRepo.FindBySessionTokenHash(ctx, in.SessionTokenHash)
-	if err != nil {
-		return nil, fmt.Errorf("find session: %w", err)
-	}
-	if existing != nil {
-		if existing.IsValid(time.Now()) {
-			// 既存セッションを再利用
-			sess = existing
-		} else {
-			// 無効なセッションは Revoke してから新規作成
-			if err := u.sessionRepo.Revoke(ctx, existing.ID()); err != nil {
-				return nil, fmt.Errorf("revoke invalid session: %w", err)
-			}
-			sess = session.New(
-				in.UserID,
-				in.SessionTokenHash,
-				in.IPAddress,
-				in.UserAgent,
-				tokenVersion,
-				expiresAt,
-			)
-			if err := u.sessionRepo.Save(ctx, sess); err != nil {
-				return nil, fmt.Errorf("save session: %w", err)
-			}
-		}
-	} else {
-		// 見つからない＝新規作成
-		sess = session.New(
-			in.UserID,
-			in.SessionTokenHash,
-			in.IPAddress,
-			in.UserAgent,
-			tokenVersion,
-			expiresAt,
-		)
-		if err := u.sessionRepo.Save(ctx, sess); err != nil {
-			return nil, fmt.Errorf("save session: %w", err)
-		}
-	}
-
-	// 5. 認可コードの作成と保存（session_id を紐付け）
+	// 7. 認可コードの作成と保存（session_id を紐付け。セッションは /sessions/login で作成済み）
 	codeExpiresAt := time.Now().Add(codeExpiryMinutes * time.Minute)
 	authCodeEntity := authcode.New(
 		in.UserID,
 		in.ClientID,
-		sess.ID(),
+		in.SessionID,
 		codeHash,
 		in.CodeChallenge,
 		in.CodeChallengeMethod,
