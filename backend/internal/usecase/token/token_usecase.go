@@ -45,6 +45,8 @@ type UseCase struct {
 	sessionRepo  port.SessionRepository
 	jwtSigner    port.JWTSigner
 	issuer       string
+
+	secureToken func() (string, error) // テスト用に差し替え可能（デフォルト: generateSecureToken）
 }
 
 // NewUseCase は UseCase を生成する。
@@ -65,6 +67,7 @@ func NewUseCase(
 		sessionRepo:  sessionRepo,
 		jwtSigner:    jwtSigner,
 		issuer:       issuer,
+		secureToken:  generateSecureToken,
 	}
 }
 
@@ -240,7 +243,11 @@ func (u *UseCase) Refresh(ctx context.Context, in *RefreshInput) (*TokenOutput, 
 // issueTokens はアクセストークン（RS256 JWT）、ID Token、リフレッシュトークンを発行する。
 // nonce が空でない場合のみ ID Token に nonce claim を入れる。authTime は ID Token の auth_time。
 func (u *UseCase) issueTokens(ctx context.Context, userID, clientID, sessionID uuid.UUID, scopes, nonce string, authTime time.Time) (*TokenOutput, error) {
-	accessJTI, err := generateSecureToken()
+	gen := u.secureToken
+	if gen == nil {
+		gen = generateSecureToken
+	}
+	accessJTI, err := gen()
 	if err != nil {
 		return nil, fmt.Errorf("generate access token: %w", err)
 	}
@@ -272,7 +279,7 @@ func (u *UseCase) issueTokens(ctx context.Context, userID, clientID, sessionID u
 		return nil, fmt.Errorf("save access token: %w", err)
 	}
 
-	refreshToken, err := generateSecureToken()
+	refreshToken, err := gen()
 	if err != nil {
 		return nil, fmt.Errorf("generate refresh token: %w", err)
 	}

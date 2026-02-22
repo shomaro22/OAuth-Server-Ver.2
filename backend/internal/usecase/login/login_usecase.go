@@ -29,6 +29,8 @@ type UseCase struct {
 	sessionRepo   port.SessionRepository
 	authReqRepo   port.AuthorizationRequestRepository
 	serverBaseURL string
+
+	secureToken func() (string, error) // テスト用に差し替え可能（デフォルト: generateSecureToken）
 }
 
 // NewUseCase は UseCase を生成する。
@@ -43,6 +45,7 @@ func NewUseCase(
 		sessionRepo:   sessionRepo,
 		authReqRepo:   authReqRepo,
 		serverBaseURL: serverBaseURL,
+		secureToken:   generateSecureToken,
 	}
 }
 
@@ -86,7 +89,11 @@ func (u *UseCase) Login(ctx context.Context, in *LoginInput) (*LoginOutput, erro
 		return nil, ErrInvalidCredentials
 	}
 
-	token, err := generateSecureToken()
+	gen := u.secureToken
+	if gen == nil {
+		gen = generateSecureToken
+	}
+	token, err := gen()
 	if err != nil {
 		return nil, fmt.Errorf("generate token: %w", err)
 	}

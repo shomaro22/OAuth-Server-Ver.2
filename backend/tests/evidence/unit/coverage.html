@@ -1,0 +1,3794 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>server: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/shomaro22/OAuth-Server-Ver.2/backend/cmd/server/main.go (0.0%)</option>
+				
+				<option value="file1">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/app/app.go (0.0%)</option>
+				
+				<option value="file2">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go (88.9%)</option>
+				
+				<option value="file3">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/session/session.go (70.6%)</option>
+				
+				<option value="file4">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/token/access_token.go (80.0%)</option>
+				
+				<option value="file5">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/token/refresh_token.go (85.7%)</option>
+				
+				<option value="file6">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/user/user.go (100.0%)</option>
+				
+				<option value="file7">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/handler/authorize_handler.go (78.8%)</option>
+				
+				<option value="file8">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/handler/discovery_handler.go (100.0%)</option>
+				
+				<option value="file9">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/handler/health_handler.go (100.0%)</option>
+				
+				<option value="file10">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/handler/jwks_handler.go (100.0%)</option>
+				
+				<option value="file11">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/handler/login_handler.go (61.5%)</option>
+				
+				<option value="file12">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/handler/logout_handler.go (66.7%)</option>
+				
+				<option value="file13">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/handler/token_handler.go (76.8%)</option>
+				
+				<option value="file14">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/handler/userinfo_handler.go (100.0%)</option>
+				
+				<option value="file15">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/audit/stdout_logger.go (0.0%)</option>
+				
+				<option value="file16">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db/gorm.go (0.0%)</option>
+				
+				<option value="file17">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db/models/access_token_model.go (0.0%)</option>
+				
+				<option value="file18">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db/models/auth_code_model.go (0.0%)</option>
+				
+				<option value="file19">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db/models/client_model.go (0.0%)</option>
+				
+				<option value="file20">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db/models/refresh_token_model.go (0.0%)</option>
+				
+				<option value="file21">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db/models/session_model.go (0.0%)</option>
+				
+				<option value="file22">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db/models/user_model.go (0.0%)</option>
+				
+				<option value="file23">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db/transaction.go (0.0%)</option>
+				
+				<option value="file24">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/jwt/signer.go (89.6%)</option>
+				
+				<option value="file25">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/redis/authorization_request_repository.go (0.0%)</option>
+				
+				<option value="file26">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/redis/client.go (0.0%)</option>
+				
+				<option value="file27">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/repository/gorm/authcode_repository.go (0.0%)</option>
+				
+				<option value="file28">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/repository/gorm/client_repository.go (0.0%)</option>
+				
+				<option value="file29">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/repository/gorm/session_repository.go (0.0%)</option>
+				
+				<option value="file30">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/repository/gorm/token_repository.go (0.0%)</option>
+				
+				<option value="file31">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/repository/gorm/user_repository.go (0.0%)</option>
+				
+				<option value="file32">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/router/router.go (0.0%)</option>
+				
+				<option value="file33">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/authorize/authorize_usecase.go (76.5%)</option>
+				
+				<option value="file34">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/login/login_usecase.go (76.5%)</option>
+				
+				<option value="file35">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/logout/logout_usecase.go (100.0%)</option>
+				
+				<option value="file36">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/session/resolver.go (100.0%)</option>
+				
+				<option value="file37">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/token/token_usecase.go (82.3%)</option>
+				
+				<option value="file38">github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/userinfo/userinfo_usecase.go (79.2%)</option>
+				
+				<option value="file39">github.com/shomaro22/OAuth-Server-Ver.2/backend/scripts/hash_client_secret.go (0.0%)</option>
+				
+				<option value="file40">github.com/shomaro22/OAuth-Server-Ver.2/backend/scripts/hash_user_password/main.go (0.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import (
+        "log"
+
+        "github.com/joho/godotenv"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/app"
+)
+
+func main() <span class="cov0" title="0">{
+        // backend/ から起動時は .env を読み込む（上書きしない）
+        _ = godotenv.Load()
+        application, err := app.New()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalf("Failed to initialize app: %v", err)
+        }</span>
+        <span class="cov0" title="0">defer application.Close()
+
+        if err := application.Run(); err != nil </span><span class="cov0" title="0">{
+                log.Fatalf("App error: %v", err)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package app
+
+import (
+        "context"
+        "fmt"
+        "log"
+        "os"
+        "os/signal"
+        "syscall"
+
+        "github.com/labstack/echo/v4"
+        "github.com/labstack/echo/v4/middleware"
+        redis "github.com/redis/go-redis/v9"
+        "gorm.io/gorm"
+
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/handler"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/jwt"
+        redisinfra "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/redis"
+        gormrepo "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/repository/gorm"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/router"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/authorize"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/login"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/logout"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/session"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/token"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/userinfo"
+)
+
+// App はアプリケーションの組み立てと起動を担当する。
+type App struct {
+        db    *gorm.DB
+        redis *redis.Client
+        e     *echo.Echo
+}
+
+// New は App を生成する。DI の入口。
+func New() (*App, error) <span class="cov0" title="0">{
+        cfg := db.NewConfig()
+        gormDB, err := db.NewDB(cfg)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">log.Println("Successfully connected to PostgreSQL (GORM)")
+
+        return &amp;App{db: gormDB}, nil</span>
+}
+
+// Run はアプリケーションを起動する。
+func (a *App) Run() error <span class="cov0" title="0">{
+        // Repository 生成（port を実装する GORM adapter）
+        authCodeRepo := gormrepo.NewAuthCodeRepository(a.db)
+        sessionRepo := gormrepo.NewSessionRepository(a.db)
+        clientRepo := gormrepo.NewClientRepository(a.db)
+        tokenRepo := gormrepo.NewTokenRepository(a.db)
+        userRepo := gormrepo.NewUserRepository(a.db)
+
+        // Redis（login_challenge 用）
+        redisCfg := redisinfra.NewConfig()
+        redisClient, err := redisinfra.NewClient(redisCfg)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("redis: %w", err)
+        }</span>
+        <span class="cov0" title="0">a.redis = redisClient
+        authReqRepo := redisinfra.NewAuthorizationRequestRepository(redisClient)
+
+        // JWT Signer（RS256、開発用は起動時に鍵生成）
+        jwtKey, err := jwt.GenerateKey()
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("generate jwt key: %w", err)
+        }</span>
+        <span class="cov0" title="0">jwtSigner := jwt.NewSigner(jwtKey)
+
+        // TransactionRunner（code 交換の二重実行防止用）
+        txRunner := db.NewTransactionRunner(a.db)
+
+        // Issuer（ID Token の iss、Discovery、全 endpoint URL の起点。本番は https 必須）
+        issuer := getEnv("OAUTH_ISSUER", "http://localhost:8080")
+
+        // ログイン/認可URL（環境変数で上書き可能）
+        loginURL := getEnv("LOGIN_URL", "http://localhost:5173/login")
+        consentURL := getEnv("CONSENT_URL", "http://localhost:5173/consent")
+        serverBaseURL := getEnv("SERVER_BASE_URL", "http://localhost:8080")
+
+        // CORS: React（別オリジン）から credentials 付きで Cookie を受け取るために必須
+        // AllowCredentials=true のとき AllowOrigins は * 不可。CORS_ORIGIN でフロントのオリジンを指定。
+        corsOrigin := getEnv("CORS_ORIGIN", "http://localhost:5173")
+
+        // Usecase 生成
+        authorizeUseCase := authorize.NewUseCase(authCodeRepo, clientRepo, authReqRepo)
+        sessionResolver := session.NewResolver(sessionRepo)
+        tokenUseCase := token.NewUseCase(txRunner, authCodeRepo, tokenRepo, clientRepo, sessionRepo, jwtSigner, issuer)
+        loginUseCase := login.NewUseCase(userRepo, sessionRepo, authReqRepo, serverBaseURL)
+        logoutUseCase := logout.NewUseCase(sessionRepo)
+        userInfoUseCase := userinfo.NewUseCase(tokenRepo, userRepo, sessionRepo, jwtSigner)
+
+        // Handler 生成
+        authorizeHandler := handler.NewAuthorizeHandler(authorizeUseCase, sessionResolver, loginURL, consentURL, serverBaseURL)
+        tokenHandler := handler.NewTokenHandler(tokenUseCase, clientRepo, []string{corsOrigin})
+        loginHandler := handler.NewLoginHandler(loginUseCase)
+        logoutHandler := handler.NewLogoutHandler(logoutUseCase)
+        healthHandler := handler.NewHealthHandler()
+        discoveryHandler := handler.NewDiscoveryHandler(issuer)
+        jwksHandler := handler.NewJWKSHandler(jwtSigner) // *jwt.Signer は port.JWKSProvider を実装
+        userInfoHandler := handler.NewUserInfoHandler(userInfoUseCase)
+
+        port := getEnv("SERVER_PORT", "8080")
+        a.e = echo.New()
+
+        // CORS: credentials 付きリクエストで Cookie を返すために必須
+        a.e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+                AllowOrigins:     []string{corsOrigin},
+                AllowMethods:     []string{"GET", "POST", "OPTIONS"},
+                AllowHeaders:     []string{"Content-Type", "Authorization"},
+                AllowCredentials: true,
+        }))
+
+        router.New(a.e, &amp;router.Config{
+                AuthorizeHandler: authorizeHandler,
+                TokenHandler:     tokenHandler,
+                LoginHandler:     loginHandler,
+                LogoutHandler:    logoutHandler,
+                HealthHandler:    healthHandler,
+                DiscoveryHandler: discoveryHandler,
+                JWKSHandler:      jwksHandler,
+                UserInfoHandler:  userInfoHandler,
+        })
+
+        // Graceful shutdown
+        go func() </span><span class="cov0" title="0">{
+                sigCh := make(chan os.Signal, 1)
+                signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+                &lt;-sigCh
+                log.Println("Shutting down...")
+                if err := a.e.Shutdown(context.Background()); err != nil </span><span class="cov0" title="0">{
+                        log.Printf("Shutdown error: %v", err)
+                }</span>
+        }()
+
+        <span class="cov0" title="0">addr := fmt.Sprintf(":%s", port)
+        log.Printf("Server starting on %s", addr)
+        return a.e.Start(addr)</span>
+}
+
+func getEnv(key, defaultValue string) string <span class="cov0" title="0">{
+        if v := os.Getenv(key); v != "" </span><span class="cov0" title="0">{
+                return v
+        }</span>
+        <span class="cov0" title="0">return defaultValue</span>
+}
+
+// Close はリソースを解放する。
+func (a *App) Close() <span class="cov0" title="0">{
+        if a.redis != nil </span><span class="cov0" title="0">{
+                a.redis.Close()
+        }</span>
+        <span class="cov0" title="0">if a.db != nil </span><span class="cov0" title="0">{
+                if sqlDB, err := a.db.DB(); err == nil </span><span class="cov0" title="0">{
+                        sqlDB.Close()
+                }</span>
+        }
+}
+
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package authcode
+
+import (
+        "time"
+
+        "github.com/google/uuid"
+)
+
+// CodeChallengeMethod PKCEのコードチャレンジ方式（S256 のみサポート）
+const CodeChallengeMethodS256 = "S256"
+
+// AuthorizationCode は認可コードのドメインエンティティ。
+// PKCE、有効期限、再利用防止をサポートする。
+// sessionID は Token Version 方式で JWT に sid/ver を入れるために必要。
+type AuthorizationCode struct {
+        id                 uuid.UUID
+        userID             uuid.UUID
+        clientID           uuid.UUID
+        sessionID          uuid.UUID
+        codeHash           string
+        codeChallenge      string // PKCE: code_verifier から生成した challenge
+        codeChallengeMethod string // PKCE: S256 のみ
+        redirectURI        string
+        scopes             string
+        nonce              string // OIDC: ID Token の nonce claim 用
+        expiresAt          time.Time
+        consumed           bool
+        createdAt          time.Time
+}
+
+// New は新しい AuthorizationCode を作成する。
+func New(
+        userID uuid.UUID,
+        clientID uuid.UUID,
+        sessionID uuid.UUID,
+        codeHash string,
+        codeChallenge string,
+        codeChallengeMethod string,
+        redirectURI string,
+        scopes string,
+        nonce string,
+        expiresAt time.Time,
+) *AuthorizationCode <span class="cov8" title="1">{
+        return &amp;AuthorizationCode{
+                id:                  uuid.New(),
+                userID:              userID,
+                clientID:            clientID,
+                sessionID:           sessionID,
+                codeHash:            codeHash,
+                codeChallenge:       codeChallenge,
+                codeChallengeMethod: codeChallengeMethod,
+                redirectURI:         redirectURI,
+                scopes:              scopes,
+                nonce:               nonce,
+                expiresAt:           expiresAt,
+                consumed:            false,
+                createdAt:           time.Now(),
+        }
+}</span>
+
+// ID は認可コードIDを返す。
+func (a *AuthorizationCode) ID() uuid.UUID <span class="cov8" title="1">{
+        return a.id
+}</span>
+
+// UserID はユーザーIDを返す。
+func (a *AuthorizationCode) UserID() uuid.UUID <span class="cov8" title="1">{
+        return a.userID
+}</span>
+
+// ClientID はクライアントIDを返す。
+func (a *AuthorizationCode) ClientID() uuid.UUID <span class="cov8" title="1">{
+        return a.clientID
+}</span>
+
+// SessionID はセッションIDを返す（Token Version 照合用）。
+func (a *AuthorizationCode) SessionID() uuid.UUID <span class="cov8" title="1">{
+        return a.sessionID
+}</span>
+
+// CodeHash はコードのハッシュを返す。
+func (a *AuthorizationCode) CodeHash() string <span class="cov8" title="1">{
+        return a.codeHash
+}</span>
+
+// CodeChallenge はPKCEのコードチャレンジを返す。
+func (a *AuthorizationCode) CodeChallenge() string <span class="cov8" title="1">{
+        return a.codeChallenge
+}</span>
+
+// CodeChallengeMethod はPKCEのコードチャレンジ方式を返す。
+func (a *AuthorizationCode) CodeChallengeMethod() string <span class="cov8" title="1">{
+        return a.codeChallengeMethod
+}</span>
+
+// RedirectURI はリダイレクトURIを返す。
+func (a *AuthorizationCode) RedirectURI() string <span class="cov8" title="1">{
+        return a.redirectURI
+}</span>
+
+// Scopes は付与されたスコープを返す。
+func (a *AuthorizationCode) Scopes() string <span class="cov8" title="1">{
+        return a.scopes
+}</span>
+
+// Nonce は OIDC の nonce（ID Token の nonce claim 用）を返す。
+func (a *AuthorizationCode) Nonce() string <span class="cov8" title="1">{
+        return a.nonce
+}</span>
+
+// ExpiresAt は有効期限を返す。
+func (a *AuthorizationCode) ExpiresAt() time.Time <span class="cov0" title="0">{
+        return a.expiresAt
+}</span>
+
+// CreatedAt は作成日時を返す。
+func (a *AuthorizationCode) CreatedAt() time.Time <span class="cov0" title="0">{
+        return a.createdAt
+}</span>
+
+// IsExpired は有効期限切れかどうかを判定する。
+func (a *AuthorizationCode) IsExpired(now time.Time) bool <span class="cov8" title="1">{
+        return now.After(a.expiresAt)
+}</span>
+
+// IsConsumed は消費済み（再利用済み）かどうかを判定する。
+func (a *AuthorizationCode) IsConsumed() bool <span class="cov8" title="1">{
+        return a.consumed
+}</span>
+
+// Consume は認可コードを消費する。再利用防止のため1回のみ呼び出し可能。
+func (a *AuthorizationCode) Consume() <span class="cov8" title="1">{
+        a.consumed = true
+}</span>
+
+// IsValid は認可コードが有効かどうかを判定する。
+// 有効期限切れまたは消費済みの場合は false。
+func (a *AuthorizationCode) IsValid(now time.Time) bool <span class="cov8" title="1">{
+        return !a.IsExpired(now) &amp;&amp; !a.IsConsumed()
+}</span>
+
+// Reconstruct は永続化層から復元するためのファクトリ。
+func Reconstruct(
+        id uuid.UUID,
+        userID uuid.UUID,
+        clientID uuid.UUID,
+        sessionID uuid.UUID,
+        codeHash string,
+        codeChallenge string,
+        codeChallengeMethod string,
+        redirectURI string,
+        scopes string,
+        nonce string,
+        expiresAt time.Time,
+        consumed bool,
+        createdAt time.Time,
+) *AuthorizationCode <span class="cov8" title="1">{
+        return &amp;AuthorizationCode{
+                id:                  id,
+                userID:              userID,
+                clientID:            clientID,
+                sessionID:           sessionID,
+                codeHash:            codeHash,
+                codeChallenge:       codeChallenge,
+                codeChallengeMethod: codeChallengeMethod,
+                redirectURI:         redirectURI,
+                scopes:              scopes,
+                nonce:               nonce,
+                expiresAt:           expiresAt,
+                consumed:            consumed,
+                createdAt:           createdAt,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package session
+
+import (
+        "time"
+
+        "github.com/google/uuid"
+)
+
+// Session はセッションのドメインエンティティ。
+// token_version による即時失効をサポートする。
+type Session struct {
+        id               uuid.UUID
+        userID           uuid.UUID
+        sessionTokenHash string
+        ipAddress        string
+        userAgent        string
+        tokenVersion     int64
+        expiresAt        time.Time
+        createdAt        time.Time
+        revoked          bool
+}
+
+// New は新しい Session を作成する。
+func New(
+        userID uuid.UUID,
+        sessionTokenHash string,
+        ipAddress string,
+        userAgent string,
+        tokenVersion int64,
+        expiresAt time.Time,
+) *Session <span class="cov8" title="1">{
+        now := time.Now()
+        return &amp;Session{
+                id:               uuid.New(),
+                userID:           userID,
+                sessionTokenHash: sessionTokenHash,
+                ipAddress:        ipAddress,
+                userAgent:        userAgent,
+                tokenVersion:     tokenVersion,
+                expiresAt:        expiresAt,
+                createdAt:       now,
+                revoked:          false,
+        }
+}</span>
+
+// ID はセッションIDを返す。
+func (s *Session) ID() uuid.UUID <span class="cov8" title="1">{
+        return s.id
+}</span>
+
+// UserID はユーザーIDを返す。
+func (s *Session) UserID() uuid.UUID <span class="cov8" title="1">{
+        return s.userID
+}</span>
+
+// SessionTokenHash はセッショントークンのハッシュを返す。
+func (s *Session) SessionTokenHash() string <span class="cov8" title="1">{
+        return s.sessionTokenHash
+}</span>
+
+// IPAddress はIPアドレスを返す。
+func (s *Session) IPAddress() string <span class="cov0" title="0">{
+        return s.ipAddress
+}</span>
+
+// UserAgent はUser-Agentを返す。
+func (s *Session) UserAgent() string <span class="cov0" title="0">{
+        return s.userAgent
+}</span>
+
+// TokenVersion はトークンバージョンを返す。
+func (s *Session) TokenVersion() int64 <span class="cov8" title="1">{
+        return s.tokenVersion
+}</span>
+
+// CreatedAt は作成日時を返す。
+func (s *Session) CreatedAt() time.Time <span class="cov0" title="0">{
+        return s.createdAt
+}</span>
+
+// ExpiresAt は有効期限を返す。
+func (s *Session) ExpiresAt() time.Time <span class="cov0" title="0">{
+        return s.expiresAt
+}</span>
+
+// IsExpired は有効期限切れかどうかを判定する。
+func (s *Session) IsExpired(now time.Time) bool <span class="cov8" title="1">{
+        return now.After(s.expiresAt)
+}</span>
+
+// IsRevoked は失効済みかどうかを判定する。
+func (s *Session) IsRevoked() bool <span class="cov8" title="1">{
+        return s.revoked
+}</span>
+
+// IsValid はセッションが有効かどうかを判定する。
+// 有効期限切れまたは失効済みの場合は false。
+func (s *Session) IsValid(now time.Time) bool <span class="cov8" title="1">{
+        return !s.IsExpired(now) &amp;&amp; !s.IsRevoked()
+}</span>
+
+// IncrementVersion は token_version をインクリメントする。
+// 即時失効（ログアウト等）時に呼び出す。
+func (s *Session) IncrementVersion() <span class="cov8" title="1">{
+        s.tokenVersion++
+}</span>
+
+// Revoke はセッションを失効させる。
+func (s *Session) Revoke() <span class="cov8" title="1">{
+        s.revoked = true
+}</span>
+
+// UpdateExpiry は有効期限を更新する。
+func (s *Session) UpdateExpiry(expiresAt time.Time) <span class="cov0" title="0">{
+        s.expiresAt = expiresAt
+}</span>
+
+// Reconstruct は永続化層から復元するためのファクトリ。
+// Repository が DB から読み込んだ値を渡す。
+func Reconstruct(
+        id uuid.UUID,
+        userID uuid.UUID,
+        sessionTokenHash string,
+        ipAddress string,
+        userAgent string,
+        tokenVersion int64,
+        expiresAt time.Time,
+        createdAt time.Time,
+        revoked bool,
+) *Session <span class="cov8" title="1">{
+        return &amp;Session{
+                id:               id,
+                userID:           userID,
+                sessionTokenHash: sessionTokenHash,
+                ipAddress:        ipAddress,
+                userAgent:        userAgent,
+                tokenVersion:     tokenVersion,
+                expiresAt:        expiresAt,
+                createdAt:       createdAt,
+                revoked:          revoked,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package token
+
+import (
+        "time"
+
+        "github.com/google/uuid"
+)
+
+// AccessToken はアクセストークンのドメインエンティティ。
+// sessionID は Token Version 照合（ログアウト即時失効）用。
+type AccessToken struct {
+        id         uuid.UUID
+        userID     uuid.UUID
+        clientID   uuid.UUID
+        sessionID  uuid.UUID
+        tokenJTI   string
+        scopes     string
+        issuedAt   time.Time
+        expiresAt  time.Time
+        revoked    bool
+}
+
+// NewAccessToken は AccessToken を生成する（永続化層からの再構築用）。
+func NewAccessToken(id, userID, clientID, sessionID uuid.UUID, tokenJTI, scopes string, issuedAt, expiresAt time.Time, revoked bool) *AccessToken <span class="cov8" title="1">{
+        return &amp;AccessToken{
+                id:        id,
+                userID:    userID,
+                clientID:  clientID,
+                sessionID: sessionID,
+                tokenJTI:  tokenJTI,
+                scopes:    scopes,
+                issuedAt:  issuedAt,
+                expiresAt: expiresAt,
+                revoked:   revoked,
+        }
+}</span>
+
+func (t *AccessToken) ID() uuid.UUID        <span class="cov8" title="1">{ return t.id }</span>
+func (t *AccessToken) UserID() uuid.UUID   <span class="cov8" title="1">{ return t.userID }</span>
+func (t *AccessToken) ClientID() uuid.UUID <span class="cov8" title="1">{ return t.clientID }</span>
+func (t *AccessToken) SessionID() uuid.UUID <span class="cov8" title="1">{ return t.sessionID }</span>
+func (t *AccessToken) TokenJTI() string     <span class="cov8" title="1">{ return t.tokenJTI }</span>
+func (t *AccessToken) Scopes() string       <span class="cov8" title="1">{ return t.scopes }</span>
+func (t *AccessToken) IssuedAt() time.Time  <span class="cov0" title="0">{ return t.issuedAt }</span>
+func (t *AccessToken) ExpiresAt() time.Time <span class="cov0" title="0">{ return t.expiresAt }</span>
+func (t *AccessToken) Revoked() bool        <span class="cov8" title="1">{ return t.revoked }</span>
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package token
+
+import (
+        "time"
+
+        "github.com/google/uuid"
+)
+
+// RefreshToken はリフレッシュトークンのドメインエンティティ。
+type RefreshToken struct {
+        id            uuid.UUID
+        accessTokenID uuid.UUID
+        tokenHash     string
+        expiresAt     time.Time
+        revoked       bool
+        rotated       bool
+}
+
+// NewRefreshToken は RefreshToken を生成する（永続化層からの再構築用）。
+func NewRefreshToken(id, accessTokenID uuid.UUID, tokenHash string, expiresAt time.Time, revoked, rotated bool) *RefreshToken <span class="cov8" title="1">{
+        return &amp;RefreshToken{
+                id:            id,
+                accessTokenID: accessTokenID,
+                tokenHash:     tokenHash,
+                expiresAt:     expiresAt,
+                revoked:       revoked,
+                rotated:       rotated,
+        }
+}</span>
+
+func (t *RefreshToken) ID() uuid.UUID            <span class="cov8" title="1">{ return t.id }</span>
+func (t *RefreshToken) AccessTokenID() uuid.UUID  <span class="cov8" title="1">{ return t.accessTokenID }</span>
+func (t *RefreshToken) TokenHash() string        <span class="cov8" title="1">{ return t.tokenHash }</span>
+func (t *RefreshToken) ExpiresAt() time.Time      <span class="cov0" title="0">{ return t.expiresAt }</span>
+func (t *RefreshToken) Revoked() bool             <span class="cov8" title="1">{ return t.revoked }</span>
+func (t *RefreshToken) Rotated() bool             <span class="cov8" title="1">{ return t.rotated }</span>
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package user
+
+import (
+        "time"
+
+        "github.com/google/uuid"
+)
+
+// User はユーザーのドメインエンティティ。
+type User struct {
+        id            uuid.UUID
+        email         string
+        username      string
+        emailVerified bool
+        status        string
+        createdAt     time.Time
+        updatedAt     time.Time
+}
+
+// NewUser は User を生成する（永続化層からの再構築用）。
+func NewUser(id uuid.UUID, email, username string, emailVerified bool, status string, createdAt, updatedAt time.Time) *User <span class="cov8" title="1">{
+        return &amp;User{
+                id:            id,
+                email:         email,
+                username:      username,
+                emailVerified: emailVerified,
+                status:        status,
+                createdAt:     createdAt,
+                updatedAt:     updatedAt,
+        }
+}</span>
+
+func (u *User) ID() uuid.UUID        <span class="cov8" title="1">{ return u.id }</span>
+func (u *User) Email() string        <span class="cov8" title="1">{ return u.email }</span>
+func (u *User) Username() string    <span class="cov8" title="1">{ return u.username }</span>
+func (u *User) EmailVerified() bool <span class="cov8" title="1">{ return u.emailVerified }</span>
+func (u *User) Status() string      <span class="cov8" title="1">{ return u.status }</span>
+func (u *User) CreatedAt() time.Time <span class="cov8" title="1">{ return u.createdAt }</span>
+func (u *User) UpdatedAt() time.Time <span class="cov8" title="1">{ return u.updatedAt }</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package handler
+
+import (
+        "context"
+        "errors"
+        "net/http"
+        "net/url"
+
+        "github.com/google/uuid"
+        "github.com/labstack/echo/v4"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/authorize"
+)
+
+// sessionCookieName は /sessions/login でセットする Cookie 名（login_handler と共通）
+const sessionCookieName = "oauth_session"
+
+// sessionMaxAge はセッション Cookie の有効期限（秒）。login_handler で使用。
+const sessionMaxAge = 24 * 60 * 60
+
+// authorizeParams は GET の認可リクエストパラメータ。
+type authorizeParams struct {
+        ClientID            string
+        RedirectURI         string
+        ResponseType        string
+        Scope               string
+        State               string
+        Nonce               string
+        CodeChallenge       string
+        CodeChallengeMethod string
+        Prompt              string // login, consent, none
+}
+
+// SessionResolver はセッション解決のインターフェース（authorize は code 発行のみのため分離）。
+type SessionResolver interface {
+        Resolve(ctx context.Context, sessionToken string) (sessionID, userID uuid.UUID, ok bool, err error)
+}
+
+// AuthorizeHandler は認可エンドポイントのハンドラ。
+// 責務：request validation、セッションCookie確認、なければ login へ redirect、あれば IssueCode。
+type AuthorizeHandler struct {
+        authorizeUseCase authorize.Interactor
+        sessionResolver  SessionResolver
+        loginURL         string
+        consentURL       string
+        serverBaseURL    string
+}
+
+// NewAuthorizeHandler は AuthorizeHandler を生成する。
+func NewAuthorizeHandler(authorizeUseCase authorize.Interactor, sessionResolver SessionResolver, loginURL, consentURL, serverBaseURL string) *AuthorizeHandler <span class="cov8" title="1">{
+        return &amp;AuthorizeHandler{
+                authorizeUseCase: authorizeUseCase,
+                sessionResolver:  sessionResolver,
+                loginURL:         loginURL,
+                consentURL:       consentURL,
+                serverBaseURL:    serverBaseURL,
+        }
+}</span>
+
+// Get は認可リクエストを処理する。
+// ログイン済みなら code 発行→redirect。未ログインなら login_challenge 発行して React へリダイレクト。
+// GET /oauth/authorize?client_id=...&amp;redirect_uri=...&amp;response_type=code&amp;scope=...&amp;state=...&amp;code_challenge=...&amp;code_challenge_method=S256
+func (h *AuthorizeHandler) Get(c echo.Context) error <span class="cov8" title="1">{
+        params := parseAuthorizeParams(c)
+        if err := h.validateAuthorizeParams(c, params); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">sessionToken := ""
+        if cookie, err := c.Cookie(sessionCookieName); err == nil &amp;&amp; cookie.Value != "" </span><span class="cov0" title="0">{
+                sessionToken = cookie.Value
+        }</span>
+        <span class="cov8" title="1">sessionID, userID, ok, err := h.sessionResolver.Resolve(c.Request().Context(), sessionToken)
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusInternalServerError, map[string]string{"error": "server_error"})
+        }</span>
+        <span class="cov8" title="1">if ok &amp;&amp; sessionID != uuid.Nil &amp;&amp; userID != uuid.Nil </span><span class="cov8" title="1">{
+                // ログイン済み → code 発行して redirect（approve フォームなし）
+                clientID, _ := uuid.Parse(params.ClientID)
+                scope := params.Scope
+                if scope == "" </span><span class="cov0" title="0">{
+                        scope = "openid"
+                }</span>
+                <span class="cov8" title="1">out, err := h.authorizeUseCase.IssueCode(c.Request().Context(), &amp;authorize.IssueCodeInput{
+                        ResponseType:        "code",
+                        UserID:              userID,
+                        SessionID:           sessionID,
+                        ClientID:            clientID,
+                        RedirectURI:         params.RedirectURI,
+                        Scopes:              scope,
+                        State:               params.State,
+                        Nonce:               params.Nonce,
+                        CodeChallenge:       params.CodeChallenge,
+                        CodeChallengeMethod: params.CodeChallengeMethod,
+                })
+                if err != nil </span><span class="cov8" title="1">{
+                        return h.authorizeErrorResponse(c, err)
+                }</span>
+                <span class="cov8" title="1">u, _ := url.Parse(params.RedirectURI)
+                q := u.Query()
+                q.Set("code", out.Code)
+                if out.State != "" </span><span class="cov8" title="1">{
+                        q.Set("state", out.State)
+                }</span>
+                <span class="cov8" title="1">u.RawQuery = q.Encode()
+                return c.Redirect(http.StatusFound, u.String())</span>
+        }
+
+        // 未ログイン → login_challenge 発行して React へリダイレクト
+        <span class="cov8" title="1">_, redirectURL, err := h.authorizeUseCase.CreateLoginChallenge(c.Request().Context(), &amp;authorize.StoredAuthParams{
+                ClientID:            params.ClientID,
+                RedirectURI:         params.RedirectURI,
+                ResponseType:        params.ResponseType,
+                Scope:               params.Scope,
+                State:               params.State,
+                Nonce:               params.Nonce,
+                CodeChallenge:       params.CodeChallenge,
+                CodeChallengeMethod: params.CodeChallengeMethod,
+                Prompt:              params.Prompt,
+                LoginURL:            h.loginURL,
+        })
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusInternalServerError, map[string]string{"error": "server_error"})
+        }</span>
+        <span class="cov8" title="1">return c.Redirect(http.StatusFound, redirectURL)</span>
+}
+
+// GetContinue はログイン後の認可リクエスト再開を処理する。
+// GET /oauth/authorize/continue?login_challenge=...
+func (h *AuthorizeHandler) GetContinue(c echo.Context) error <span class="cov8" title="1">{
+        challenge := c.QueryParam("login_challenge")
+        if challenge == "" </span><span class="cov8" title="1">{
+                return c.JSON(http.StatusBadRequest, map[string]string{
+                        "error":             "invalid_request",
+                        "error_description": "login_challenge is required",
+                })
+        }</span>
+
+        <span class="cov8" title="1">sessionToken := ""
+        if cookie, err := c.Cookie(sessionCookieName); err == nil &amp;&amp; cookie.Value != "" </span><span class="cov0" title="0">{
+                sessionToken = cookie.Value
+        }</span>
+        <span class="cov8" title="1">sessionID, userID, ok, err := h.sessionResolver.Resolve(c.Request().Context(), sessionToken)
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusInternalServerError, map[string]string{"error": "server_error"})
+        }</span>
+        <span class="cov8" title="1">if !ok || sessionID == uuid.Nil || userID == uuid.Nil </span><span class="cov0" title="0">{
+                redirectURL := h.loginURL + "?login_challenge=" + challenge
+                return c.Redirect(http.StatusFound, redirectURL)
+        }</span>
+
+        // prompt=consent かつ approved でない場合は同意画面へ（消費せず）
+        <span class="cov8" title="1">approved := c.QueryParam("approved") == "true"
+        if !approved </span><span class="cov0" title="0">{
+                storedPeek, err := h.authorizeUseCase.GetChallenge(c.Request().Context(), challenge)
+                if err == nil &amp;&amp; storedPeek != nil &amp;&amp; storedPeek.Prompt == "consent" &amp;&amp; h.consentURL != "" </span><span class="cov0" title="0">{
+                        redirectURL := h.consentURL + "?login_challenge=" + challenge + "&amp;scope=" + url.QueryEscape(storedPeek.Scope)
+                        return c.Redirect(http.StatusFound, redirectURL)
+                }</span>
+        }
+
+        // 消費して code 発行
+        <span class="cov8" title="1">stored, err := h.authorizeUseCase.GetAndConsumeChallenge(c.Request().Context(), challenge)
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, authorize.ErrChallengeNotFound) </span><span class="cov0" title="0">{
+                        return c.JSON(http.StatusBadRequest, map[string]string{
+                                "error":             "invalid_request",
+                                "error_description": "login challenge not found or expired",
+                        })
+                }</span>
+                <span class="cov0" title="0">return c.JSON(http.StatusInternalServerError, map[string]string{"error": "server_error"})</span>
+        }
+
+        <span class="cov8" title="1">clientID, _ := uuid.Parse(stored.ClientID)
+        scope := stored.Scope
+        if scope == "" </span><span class="cov8" title="1">{
+                scope = "openid"
+        }</span>
+
+        <span class="cov8" title="1">out, err := h.authorizeUseCase.IssueCode(c.Request().Context(), &amp;authorize.IssueCodeInput{
+                ResponseType:        "code",
+                UserID:             userID,
+                SessionID:          sessionID,
+                ClientID:           clientID,
+                RedirectURI:        stored.RedirectURI,
+                Scopes:             scope,
+                State:              stored.State,
+                Nonce:              stored.Nonce,
+                CodeChallenge:     stored.CodeChallenge,
+                CodeChallengeMethod: stored.CodeChallengeMethod,
+        })
+        if err != nil </span><span class="cov8" title="1">{
+                return h.authorizeErrorResponse(c, err)
+        }</span>
+
+        <span class="cov8" title="1">u, _ := url.Parse(stored.RedirectURI)
+        q := u.Query()
+        q.Set("code", out.Code)
+        if out.State != "" </span><span class="cov8" title="1">{
+                q.Set("state", out.State)
+        }</span>
+        <span class="cov8" title="1">u.RawQuery = q.Encode()
+
+        return c.Redirect(http.StatusFound, u.String())</span>
+}
+
+// GetDeny は同意拒否時のリダイレクト。redirect_uri?error=access_denied&amp;state=... に遷移。
+// GET /oauth/authorize/deny?login_challenge=...
+func (h *AuthorizeHandler) GetDeny(c echo.Context) error <span class="cov8" title="1">{
+        challenge := c.QueryParam("login_challenge")
+        if challenge == "" </span><span class="cov8" title="1">{
+                return c.JSON(http.StatusBadRequest, map[string]string{
+                        "error":             "invalid_request",
+                        "error_description": "login_challenge is required",
+                })
+        }</span>
+        <span class="cov8" title="1">stored, err := h.authorizeUseCase.GetChallenge(c.Request().Context(), challenge)
+        if err != nil || stored == nil </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusBadRequest, map[string]string{
+                        "error":             "invalid_request",
+                        "error_description": "login challenge not found or expired",
+                })
+        }</span>
+        <span class="cov8" title="1">_ = h.authorizeUseCase.ConsumeChallenge(c.Request().Context(), challenge)
+        u, _ := url.Parse(stored.RedirectURI)
+        q := u.Query()
+        q.Set("error", "access_denied")
+        if stored.State != "" </span><span class="cov8" title="1">{
+                q.Set("state", stored.State)
+        }</span>
+        <span class="cov8" title="1">u.RawQuery = q.Encode()
+        return c.Redirect(http.StatusFound, u.String())</span>
+}
+
+func parseAuthorizeParams(c echo.Context) authorizeParams <span class="cov8" title="1">{
+        return authorizeParams{
+                ClientID:            c.QueryParam("client_id"),
+                RedirectURI:         c.QueryParam("redirect_uri"),
+                ResponseType:        c.QueryParam("response_type"),
+                Scope:               c.QueryParam("scope"),
+                State:               c.QueryParam("state"),
+                Nonce:               c.QueryParam("nonce"),
+                CodeChallenge:       c.QueryParam("code_challenge"),
+                CodeChallengeMethod: c.QueryParam("code_challenge_method"),
+                Prompt:              c.QueryParam("prompt"),
+        }
+}</span>
+
+func (h *AuthorizeHandler) validateAuthorizeParams(c echo.Context, params authorizeParams) error <span class="cov8" title="1">{
+        if params.ClientID == "" || params.RedirectURI == "" </span><span class="cov8" title="1">{
+                return c.JSON(http.StatusBadRequest, map[string]string{
+                        "error":             "invalid_request",
+                        "error_description": "client_id and redirect_uri are required",
+                })
+        }</span>
+        <span class="cov8" title="1">clientID, err := uuid.Parse(params.ClientID)
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusBadRequest, map[string]string{
+                        "error":             "invalid_request",
+                        "error_description": "invalid client_id",
+                })
+        }</span>
+        <span class="cov8" title="1">err = h.authorizeUseCase.ValidateAuthorizeRequest(c.Request().Context(), &amp;authorize.ValidateAuthorizeInput{
+                ClientID:            clientID,
+                RedirectURI:         params.RedirectURI,
+                ResponseType:        params.ResponseType,
+                Scope:               params.Scope,
+                State:               params.State,
+                Nonce:               params.Nonce,
+                CodeChallenge:       params.CodeChallenge,
+                CodeChallengeMethod: params.CodeChallengeMethod,
+        })
+        if err != nil </span><span class="cov8" title="1">{
+                return h.authorizeErrorResponse(c, err)
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (h *AuthorizeHandler) authorizeErrorResponse(c echo.Context, err error) error <span class="cov8" title="1">{
+        switch err </span>{
+        case authorize.ErrInvalidRedirectURI:<span class="cov8" title="1">
+                return c.JSON(http.StatusBadRequest, map[string]string{
+                        "error":             "invalid_request",
+                        "error_description": "redirect_uri mismatch",
+                })</span>
+        case authorize.ErrInvalidResponseType:<span class="cov8" title="1">
+                return c.JSON(http.StatusBadRequest, map[string]string{
+                        "error":             "invalid_request",
+                        "error_description": "response_type must be code",
+                })</span>
+        case authorize.ErrCodeChallengeRequired:<span class="cov0" title="0">
+                return c.JSON(http.StatusBadRequest, map[string]string{
+                        "error":             "invalid_request",
+                        "error_description": "code_challenge is required",
+                })</span>
+        case authorize.ErrStateRequired:<span class="cov0" title="0">
+                return c.JSON(http.StatusBadRequest, map[string]string{
+                        "error":             "invalid_request",
+                        "error_description": "state is required",
+                })</span>
+        case authorize.ErrUnsupportedPKCE:<span class="cov0" title="0">
+                return c.JSON(http.StatusBadRequest, map[string]string{
+                        "error":             "invalid_request",
+                        "error_description": "PKCE: only S256 is supported",
+                })</span>
+        case authorize.ErrInvalidScope:<span class="cov8" title="1">
+                return c.JSON(http.StatusBadRequest, map[string]string{
+                        "error":             "invalid_request",
+                        "error_description": "scope is invalid or not allowed for client",
+                })</span>
+        default:<span class="cov8" title="1">
+                return c.JSON(http.StatusInternalServerError, map[string]string{
+                        "error": "server_error",
+                })</span>
+        }
+}
+
+// clearSessionCookie はログアウト時にセッション cookie を削除する（将来の logout 用）。
+func clearSessionCookie(c echo.Context) <span class="cov8" title="1">{
+        c.SetCookie(&amp;http.Cookie{
+                Name:     sessionCookieName,
+                Value:    "",
+                Path:     "/",
+                MaxAge:   -1,
+                HttpOnly: true,
+        })
+}</span>
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package handler
+
+import (
+        "net/http"
+        "strings"
+
+        "github.com/labstack/echo/v4"
+)
+
+// DiscoveryHandler は OIDC Discovery エンドポイントのハンドラ。
+type DiscoveryHandler struct {
+        issuer string
+}
+
+// NewDiscoveryHandler は DiscoveryHandler を生成する。
+func NewDiscoveryHandler(issuer string) *DiscoveryHandler <span class="cov8" title="1">{
+        return &amp;DiscoveryHandler{issuer: issuer}
+}</span>
+
+// Get は /.well-known/openid-configuration を返す。
+// OIDC Discovery 1.0 のメタデータ。issuer を起点に全 URL を組み立てる。
+func (h *DiscoveryHandler) Get(c echo.Context) error <span class="cov8" title="1">{
+        base := strings.TrimSuffix(h.issuer, "/")
+        return c.JSON(http.StatusOK, map[string]interface{}{
+                // 識別子（ID Token の iss と完全一致 MUST）
+                "issuer": base,
+
+                // エンドポイント
+                "authorization_endpoint": base + "/oauth/authorize",
+                "token_endpoint":         base + "/oauth/token",
+                "jwks_uri":               base + "/jwks",
+                "userinfo_endpoint":      base + "/userinfo",
+
+                // 機能サポート
+                "response_types_supported":              []string{"code"},
+                "grant_types_supported":                []string{"authorization_code", "refresh_token"},
+                "subject_types_supported":              []string{"public"},
+                "id_token_signing_alg_values_supported": []string{"RS256"},
+                "code_challenge_methods_supported":     []string{"S256"},
+
+                // クライアント認証（PKCE 前提 + confidential 対応）
+                "token_endpoint_auth_methods_supported": []string{"none", "client_secret_basic"},
+
+                // スコープ・クレーム（実装と一致。UserInfo は常に sub, email, email_verified, preferred_username を返す）
+                "scopes_supported": []string{"openid", "profile", "email"},
+                "claims_supported": []string{"sub", "iss", "aud", "exp", "iat", "auth_time", "nonce", "sid", "email", "email_verified", "preferred_username"},
+        })
+}</span>
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package handler
+
+import (
+        "net/http"
+
+        "github.com/labstack/echo/v4"
+)
+
+// HealthHandler はヘルスチェック用ハンドラ。
+type HealthHandler struct{}
+
+// NewHealthHandler は HealthHandler を生成する。
+func NewHealthHandler() *HealthHandler <span class="cov8" title="1">{
+        return &amp;HealthHandler{}
+}</span>
+
+// Get はヘルスチェックを返す。
+// GET /health
+func (h *HealthHandler) Get(c echo.Context) error <span class="cov8" title="1">{
+        return c.JSON(http.StatusOK, map[string]string{
+                "status": "ok",
+        })
+}</span>
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package handler
+
+import (
+        "net/http"
+
+        "github.com/labstack/echo/v4"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
+)
+
+// JWKSHandler は JWKS エンドポイントのハンドラ。
+type JWKSHandler struct {
+        jwksProvider port.JWKSProvider
+}
+
+// NewJWKSHandler は JWKSHandler を生成する。
+func NewJWKSHandler(jwksProvider port.JWKSProvider) *JWKSHandler <span class="cov8" title="1">{
+        return &amp;JWKSHandler{jwksProvider: jwksProvider}
+}</span>
+
+// Get は /jwks で公開鍵を返す。
+// RFC 7517 JWK Set。kid は JWT ヘッダと一致。Cache-Control で 1 時間キャッシュ推奨。
+func (h *JWKSHandler) Get(c echo.Context) error <span class="cov8" title="1">{
+        c.Response().Header().Set("Cache-Control", "public, max-age=3600")
+        return c.JSON(http.StatusOK, h.jwksProvider.ExportJWKS())
+}</span>
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package handler
+
+import (
+        "net/http"
+
+        "github.com/labstack/echo/v4"
+
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/adapter/dto/request"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/adapter/dto/response"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/login"
+)
+
+// LoginHandler はログイン API のハンドラ。
+type LoginHandler struct {
+        loginUseCase *login.UseCase
+}
+
+// NewLoginHandler は LoginHandler を生成する。
+func NewLoginHandler(loginUseCase *login.UseCase) *LoginHandler <span class="cov8" title="1">{
+        return &amp;LoginHandler{loginUseCase: loginUseCase}
+}</span>
+
+// Post はログインを処理する。
+// POST /sessions/login
+func (h *LoginHandler) Post(c echo.Context) error <span class="cov8" title="1">{
+        var req request.LoginRequest
+        if err := c.Bind(&amp;req); err != nil </span><span class="cov8" title="1">{
+                return c.JSON(http.StatusBadRequest, response.ErrorResponse{Error: "invalid_request"})
+        }</span>
+
+        <span class="cov8" title="1">out, err := h.loginUseCase.Login(c.Request().Context(), &amp;login.LoginInput{
+                LoginChallenge: req.LoginChallenge,
+                Username:       req.Username,
+                Password:       req.Password,
+                IPAddress:      c.RealIP(),
+                UserAgent:      c.Request().UserAgent(),
+        })
+        if err != nil </span><span class="cov8" title="1">{
+                switch err </span>{
+                case login.ErrInvalidCredentials:<span class="cov8" title="1">
+                        return c.JSON(http.StatusUnauthorized, response.ErrorResponse{Error: "invalid_credentials"})</span>
+                case login.ErrChallengeNotFound:<span class="cov0" title="0">
+                        return c.JSON(http.StatusBadRequest, response.ErrorResponse{Error: "invalid_request"})</span>
+                default:<span class="cov0" title="0">
+                        return c.JSON(http.StatusInternalServerError, response.ErrorResponse{Error: "server_error"})</span>
+                }
+        }
+
+        // セッション Cookie をセットする（authorize と共通）
+        <span class="cov0" title="0">secure := c.Request().TLS != nil
+        c.SetCookie(&amp;http.Cookie{
+                Name:     sessionCookieName,
+                Value:    out.SessionToken,
+                Path:     "/",
+                MaxAge:   sessionMaxAge,
+                HttpOnly: true,
+                Secure:   secure,
+                SameSite: http.SameSiteLaxMode,
+        })
+
+        return c.JSON(http.StatusOK, response.LoginResponse{
+                NextURL: out.NextURL,
+        })</span>
+}
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package handler
+
+import (
+        "net/http"
+
+        "github.com/labstack/echo/v4"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/logout"
+)
+
+// LogoutHandler はログアウトエンドポイントのハンドラ。
+type LogoutHandler struct {
+        logoutUseCase logout.Interactor
+}
+
+// NewLogoutHandler は LogoutHandler を生成する。
+func NewLogoutHandler(logoutUseCase logout.Interactor) *LogoutHandler <span class="cov8" title="1">{
+        return &amp;LogoutHandler{logoutUseCase: logoutUseCase}
+}</span>
+
+// Post はログアウトを実行する（cookie の oauth_session でこの端末のセッションを失効）。
+// POST /sessions/logout
+func (h *LogoutHandler) Post(c echo.Context) error <span class="cov8" title="1">{
+        cookie, err := c.Cookie(sessionCookieName)
+        if err != nil || cookie == nil || cookie.Value == "" </span><span class="cov8" title="1">{
+                return c.JSON(http.StatusOK, map[string]string{
+                        "message": "logged out",
+                })
+        }</span>
+
+        <span class="cov8" title="1">err = h.logoutUseCase.Logout(c.Request().Context(), &amp;logout.LogoutInput{
+                SessionToken: cookie.Value,
+        })
+        if err != nil </span><span class="cov0" title="0">{
+                if err == logout.ErrSessionNotFound </span><span class="cov0" title="0">{
+                        // セッションがなければログアウト済み扱い
+                        clearSessionCookie(c)
+                        return c.JSON(http.StatusOK, map[string]string{
+                                "message": "logged out",
+                        })
+                }</span>
+                <span class="cov0" title="0">return c.JSON(http.StatusInternalServerError, map[string]string{
+                        "error": "server_error",
+                })</span>
+        }
+
+        // ログアウト成功時は cookie を削除
+        <span class="cov8" title="1">clearSessionCookie(c)
+        return c.JSON(http.StatusOK, map[string]string{
+                "message": "logged out",
+        })</span>
+}
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package handler
+
+import (
+        "encoding/base64"
+        "net/http"
+        "strings"
+
+        "github.com/google/uuid"
+        "github.com/labstack/echo/v4"
+
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/adapter/dto/request"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/adapter/dto/response"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/token"
+)
+
+// parseBasicAuth は Authorization: Basic base64(client_id:client_secret) をパースする。
+func parseBasicAuth(auth string) (clientID, clientSecret string, ok bool) <span class="cov8" title="1">{
+        if auth == "" || !strings.HasPrefix(auth, "Basic ") </span><span class="cov8" title="1">{
+                return "", "", false
+        }</span>
+        <span class="cov8" title="1">decoded, err := base64.StdEncoding.DecodeString(strings.TrimPrefix(auth, "Basic "))
+        if err != nil </span><span class="cov0" title="0">{
+                return "", "", false
+        }</span>
+        <span class="cov8" title="1">parts := strings.SplitN(string(decoded), ":", 2)
+        if len(parts) != 2 </span><span class="cov0" title="0">{
+                return "", "", false
+        }</span>
+        <span class="cov8" title="1">return parts[0], parts[1], true</span>
+}
+
+// RT Cookie 名（__Host- prefix で強めの制約）
+const rtCookieName = "__Host-rt"
+
+// RT Cookie 有効期限（30日、秒）
+const rtCookieMaxAge = 30 * 24 * 3600
+
+// TokenHandler はトークンエンドポイントのハンドラ。
+type TokenHandler struct {
+        tokenUseCase   token.Interactor
+        clientRepo     port.ClientRepository
+        allowedOrigins []string // CSRF 用（refresh_token の Origin チェック）
+}
+
+// NewTokenHandler は TokenHandler を生成する。
+func NewTokenHandler(tokenUseCase token.Interactor, clientRepo port.ClientRepository, allowedOrigins []string) *TokenHandler <span class="cov8" title="1">{
+        return &amp;TokenHandler{
+                tokenUseCase:   tokenUseCase,
+                clientRepo:     clientRepo,
+                allowedOrigins: allowedOrigins,
+        }
+}</span>
+
+// Post は認可コードまたはリフレッシュトークンをトークンに交換する。
+// POST /oauth/token
+func (h *TokenHandler) Post(c echo.Context) error <span class="cov8" title="1">{
+        var grantReq struct {
+                GrantType string `form:"grant_type"`
+        }
+        if err := c.Bind(&amp;grantReq); err != nil </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusBadRequest, response.ErrorResponse{Error: "invalid_request"})
+        }</span>
+        <span class="cov8" title="1">switch grantReq.GrantType </span>{
+        case "authorization_code":<span class="cov8" title="1">
+                return h.handleAuthorizationCode(c)</span>
+        case "refresh_token":<span class="cov8" title="1">
+                return h.handleRefreshToken(c)</span>
+        default:<span class="cov8" title="1">
+                return c.JSON(http.StatusBadRequest, response.ErrorResponse{Error: "unsupported_grant_type"})</span>
+        }
+}
+
+func (h *TokenHandler) handleAuthorizationCode(c echo.Context) error <span class="cov8" title="1">{
+        var req request.AuthCodeTokenRequest
+        if err := c.Bind(&amp;req); err != nil </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusBadRequest, response.ErrorResponse{Error: "invalid_request"})
+        }</span>
+        <span class="cov8" title="1">if req.Code == "" || req.RedirectURI == "" || req.ClientID == "" </span><span class="cov8" title="1">{
+                return c.JSON(http.StatusBadRequest, response.ErrorResponse{Error: "invalid_request"})
+        }</span>
+        // PKCE S256 only: code_verifier 必須
+        <span class="cov8" title="1">if req.CodeVerifier == "" </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusBadRequest, response.ErrorResponse{Error: "invalid_request"})
+        }</span>
+
+        <span class="cov8" title="1">clientID, err := uuid.Parse(req.ClientID)
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusBadRequest, response.ErrorResponse{Error: "invalid_request"})
+        }</span>
+
+        // Confidential client: Authorization: Basic で client_secret が渡された場合に検証
+        <span class="cov8" title="1">if clientIDStr, clientSecret, ok := parseBasicAuth(c.Request().Header.Get("Authorization")); ok &amp;&amp; clientSecret != "" </span><span class="cov8" title="1">{
+                parsedID, parseErr := uuid.Parse(clientIDStr)
+                if parseErr != nil || parsedID != clientID </span><span class="cov0" title="0">{
+                        c.Response().Header().Set("WWW-Authenticate", "Bearer")
+                        return c.JSON(http.StatusUnauthorized, response.ErrorResponse{Error: "invalid_client"})
+                }</span>
+                <span class="cov8" title="1">valid, _ := h.clientRepo.ValidateClientCredentials(c.Request().Context(), clientID, clientSecret)
+                if !valid </span><span class="cov8" title="1">{
+                        c.Response().Header().Set("WWW-Authenticate", "Bearer")
+                        return c.JSON(http.StatusUnauthorized, response.ErrorResponse{Error: "invalid_client"})
+                }</span>
+        }
+
+        <span class="cov8" title="1">out, err := h.tokenUseCase.Exchange(c.Request().Context(), &amp;token.ExchangeInput{
+                Code:         req.Code,
+                RedirectURI:  req.RedirectURI,
+                ClientID:     clientID,
+                CodeVerifier: req.CodeVerifier,
+        })
+        if err != nil </span><span class="cov8" title="1">{
+                switch err </span>{
+                case token.ErrInvalidClient:<span class="cov0" title="0">
+                        c.Response().Header().Set("WWW-Authenticate", "Bearer")
+                        return c.JSON(http.StatusUnauthorized, response.ErrorResponse{Error: "invalid_client"})</span>
+                case token.ErrInvalidCode, token.ErrInvalidRedirectURI, token.ErrInvalidPKCE:<span class="cov8" title="1">
+                        return c.JSON(http.StatusBadRequest, response.ErrorResponse{Error: "invalid_grant"})</span>
+                default:<span class="cov0" title="0">
+                        return c.JSON(http.StatusInternalServerError, response.ErrorResponse{Error: "server_error"})</span>
+                }
+        }
+
+        // refresh_token を Cookie で返却（body には含めない）
+        <span class="cov8" title="1">setRefreshTokenCookie(c, out.RefreshToken)
+
+        return c.JSON(http.StatusOK, response.TokenResponse{
+                AccessToken: out.AccessToken,
+                TokenType:   out.TokenType,
+                ExpiresIn:   out.ExpiresIn,
+                Scope:       out.Scope,
+                IDToken:     out.IDToken,
+        })</span>
+}
+
+func (h *TokenHandler) handleRefreshToken(c echo.Context) error <span class="cov8" title="1">{
+        // CSRF 対策: Origin / Referer が許可リストに含まれること（Cookie 送信のため）
+        if !h.checkOrigin(c) </span><span class="cov8" title="1">{
+                return c.JSON(http.StatusForbidden, response.ErrorResponse{Error: "invalid_request"})
+        }</span>
+
+        // refresh_token は Cookie から取得（body には含めない）
+        <span class="cov8" title="1">refreshToken := ""
+        if cookie, err := c.Cookie(rtCookieName); err == nil &amp;&amp; cookie != nil </span><span class="cov8" title="1">{
+                refreshToken = cookie.Value
+        }</span>
+        <span class="cov8" title="1">if refreshToken == "" </span><span class="cov8" title="1">{
+                return c.JSON(http.StatusBadRequest, response.ErrorResponse{Error: "invalid_request"})
+        }</span>
+
+        <span class="cov8" title="1">var req request.RefreshTokenRequest
+        if err := c.Bind(&amp;req); err != nil </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusBadRequest, response.ErrorResponse{Error: "invalid_request"})
+        }</span>
+        <span class="cov8" title="1">if req.ClientID == "" </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusBadRequest, response.ErrorResponse{Error: "invalid_request"})
+        }</span>
+
+        <span class="cov8" title="1">clientID, err := uuid.Parse(req.ClientID)
+        if err != nil </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusBadRequest, response.ErrorResponse{Error: "invalid_request"})
+        }</span>
+
+        <span class="cov8" title="1">out, err := h.tokenUseCase.Refresh(c.Request().Context(), &amp;token.RefreshInput{
+                RefreshToken: refreshToken,
+                ClientID:     clientID,
+        })
+        if err != nil </span><span class="cov8" title="1">{
+                switch err </span>{
+                case token.ErrInvalidRefreshToken, token.ErrTokenExpired:<span class="cov8" title="1">
+                        return c.JSON(http.StatusBadRequest, response.ErrorResponse{Error: "invalid_grant"})</span>
+                default:<span class="cov0" title="0">
+                        return c.JSON(http.StatusInternalServerError, response.ErrorResponse{Error: "server_error"})</span>
+                }
+        }
+
+        // 新 RT を Cookie で返却（rotation 後）
+        <span class="cov8" title="1">setRefreshTokenCookie(c, out.RefreshToken)
+
+        return c.JSON(http.StatusOK, response.TokenResponse{
+                AccessToken: out.AccessToken,
+                TokenType:   out.TokenType,
+                ExpiresIn:   out.ExpiresIn,
+                Scope:       out.Scope,
+                IDToken:     out.IDToken,
+        })</span>
+}
+
+// checkOrigin は Origin または Referer が許可リストに含まれるか確認する（CSRF 対策）。
+func (h *TokenHandler) checkOrigin(c echo.Context) bool <span class="cov8" title="1">{
+        origin := c.Request().Header.Get("Origin")
+        if origin != "" </span><span class="cov8" title="1">{
+                for _, allowed := range h.allowedOrigins </span><span class="cov8" title="1">{
+                        if origin == allowed </span><span class="cov8" title="1">{
+                                return true
+                        }</span>
+                }
+        }
+        <span class="cov8" title="1">referer := c.Request().Header.Get("Referer")
+        if referer != "" </span><span class="cov0" title="0">{
+                for _, allowed := range h.allowedOrigins </span><span class="cov0" title="0">{
+                        if strings.HasPrefix(referer, allowed+"/") || referer == allowed </span><span class="cov0" title="0">{
+                                return true
+                        }</span>
+                }
+        }
+        // 同一オリジン（Origin なし＝同一オリジンリクエスト）は許可
+        <span class="cov8" title="1">if origin == "" &amp;&amp; referer == "" </span><span class="cov0" title="0">{
+                return true
+        }</span>
+        <span class="cov8" title="1">return false</span>
+}
+
+// setRefreshTokenCookie は refresh_token を HttpOnly Cookie で設定する。
+func setRefreshTokenCookie(c echo.Context, rt string) <span class="cov8" title="1">{
+        cookie := &amp;http.Cookie{
+                Name:     rtCookieName,
+                Value:    rt,
+                Path:     "/",
+                MaxAge:   rtCookieMaxAge,
+                HttpOnly: true,
+                Secure:   true,
+                SameSite: http.SameSiteLaxMode,
+        }
+        c.SetCookie(cookie)
+}</span>
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">package handler
+
+import (
+        "net/http"
+        "strings"
+
+        "github.com/labstack/echo/v4"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/usecase/userinfo"
+)
+
+// UserInfoHandler はユーザー情報エンドポイントのハンドラ。
+type UserInfoHandler struct {
+        userInfoUseCase userinfo.Interactor
+}
+
+// NewUserInfoHandler は UserInfoHandler を生成する。
+func NewUserInfoHandler(userInfoUseCase userinfo.Interactor) *UserInfoHandler <span class="cov8" title="1">{
+        return &amp;UserInfoHandler{userInfoUseCase: userInfoUseCase}
+}</span>
+
+// Get はアクセストークンからユーザー情報を取得する。
+// GET /userinfo
+func (h *UserInfoHandler) Get(c echo.Context) error <span class="cov8" title="1">{
+        auth := c.Request().Header.Get("Authorization")
+        if auth == "" || !strings.HasPrefix(auth, "Bearer ") </span><span class="cov8" title="1">{
+                return c.JSON(http.StatusUnauthorized, map[string]string{
+                        "error": "invalid_token",
+                })
+        }</span>
+        <span class="cov8" title="1">accessToken := strings.TrimPrefix(auth, "Bearer ")
+
+        out, err := h.userInfoUseCase.Get(c.Request().Context(), &amp;userinfo.GetInput{
+                AccessToken: accessToken,
+        })
+        if err != nil </span><span class="cov8" title="1">{
+                if err == userinfo.ErrInvalidToken </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusUnauthorized, map[string]string{
+                                "error": "invalid_token",
+                        })
+                }</span>
+                <span class="cov8" title="1">return c.JSON(http.StatusInternalServerError, map[string]string{
+                        "error": "server_error",
+                })</span>
+        }
+
+        <span class="cov8" title="1">return c.JSON(http.StatusOK, out)</span>
+}
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package audit
+
+import (
+        "context"
+        "log"
+
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
+)
+
+var _ port.AuditLogger = (*StdoutLogger)(nil)
+
+// StdoutLogger は監査ログを標準出力に出力する（開発用）。
+type StdoutLogger struct{}
+
+// NewStdoutLogger は StdoutLogger を生成する。
+func NewStdoutLogger() *StdoutLogger <span class="cov0" title="0">{
+        return &amp;StdoutLogger{}
+}</span>
+
+// Log は監査ログを出力する。
+func (l *StdoutLogger) Log(ctx context.Context, entry *port.AuditEntry) <span class="cov0" title="0">{
+        if entry == nil </span><span class="cov0" title="0">{
+                return
+        }</span>
+        <span class="cov0" title="0">log.Printf("[AUDIT] event=%s user_id=%s client_id=%s session_id=%s jti=%s ip=%s user_agent=%s",
+                entry.Event,
+                entry.UserID.String(),
+                entry.ClientID.String(),
+                entry.SessionID.String(),
+                entry.JTI,
+                entry.IP,
+                entry.UserAgent,
+        )</span>
+}
+</pre>
+		
+		<pre class="file" id="file16" style="display: none">package db
+
+import (
+        "context"
+        "fmt"
+        "os"
+        "time"
+
+        "gorm.io/driver/postgres"
+        "gorm.io/gorm"
+)
+
+// DefaultConnectTimeoutはDB接続のデフォルトタイムアウト（秒）。
+const DefaultConnectTimeout = 5
+
+// ConfigはDB接続設定。
+type Config struct {
+        Host     string
+        Port     string
+        User     string
+        Password string
+        DBName   string
+        SSLMode  string
+}
+
+// NewConfigは環境変数からConfigを生成する。
+func NewConfig() *Config <span class="cov0" title="0">{
+        return &amp;Config{
+                Host:     getEnv("DB_HOST", "localhost"),
+                Port:     getEnv("DB_PORT", "5432"),
+                User:     getEnv("DB_USER", "postgres"),
+                Password: getEnv("DB_PASSWORD", "postgres"),
+                DBName:   getEnv("DB_NAME", "oauth_server"),
+                SSLMode:  getEnv("DB_SSLMODE", "disable"),
+        }
+}</span>
+
+// DSN（データソース名）はPostgreSQL接続文字列を返す。
+func (c *Config) DSN() string <span class="cov0" title="0">{
+        return fmt.Sprintf(
+                "host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+                c.Host, c.Port, c.User, c.Password, c.DBName, c.SSLMode,
+        )
+}</span>
+
+// NewDB は GORM の DB 接続を生成する。
+// 起動時に Ping で接続確認を行う（DB が死んでいると起動が無限待ちになるのを防ぐ）。
+// ※ AutoMigrate は本番で使わない（migration ツールを使用すること）。
+func NewDB(cfg *Config) (*gorm.DB, error) <span class="cov0" title="0">{
+        db, err := gorm.Open(postgres.Open(cfg.DSN()), &amp;gorm.Config{})
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("gorm open: %w", err)
+        }</span>
+        <span class="cov0" title="0">sqlDB, err := db.DB()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("get underlying sql.DB: %w", err)
+        }</span>
+        <span class="cov0" title="0">ctx, cancel := context.WithTimeout(context.Background(), DefaultConnectTimeout*time.Second)
+        defer cancel()
+        if err := sqlDB.PingContext(ctx); err != nil </span><span class="cov0" title="0">{
+                sqlDB.Close()
+                return nil, fmt.Errorf("ping database: %w", err)
+        }</span>
+        <span class="cov0" title="0">return db, nil</span>
+}
+
+func getEnv(key, defaultValue string) string <span class="cov0" title="0">{
+        if v := os.Getenv(key); v != "" </span><span class="cov0" title="0">{
+                return v
+        }</span>
+        <span class="cov0" title="0">return defaultValue</span>
+}
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">package models
+
+import (
+        "time"
+
+        "github.com/google/uuid"
+)
+
+// AccessTokenModelはaccess_tokensテーブルのGORMモデル。
+type AccessTokenModel struct {
+        ID        uuid.UUID `gorm:"type:uuid;primaryKey"`
+        UserID    uuid.UUID `gorm:"type:uuid;index;not null"`
+        ClientID  uuid.UUID `gorm:"type:uuid;index;not null"`
+        SessionID uuid.UUID `gorm:"type:uuid;index;not null"`
+        TokenJTI  string    `gorm:"column:token_jti;type:varchar(255);uniqueIndex;not null"`
+        Scopes    string    `gorm:"type:varchar(512)"`
+        IssuedAt  time.Time `gorm:"column:issued_at;not null"`
+        ExpiresAt time.Time `gorm:"not null"`
+        Revoked   bool      `gorm:"not null;default:false"`
+}
+
+// TableNameはテーブル名を返す。
+func (AccessTokenModel) TableName() string <span class="cov0" title="0">{
+        return "access_tokens"
+}</span>
+</pre>
+		
+		<pre class="file" id="file18" style="display: none">package models
+
+import (
+        "time"
+
+        "github.com/google/uuid"
+)
+
+// AuthCodeModelはauthorization_codesテーブルのGORMモデル。
+type AuthCodeModel struct {
+        ID                  uuid.UUID `gorm:"type:uuid;primaryKey"`
+        UserID              uuid.UUID `gorm:"type:uuid;index;not null"`
+        ClientID            uuid.UUID `gorm:"type:uuid;index;not null"`
+        SessionID           uuid.UUID `gorm:"type:uuid;index;not null"`
+        CodeHash            string    `gorm:"type:varchar(255);uniqueIndex;not null"`
+        CodeChallenge       string    `gorm:"type:varchar(255)"`
+        CodeChallengeMethod string    `gorm:"type:varchar(10)"`
+        RedirectURI         string    `gorm:"type:varchar(512);not null"`
+        Scopes              string    `gorm:"type:varchar(512)"`
+        Nonce               string    `gorm:"type:varchar(255)"`
+        ExpiresAt           time.Time `gorm:"not null"`
+        Consumed            bool      `gorm:"not null;default:false"`
+        CreatedAt           time.Time `gorm:"not null"`
+}
+
+// TableNameはテーブル名を返す。
+func (AuthCodeModel) TableName() string <span class="cov0" title="0">{
+        return "authorization_codes"
+}</span>
+</pre>
+		
+		<pre class="file" id="file19" style="display: none">package models
+
+import (
+        "github.com/google/uuid"
+)
+
+// ClientModelはclientsテーブルのGORMモデル。
+// ClientSecretHashはbcryptハッシュ（平文保存禁止）。
+type ClientModel struct {
+        ID               uuid.UUID `gorm:"type:uuid;primaryKey"`
+        ClientSecretHash string    `gorm:"column:client_secret_hash;type:varchar(255)"`
+        RedirectURIs     string    `gorm:"column:redirect_uris;type:text"`
+        AllowedScopes    string    `gorm:"column:allowed_scopes;type:varchar(512)"`
+}
+
+// TableNameはテーブル名を返す。
+func (ClientModel) TableName() string <span class="cov0" title="0">{
+        return "clients"
+}</span>
+</pre>
+		
+		<pre class="file" id="file20" style="display: none">package models
+
+import (
+        "time"
+
+        "github.com/google/uuid"
+)
+
+// RefreshTokenModelはrefresh_tokensテーブルのGORMモデル。
+type RefreshTokenModel struct {
+        ID            uuid.UUID `gorm:"type:uuid;primaryKey"`
+        AccessTokenID uuid.UUID `gorm:"column:access_token_id;type:uuid;index;not null"`
+        TokenHash     string    `gorm:"column:token_hash;type:varchar(255);uniqueIndex;not null"`
+        ExpiresAt     time.Time `gorm:"not null"`
+        Revoked       bool      `gorm:"not null;default:false"`
+        Rotated       bool      `gorm:"not null;default:false"`
+}
+
+// TableNameはテーブル名を返す。
+func (RefreshTokenModel) TableName() string <span class="cov0" title="0">{
+        return "refresh_tokens"
+}</span>
+</pre>
+		
+		<pre class="file" id="file21" style="display: none">package models
+
+import (
+        "time"
+
+        "github.com/google/uuid"
+)
+
+// SessionModelはsessionsテーブルのGORMモデル。
+type SessionModel struct {
+        ID               uuid.UUID `gorm:"type:uuid;primaryKey"`
+        UserID           uuid.UUID `gorm:"type:uuid;index;not null"`
+        SessionTokenHash string    `gorm:"type:varchar(255);index;not null"`
+        IPAddress        string    `gorm:"type:varchar(45)"`
+        UserAgent        string    `gorm:"type:varchar(512)"`
+        TokenVersion     int64     `gorm:"not null;default:1"`
+        ExpiresAt        time.Time `gorm:"not null"`
+        CreatedAt        time.Time `gorm:"not null"`
+        Revoked          bool      `gorm:"not null;default:false"`
+}
+
+// TableNameはテーブル名を返す。
+func (SessionModel) TableName() string <span class="cov0" title="0">{
+        return "sessions"
+}</span>
+</pre>
+		
+		<pre class="file" id="file22" style="display: none">package models
+
+import (
+        "time"
+
+        "github.com/google/uuid"
+)
+
+// UserModelはusersテーブルのGORMモデル。
+type UserModel struct {
+        ID            uuid.UUID `gorm:"type:uuid;primaryKey"`
+        Email         string    `gorm:"type:varchar(255);not null"`
+        Username      string    `gorm:"type:varchar(255)"`
+        PasswordHash  string    `gorm:"column:password_hash;type:varchar(255)"`
+        EmailVerified bool      `gorm:"column:email_verified;not null;default:false"`
+        Status        string    `gorm:"type:varchar(50)"`
+        CreatedAt     time.Time `gorm:"column:created_at;not null"`
+        UpdatedAt     time.Time `gorm:"column:updated_at;not null"`
+}
+
+// TableNameはテーブル名を返す。
+func (UserModel) TableName() string <span class="cov0" title="0">{
+        return "users"
+}</span>
+</pre>
+		
+		<pre class="file" id="file23" style="display: none">package db
+
+import (
+        "context"
+
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
+        "gorm.io/gorm"
+)
+
+type txKey struct{}
+
+// WithTx は context にトランザクションを格納する。
+func WithTx(ctx context.Context, tx *gorm.DB) context.Context <span class="cov0" title="0">{
+        return context.WithValue(ctx, txKey{}, tx)
+}</span>
+
+// TxFromContext は context からトランザクションを取得する。
+func TxFromContext(ctx context.Context) (*gorm.DB, bool) <span class="cov0" title="0">{
+        tx, ok := ctx.Value(txKey{}).(*gorm.DB)
+        return tx, ok
+}</span>
+
+// GormTransactionRunner は GORM による TransactionRunner の実装。
+type GormTransactionRunner struct {
+        db *gorm.DB
+}
+
+// NewTransactionRunner は TransactionRunner を生成する。
+func NewTransactionRunner(db *gorm.DB) port.TransactionRunner <span class="cov0" title="0">{
+        return &amp;GormTransactionRunner{db: db}
+}</span>
+
+// Transaction はトランザクション内で fn を実行する。
+func (r *GormTransactionRunner) Transaction(ctx context.Context, fn func(ctx context.Context) error) error <span class="cov0" title="0">{
+        return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error </span><span class="cov0" title="0">{
+                txCtx := WithTx(ctx, tx)
+                return fn(txCtx)
+        }</span>)
+}
+</pre>
+		
+		<pre class="file" id="file24" style="display: none">package jwt
+
+import (
+        "crypto/rand"
+        "crypto/rsa"
+        "crypto/x509"
+        "encoding/base64"
+        "encoding/json"
+        "encoding/pem"
+        "fmt"
+        "math/big"
+        "time"
+
+        "github.com/golang-jwt/jwt/v5"
+        "github.com/google/uuid"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
+)
+
+const defaultKeyID = "default"
+
+// accessTokenClaims は JWT 内部の claims 構造。
+// sub/aud は RegisteredClaims に含まれるため重複しない。
+type accessTokenClaims struct {
+        jwt.RegisteredClaims
+        Sid string `json:"sid"`
+        Ver int64  `json:"ver"`
+}
+
+// Signer は RS256 で JWT を署名する。port.JWTSigner と port.JWKSProvider を実装する。
+type Signer struct {
+        privateKey *rsa.PrivateKey
+}
+
+// NewSigner は秘密鍵から Signer を生成する。
+func NewSigner(privateKey *rsa.PrivateKey) *Signer <span class="cov8" title="1">{
+        return &amp;Signer{privateKey: privateKey}
+}</span>
+
+// GenerateKey は開発用の RSA 秘密鍵を生成する。
+func GenerateKey() (*rsa.PrivateKey, error) <span class="cov8" title="1">{
+        return rsa.GenerateKey(rand.Reader, 2048)
+}</span>
+
+// ParsePrivateKey は PEM 形式の秘密鍵をパースする。
+func ParsePrivateKey(pemBytes []byte) (*rsa.PrivateKey, error) <span class="cov8" title="1">{
+        block, _ := pem.Decode(pemBytes)
+        if block == nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("failed to parse PEM")
+        }</span>
+        <span class="cov8" title="1">key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("parse private key: %w", err)
+        }</span>
+        <span class="cov8" title="1">return key, nil</span>
+}
+
+// idTokenClaims は ID Token の claims 構造。
+type idTokenClaims struct {
+        jwt.RegisteredClaims
+        AuthTime *jwt.NumericDate `json:"auth_time"`
+        Nonce   string            `json:"nonce,omitempty"`
+}
+
+// Sign はアクセストークン JWT を署名して返す。
+func (s *Signer) Sign(sub, sid, aud uuid.UUID, ver int64, jti string, expiresIn time.Duration) (string, error) <span class="cov8" title="1">{
+        now := time.Now()
+        claims := accessTokenClaims{
+                RegisteredClaims: jwt.RegisteredClaims{
+                        ID:        jti,
+                        Subject:   sub.String(),
+                        Audience:  jwt.ClaimStrings{aud.String()},
+                        ExpiresAt: jwt.NewNumericDate(now.Add(expiresIn)),
+                        IssuedAt:  jwt.NewNumericDate(now),
+                },
+                Sid: sid.String(),
+                Ver: ver,
+        }
+
+        token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+        token.Header["kid"] = defaultKeyID
+        return token.SignedString(s.privateKey)
+}</span>
+
+// SignIDToken は ID Token JWT を署名して返す。
+// iss, sub, aud, exp, iat, auth_time, nonce を含む。
+func (s *Signer) SignIDToken(iss, sub, aud string, nonce string, authTime time.Time, expiresIn time.Duration) (string, error) <span class="cov8" title="1">{
+        now := time.Now()
+        claims := idTokenClaims{
+                RegisteredClaims: jwt.RegisteredClaims{
+                        Issuer:    iss,
+                        Subject:   sub,
+                        Audience:  jwt.ClaimStrings{aud},
+                        ExpiresAt: jwt.NewNumericDate(now.Add(expiresIn)),
+                        IssuedAt:  jwt.NewNumericDate(now),
+                },
+                AuthTime: jwt.NewNumericDate(authTime),
+                Nonce:    nonce,
+        }
+        token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+        token.Header["kid"] = defaultKeyID
+        return token.SignedString(s.privateKey)
+}</span>
+
+// JWKS は JSON Web Key Set の構造。
+type JWKS struct {
+        Keys []JWK `json:"keys"`
+}
+
+// JWK は JSON Web Key の構造（RSA 用）。
+type JWK struct {
+        Kty string `json:"kty"`
+        Kid string `json:"kid"`
+        Use string `json:"use"`
+        Alg string `json:"alg"`
+        N   string `json:"n"`
+        E   string `json:"e"`
+}
+
+// ExportJWKS は公開鍵を JWKS 形式で返す。port.JWKSProvider を実装する。
+func (s *Signer) ExportJWKS() any <span class="cov0" title="0">{
+        return s.exportJWKS()
+}</span>
+
+func (s *Signer) exportJWKS() *JWKS <span class="cov8" title="1">{
+        pub := s.privateKey.Public().(*rsa.PublicKey)
+        n := base64.RawURLEncoding.EncodeToString(pub.N.Bytes())
+        e := base64.RawURLEncoding.EncodeToString(big.NewInt(int64(pub.E)).Bytes())
+        return &amp;JWKS{
+                Keys: []JWK{
+                        {Kty: "RSA", Kid: defaultKeyID, Use: "sig", Alg: "RS256", N: n, E: e},
+                },
+        }
+}</span>
+
+// ExportJWKSJSON は JWKS を JSON 文字列で返す。
+func (s *Signer) ExportJWKSJSON() (string, error) <span class="cov8" title="1">{
+        b, err := json.Marshal(s.exportJWKS())
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">return string(b), nil</span>
+}
+
+// Verify は JWT を検証し claims を返す。
+func (s *Signer) Verify(tokenString string) (*port.AccessTokenClaims, error) <span class="cov8" title="1">{
+        token, err := jwt.ParseWithClaims(tokenString, &amp;accessTokenClaims{}, func(t *jwt.Token) (interface{}, error) </span><span class="cov8" title="1">{
+                if _, ok := t.Method.(*jwt.SigningMethodRSA); !ok </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+                }</span>
+                <span class="cov8" title="1">return &amp;s.privateKey.PublicKey, nil</span>
+        })
+        <span class="cov8" title="1">if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">claims, ok := token.Claims.(*accessTokenClaims)
+        if !ok || !token.Valid </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("invalid token")
+        }</span>
+        <span class="cov8" title="1">aud, _ := claims.GetAudience()
+        audStr := ""
+        if len(aud) &gt; 0 </span><span class="cov8" title="1">{
+                audStr = aud[0]
+        }</span>
+        <span class="cov8" title="1">exp := int64(0)
+        if claims.ExpiresAt != nil </span><span class="cov8" title="1">{
+                exp = claims.ExpiresAt.Unix()
+        }</span>
+        <span class="cov8" title="1">iat := int64(0)
+        if claims.IssuedAt != nil </span><span class="cov8" title="1">{
+                iat = claims.IssuedAt.Unix()
+        }</span>
+        <span class="cov8" title="1">return &amp;port.AccessTokenClaims{
+                Sub: claims.Subject,
+                Sid: claims.Sid,
+                Ver: claims.Ver,
+                Aud: audStr,
+                Jti: claims.ID,
+                Exp: exp,
+                Iat: iat,
+        }, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file25" style="display: none">package redis
+
+import (
+        "context"
+        "encoding/json"
+        "fmt"
+        "time"
+
+        "github.com/redis/go-redis/v9"
+
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
+)
+
+const keyPrefix = "auth_req:"
+
+// AuthorizationRequestRepository は Redis による AuthorizationRequestRepository の実装。
+type AuthorizationRequestRepository struct {
+        client *redis.Client
+}
+
+// NewAuthorizationRequestRepository は AuthorizationRequestRepository を生成する。
+func NewAuthorizationRequestRepository(client *redis.Client) *AuthorizationRequestRepository <span class="cov0" title="0">{
+        return &amp;AuthorizationRequestRepository{client: client}
+}</span>
+
+// Save は認可リクエストを challenge に紐づけて保存する。
+func (r *AuthorizationRequestRepository) Save(ctx context.Context, challenge string, req *port.StoredAuthorizationRequest, ttl time.Duration) error <span class="cov0" title="0">{
+        b, err := json.Marshal(req)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("marshal: %w", err)
+        }</span>
+        <span class="cov0" title="0">key := keyPrefix + challenge
+        return r.client.Set(ctx, key, b, ttl).Err()</span>
+}
+
+// Get は challenge に紐づく認可リクエストを取得する。
+func (r *AuthorizationRequestRepository) Get(ctx context.Context, challenge string) (*port.StoredAuthorizationRequest, error) <span class="cov0" title="0">{
+        key := keyPrefix + challenge
+        b, err := r.client.Get(ctx, key).Bytes()
+        if err != nil </span><span class="cov0" title="0">{
+                if err == redis.Nil </span><span class="cov0" title="0">{
+                        return nil, nil
+                }</span>
+                <span class="cov0" title="0">return nil, err</span>
+        }
+        <span class="cov0" title="0">var req port.StoredAuthorizationRequest
+        if err := json.Unmarshal(b, &amp;req); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("unmarshal: %w", err)
+        }</span>
+        <span class="cov0" title="0">return &amp;req, nil</span>
+}
+
+// Delete は challenge を削除する（one-time 用）。
+func (r *AuthorizationRequestRepository) Delete(ctx context.Context, challenge string) error <span class="cov0" title="0">{
+        key := keyPrefix + challenge
+        return r.client.Del(ctx, key).Err()
+}</span>
+</pre>
+		
+		<pre class="file" id="file26" style="display: none">package redis
+
+import (
+        "context"
+        "fmt"
+        "os"
+        "strconv"
+        "time"
+
+        "github.com/redis/go-redis/v9"
+)
+
+// Config は Redis 接続設定。
+type Config struct {
+        Addr     string
+        Password string
+        DB       int
+}
+
+// NewConfig は環境変数から Config を生成する。
+func NewConfig() *Config <span class="cov0" title="0">{
+        db, _ := strconv.Atoi(getEnv("REDIS_DB", "0"))
+        return &amp;Config{
+                Addr:     getEnv("REDIS_ADDR", "localhost:6379"),
+                Password: getEnv("REDIS_PASSWORD", ""),
+                DB:       db,
+        }
+}</span>
+
+// NewClient は Redis クライアントを生成する。
+func NewClient(cfg *Config) (*redis.Client, error) <span class="cov0" title="0">{
+        client := redis.NewClient(&amp;redis.Options{
+                Addr:     cfg.Addr,
+                Password: cfg.Password,
+                DB:       cfg.DB,
+        })
+        ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+        defer cancel()
+        if err := client.Ping(ctx).Err(); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("redis ping: %w", err)
+        }</span>
+        <span class="cov0" title="0">return client, nil</span>
+}
+
+func getEnv(key, defaultValue string) string <span class="cov0" title="0">{
+        if v := os.Getenv(key); v != "" </span><span class="cov0" title="0">{
+                return v
+        }</span>
+        <span class="cov0" title="0">return defaultValue</span>
+}
+</pre>
+		
+		<pre class="file" id="file27" style="display: none">package gorm
+
+import (
+        "context"
+        "errors"
+
+        "github.com/google/uuid"
+        "gorm.io/gorm"
+        "gorm.io/gorm/clause"
+
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db/models"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
+)
+
+var _ port.AuthCodeRepository = (*AuthCodeRepository)(nil)
+
+// AuthCodeRepository は GORM による AuthCodeRepository の実装。
+type AuthCodeRepository struct {
+        db *gorm.DB
+}
+
+// NewAuthCodeRepository は AuthCodeRepository を生成する。
+func NewAuthCodeRepository(db *gorm.DB) *AuthCodeRepository <span class="cov0" title="0">{
+        return &amp;AuthCodeRepository{db: db}
+}</span>
+
+// Save は認可コードを保存する。
+func (r *AuthCodeRepository) Save(ctx context.Context, code *authcode.AuthorizationCode) error <span class="cov0" title="0">{
+        m := &amp;models.AuthCodeModel{
+                ID:                  code.ID(),
+                UserID:              code.UserID(),
+                ClientID:            code.ClientID(),
+                SessionID:           code.SessionID(),
+                CodeHash:            code.CodeHash(),
+                CodeChallenge:       code.CodeChallenge(),
+                CodeChallengeMethod: code.CodeChallengeMethod(),
+                RedirectURI:         code.RedirectURI(),
+                Scopes:              code.Scopes(),
+                Nonce:               code.Nonce(),
+                ExpiresAt:           code.ExpiresAt(),
+                Consumed:            code.IsConsumed(),
+                CreatedAt:           code.CreatedAt(),
+        }
+        return r.db.WithContext(ctx).Create(m).Error
+}</span>
+
+// FindByCodeHash はコードハッシュで認可コードを取得する。
+func (r *AuthCodeRepository) FindByCodeHash(ctx context.Context, codeHash string) (*authcode.AuthorizationCode, error) <span class="cov0" title="0">{
+        return r.findByCodeHash(ctx, codeHash, false)
+}</span>
+
+// FindByCodeHashForUpdate はコードハッシュで認可コードをロックして取得する（SELECT FOR UPDATE）。
+func (r *AuthCodeRepository) FindByCodeHashForUpdate(ctx context.Context, codeHash string) (*authcode.AuthorizationCode, error) <span class="cov0" title="0">{
+        return r.findByCodeHash(ctx, codeHash, true)
+}</span>
+
+func (r *AuthCodeRepository) findByCodeHash(ctx context.Context, codeHash string, forUpdate bool) (*authcode.AuthorizationCode, error) <span class="cov0" title="0">{
+        exec := r.db.WithContext(ctx)
+        if tx, ok := db.TxFromContext(ctx); ok </span><span class="cov0" title="0">{
+                exec = tx.WithContext(ctx)
+        }</span>
+        <span class="cov0" title="0">query := exec.Where("code_hash = ?", codeHash)
+        if forUpdate </span><span class="cov0" title="0">{
+                query = query.Clauses(clause.Locking{Strength: "UPDATE"})
+        }</span>
+        <span class="cov0" title="0">var m models.AuthCodeModel
+        err := query.First(&amp;m).Error
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                        return nil, nil
+                }</span>
+                <span class="cov0" title="0">return nil, err</span>
+        }
+        <span class="cov0" title="0">return toAuthCode(&amp;m), nil</span>
+}
+
+// MarkConsumed は認可コードを消費済みにする。戻り値の rowsAffected が 1 でない場合は二重交換の可能性あり。
+func (r *AuthCodeRepository) MarkConsumed(ctx context.Context, id uuid.UUID) (int64, error) <span class="cov0" title="0">{
+        exec := r.db.WithContext(ctx)
+        if tx, ok := db.TxFromContext(ctx); ok </span><span class="cov0" title="0">{
+                exec = tx.WithContext(ctx)
+        }</span>
+        <span class="cov0" title="0">result := exec.Model(&amp;models.AuthCodeModel{}).Where("id = ? AND consumed = ?", id, false).Update("consumed", true)
+        return result.RowsAffected, result.Error</span>
+}
+
+// Delete は認可コードを削除する。
+func (r *AuthCodeRepository) Delete(ctx context.Context, id uuid.UUID) error <span class="cov0" title="0">{
+        return r.db.WithContext(ctx).Where("id = ?", id).Delete(&amp;models.AuthCodeModel{}).Error
+}</span>
+
+func toAuthCode(m *models.AuthCodeModel) *authcode.AuthorizationCode <span class="cov0" title="0">{
+        return authcode.Reconstruct(
+                m.ID, m.UserID, m.ClientID, m.SessionID,
+                m.CodeHash, m.CodeChallenge, m.CodeChallengeMethod,
+                m.RedirectURI, m.Scopes, m.Nonce, m.ExpiresAt, m.Consumed, m.CreatedAt,
+        )
+}</span>
+</pre>
+		
+		<pre class="file" id="file28" style="display: none">package gorm
+
+import (
+        "context"
+        "errors"
+        "strings"
+
+        "github.com/google/uuid"
+        "golang.org/x/crypto/bcrypt"
+        "gorm.io/gorm"
+
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db/models"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
+)
+
+var _ port.ClientRepository = (*ClientRepository)(nil)
+
+// ClientRepository は GORM による ClientRepository の実装。
+type ClientRepository struct {
+        db *gorm.DB
+}
+
+// NewClientRepository は ClientRepository を生成する。
+func NewClientRepository(db *gorm.DB) *ClientRepository <span class="cov0" title="0">{
+        return &amp;ClientRepository{db: db}
+}</span>
+
+// Exists はクライアントが存在するかどうかを返す。
+func (r *ClientRepository) Exists(ctx context.Context, clientID uuid.UUID) (bool, error) <span class="cov0" title="0">{
+        var count int64
+        err := r.db.WithContext(ctx).Model(&amp;models.ClientModel{}).Where("id = ?", clientID).Count(&amp;count).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return false, err
+        }</span>
+        <span class="cov0" title="0">return count &gt; 0, nil</span>
+}
+
+// ValidateRedirectURI は redirect_uri がクライアントに登録されているか検証する。
+func (r *ClientRepository) ValidateRedirectURI(ctx context.Context, clientID uuid.UUID, redirectURI string) (bool, error) <span class="cov0" title="0">{
+        var m models.ClientModel
+        err := r.db.WithContext(ctx).Where("id = ?", clientID).First(&amp;m).Error
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                        return false, nil
+                }</span>
+                <span class="cov0" title="0">return false, err</span>
+        }
+        <span class="cov0" title="0">uris := strings.FieldsFunc(m.RedirectURIs, func(r rune) bool </span><span class="cov0" title="0">{
+                return r == ',' || r == '\n' || r == ' '
+        }</span>)
+        <span class="cov0" title="0">for _, uri := range uris </span><span class="cov0" title="0">{
+                if strings.TrimSpace(uri) == redirectURI </span><span class="cov0" title="0">{
+                        return true, nil
+                }</span>
+        }
+        <span class="cov0" title="0">return false, nil</span>
+}
+
+// dummyBcryptHash は client が存在しない場合のタイミング攻撃対策用。
+// 存在しない client でも bcrypt を1回回し、応答時間差で client の存在を推測されないようにする。
+// bcrypt.GenerateFromPassword([]byte("dummy-timing-attack"), bcrypt.DefaultCost) で生成した固定ハッシュ
+const dummyBcryptHash = "$2a$10$cZPGFEuZkd1TEWgZ1GFAmuqNTygVRNE.huBdcioIXAD2o5oTkQp9S"
+
+// ValidateClientCredentials は client_id + client_secret でクライアント認証する。
+// DB には client_secret_hash（bcrypt）を保存し、bcrypt.CompareHashAndPassword で照合する。
+func (r *ClientRepository) ValidateClientCredentials(ctx context.Context, clientID uuid.UUID, clientSecret string) (bool, error) <span class="cov0" title="0">{
+        if clientSecret == "" </span><span class="cov0" title="0">{
+                return false, nil
+        }</span>
+        <span class="cov0" title="0">var m models.ClientModel
+        err := r.db.WithContext(ctx).Where("id = ?", clientID).First(&amp;m).Error
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                        _ = bcrypt.CompareHashAndPassword([]byte(dummyBcryptHash), []byte(clientSecret))
+                        return false, nil
+                }</span>
+                <span class="cov0" title="0">return false, err</span>
+        }
+        <span class="cov0" title="0">if m.ClientSecretHash == "" </span><span class="cov0" title="0">{
+                return false, nil
+        }</span>
+        <span class="cov0" title="0">err = bcrypt.CompareHashAndPassword([]byte(m.ClientSecretHash), []byte(clientSecret))
+        return err == nil, nil</span>
+}
+
+// GetAllowedScopes はクライアントが許可する scope の一覧を返す。
+func (r *ClientRepository) GetAllowedScopes(ctx context.Context, clientID uuid.UUID) ([]string, error) <span class="cov0" title="0">{
+        var m models.ClientModel
+        err := r.db.WithContext(ctx).Where("id = ?", clientID).First(&amp;m).Error
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                        return nil, nil
+                }</span>
+                <span class="cov0" title="0">return nil, err</span>
+        }
+        <span class="cov0" title="0">if m.AllowedScopes == "" </span><span class="cov0" title="0">{
+                return []string{"openid", "profile", "email"}, nil
+        }</span>
+        <span class="cov0" title="0">scopes := strings.FieldsFunc(m.AllowedScopes, func(r rune) bool </span><span class="cov0" title="0">{
+                return r == ',' || r == '\n' || r == ' ' || r == '\t'
+        }</span>)
+        <span class="cov0" title="0">result := make([]string, 0, len(scopes))
+        for _, s := range scopes </span><span class="cov0" title="0">{
+                if t := strings.TrimSpace(s); t != "" </span><span class="cov0" title="0">{
+                        result = append(result, t)
+                }</span>
+        }
+        <span class="cov0" title="0">if len(result) == 0 </span><span class="cov0" title="0">{
+                return []string{"openid", "profile", "email"}, nil
+        }</span>
+        <span class="cov0" title="0">return result, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file29" style="display: none">package gorm
+
+import (
+        "context"
+        "errors"
+
+        "github.com/google/uuid"
+        "gorm.io/gorm"
+        "gorm.io/gorm/clause"
+
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/session"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db/models"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
+)
+
+var _ port.SessionRepository = (*SessionRepository)(nil)
+
+// SessionRepository は GORM による SessionRepository の実装。
+type SessionRepository struct {
+        db *gorm.DB
+}
+
+// NewSessionRepository は SessionRepository を生成する。
+func NewSessionRepository(db *gorm.DB) *SessionRepository <span class="cov0" title="0">{
+        return &amp;SessionRepository{db: db}
+}</span>
+
+// Save はセッションを保存する。
+func (r *SessionRepository) Save(ctx context.Context, s *session.Session) error <span class="cov0" title="0">{
+        m := &amp;models.SessionModel{
+                ID:               s.ID(),
+                UserID:           s.UserID(),
+                SessionTokenHash: s.SessionTokenHash(),
+                IPAddress:        s.IPAddress(),
+                UserAgent:        s.UserAgent(),
+                TokenVersion:     s.TokenVersion(),
+                ExpiresAt:        s.ExpiresAt(),
+                CreatedAt:        s.CreatedAt(),
+                Revoked:          s.IsRevoked(),
+        }
+        return r.exec(ctx).Clauses(clause.OnConflict{
+                Columns:   []clause.Column{{Name: "id"}},
+                DoUpdates: clause.AssignmentColumns([]string{"session_token_hash", "ip_address", "user_agent", "token_version", "expires_at", "revoked"}),
+        }).Create(m).Error
+}</span>
+
+func (r *SessionRepository) exec(ctx context.Context) *gorm.DB <span class="cov0" title="0">{
+        if tx, ok := db.TxFromContext(ctx); ok </span><span class="cov0" title="0">{
+                return tx.WithContext(ctx)
+        }</span>
+        <span class="cov0" title="0">return r.db.WithContext(ctx)</span>
+}
+
+// FindByID はセッションIDでセッションを取得する。
+func (r *SessionRepository) FindByID(ctx context.Context, sid uuid.UUID) (*session.Session, error) <span class="cov0" title="0">{
+        var m models.SessionModel
+        err := r.exec(ctx).Where("id = ?", sid).First(&amp;m).Error
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                        return nil, nil
+                }</span>
+                <span class="cov0" title="0">return nil, err</span>
+        }
+        <span class="cov0" title="0">return toSession(&amp;m), nil</span>
+}
+
+// FindBySessionTokenHash はトークンハッシュでセッションを取得する。
+func (r *SessionRepository) FindBySessionTokenHash(ctx context.Context, tokenHash string) (*session.Session, error) <span class="cov0" title="0">{
+        var m models.SessionModel
+        err := r.exec(ctx).Where("session_token_hash = ? AND revoked = ?", tokenHash, false).First(&amp;m).Error
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                        return nil, nil
+                }</span>
+                <span class="cov0" title="0">return nil, err</span>
+        }
+        <span class="cov0" title="0">return toSession(&amp;m), nil</span>
+}
+
+// IncrementTokenVersion は token_version をインクリメントする。
+func (r *SessionRepository) IncrementTokenVersion(ctx context.Context, sid uuid.UUID) error <span class="cov0" title="0">{
+        return r.exec(ctx).Model(&amp;models.SessionModel{}).Where("id = ?", sid).Update("token_version", gorm.Expr("token_version + 1")).Error
+}</span>
+
+// Revoke はセッションを失効させる。
+func (r *SessionRepository) Revoke(ctx context.Context, sid uuid.UUID) error <span class="cov0" title="0">{
+        return r.exec(ctx).Model(&amp;models.SessionModel{}).Where("id = ?", sid).Update("revoked", true).Error
+}</span>
+
+func toSession(m *models.SessionModel) *session.Session <span class="cov0" title="0">{
+        return session.Reconstruct(m.ID, m.UserID, m.SessionTokenHash, m.IPAddress, m.UserAgent, m.TokenVersion, m.ExpiresAt, m.CreatedAt, m.Revoked)
+}</span>
+</pre>
+		
+		<pre class="file" id="file30" style="display: none">package gorm
+
+import (
+        "context"
+        "errors"
+        "time"
+
+        "github.com/google/uuid"
+        "gorm.io/gorm"
+
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/token"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db/models"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
+)
+
+var _ port.TokenRepository = (*TokenRepository)(nil)
+
+// TokenRepository は GORM による TokenRepository の実装。
+type TokenRepository struct {
+        db *gorm.DB
+}
+
+// NewTokenRepository は TokenRepository を生成する。
+func NewTokenRepository(db *gorm.DB) *TokenRepository <span class="cov0" title="0">{
+        return &amp;TokenRepository{db: db}
+}</span>
+
+func (r *TokenRepository) exec(ctx context.Context) *gorm.DB <span class="cov0" title="0">{
+        if tx, ok := db.TxFromContext(ctx); ok </span><span class="cov0" title="0">{
+                return tx.WithContext(ctx)
+        }</span>
+        <span class="cov0" title="0">return r.db.WithContext(ctx)</span>
+}
+
+// SaveAccessToken はアクセストークンを保存する。
+func (r *TokenRepository) SaveAccessToken(ctx context.Context, userID, clientID, sessionID uuid.UUID, tokenJTI, scopes string, expiresAt time.Time) (uuid.UUID, error) <span class="cov0" title="0">{
+        id := uuid.New()
+        now := time.Now()
+        m := &amp;models.AccessTokenModel{
+                ID:        id,
+                UserID:    userID,
+                ClientID:  clientID,
+                SessionID: sessionID,
+                TokenJTI:  tokenJTI,
+                Scopes:    scopes,
+                IssuedAt:  now,
+                ExpiresAt: expiresAt,
+                Revoked:   false,
+        }
+        if err := r.exec(ctx).Create(m).Error; err != nil </span><span class="cov0" title="0">{
+                return uuid.Nil, err
+        }</span>
+        <span class="cov0" title="0">return id, nil</span>
+}
+
+// SaveRefreshToken はリフレッシュトークンを保存する。
+func (r *TokenRepository) SaveRefreshToken(ctx context.Context, accessTokenID uuid.UUID, tokenHash string, expiresAt time.Time) (uuid.UUID, error) <span class="cov0" title="0">{
+        id := uuid.New()
+        m := &amp;models.RefreshTokenModel{
+                ID:            id,
+                AccessTokenID: accessTokenID,
+                TokenHash:     tokenHash,
+                ExpiresAt:     expiresAt,
+                Revoked:       false,
+                Rotated:       false,
+        }
+        if err := r.exec(ctx).Create(m).Error; err != nil </span><span class="cov0" title="0">{
+                return uuid.Nil, err
+        }</span>
+        <span class="cov0" title="0">return id, nil</span>
+}
+
+// FindAccessTokenByJTI はJTIでアクセストークンを取得する。
+func (r *TokenRepository) FindAccessTokenByJTI(ctx context.Context, tokenJTI string) (*token.AccessToken, error) <span class="cov0" title="0">{
+        var m models.AccessTokenModel
+        err := r.exec(ctx).Where("token_jti = ?", tokenJTI).First(&amp;m).Error
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                        return nil, nil
+                }</span>
+                <span class="cov0" title="0">return nil, err</span>
+        }
+        <span class="cov0" title="0">return toAccessToken(&amp;m), nil</span>
+}
+
+// FindAccessTokenByID はIDでアクセストークンを取得する。
+func (r *TokenRepository) FindAccessTokenByID(ctx context.Context, id uuid.UUID) (*token.AccessToken, error) <span class="cov0" title="0">{
+        var m models.AccessTokenModel
+        err := r.exec(ctx).Where("id = ?", id).First(&amp;m).Error
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                        return nil, nil
+                }</span>
+                <span class="cov0" title="0">return nil, err</span>
+        }
+        <span class="cov0" title="0">return toAccessToken(&amp;m), nil</span>
+}
+
+// FindRefreshTokenByHash はハッシュでリフレッシュトークンを取得する。
+func (r *TokenRepository) FindRefreshTokenByHash(ctx context.Context, tokenHash string) (*token.RefreshToken, error) <span class="cov0" title="0">{
+        var m models.RefreshTokenModel
+        err := r.exec(ctx).Where("token_hash = ?", tokenHash).First(&amp;m).Error
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                        return nil, nil
+                }</span>
+                <span class="cov0" title="0">return nil, err</span>
+        }
+        <span class="cov0" title="0">return toRefreshToken(&amp;m), nil</span>
+}
+
+// RevokeAccessToken はアクセストークンを失効させる。
+func (r *TokenRepository) RevokeAccessToken(ctx context.Context, id uuid.UUID) error <span class="cov0" title="0">{
+        return r.exec(ctx).Model(&amp;models.AccessTokenModel{}).Where("id = ?", id).Update("revoked", true).Error
+}</span>
+
+// RevokeRefreshToken はリフレッシュトークンを失効させる。
+func (r *TokenRepository) RevokeRefreshToken(ctx context.Context, id uuid.UUID) error <span class="cov0" title="0">{
+        return r.exec(ctx).Model(&amp;models.RefreshTokenModel{}).Where("id = ?", id).Update("revoked", true).Error
+}</span>
+
+// MarkRefreshTokenRotated はリフレッシュトークンをローテーション済みにする。
+func (r *TokenRepository) MarkRefreshTokenRotated(ctx context.Context, id uuid.UUID) error <span class="cov0" title="0">{
+        return r.exec(ctx).Model(&amp;models.RefreshTokenModel{}).Where("id = ?", id).Updates(map[string]interface{}{
+                "rotated": true,
+                "revoked": true,
+        }).Error
+}</span>
+
+func toAccessToken(m *models.AccessTokenModel) *token.AccessToken <span class="cov0" title="0">{
+        return token.NewAccessToken(m.ID, m.UserID, m.ClientID, m.SessionID, m.TokenJTI, m.Scopes, m.IssuedAt, m.ExpiresAt, m.Revoked)
+}</span>
+
+func toRefreshToken(m *models.RefreshTokenModel) *token.RefreshToken <span class="cov0" title="0">{
+        return token.NewRefreshToken(m.ID, m.AccessTokenID, m.TokenHash, m.ExpiresAt, m.Revoked, m.Rotated)
+}</span>
+</pre>
+		
+		<pre class="file" id="file31" style="display: none">package gorm
+
+import (
+        "context"
+        "errors"
+
+        "github.com/google/uuid"
+        "gorm.io/gorm"
+
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/user"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db/models"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
+)
+
+var _ port.UserRepository = (*UserRepository)(nil)
+
+// UserRepository は GORM による UserRepository の実装。
+type UserRepository struct {
+        db *gorm.DB
+}
+
+// NewUserRepository は UserRepository を生成する。
+func NewUserRepository(db *gorm.DB) *UserRepository <span class="cov0" title="0">{
+        return &amp;UserRepository{db: db}
+}</span>
+
+// FindByID はIDでユーザーを取得する。
+func (r *UserRepository) FindByID(ctx context.Context, id uuid.UUID) (*user.User, error) <span class="cov0" title="0">{
+        var m models.UserModel
+        err := r.db.WithContext(ctx).Where("id = ?", id).First(&amp;m).Error
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                        return nil, nil
+                }</span>
+                <span class="cov0" title="0">return nil, err</span>
+        }
+        <span class="cov0" title="0">return toUser(&amp;m), nil</span>
+}
+
+// FindByUsername はユーザー名でユーザーを取得する（ログイン認証用、password_hash も返す）。
+func (r *UserRepository) FindByUsername(ctx context.Context, username string) (*user.User, string, error) <span class="cov0" title="0">{
+        var m models.UserModel
+        err := r.db.WithContext(ctx).Where("username = ?", username).First(&amp;m).Error
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                        return nil, "", nil
+                }</span>
+                <span class="cov0" title="0">return nil, "", err</span>
+        }
+        <span class="cov0" title="0">return toUser(&amp;m), m.PasswordHash, nil</span>
+}
+
+// Save はユーザーを保存する。
+func (r *UserRepository) Save(ctx context.Context, u *user.User) error <span class="cov0" title="0">{
+        m := &amp;models.UserModel{
+                ID:            u.ID(),
+                Email:         u.Email(),
+                Username:      u.Username(),
+                EmailVerified: u.EmailVerified(),
+                Status:        u.Status(),
+                CreatedAt:     u.CreatedAt(),
+                UpdatedAt:     u.UpdatedAt(),
+        }
+        return r.db.WithContext(ctx).Save(m).Error
+}</span>
+
+func toUser(m *models.UserModel) *user.User <span class="cov0" title="0">{
+        return user.NewUser(m.ID, m.Email, m.Username, m.EmailVerified, m.Status, m.CreatedAt, m.UpdatedAt)
+}</span>
+</pre>
+		
+		<pre class="file" id="file32" style="display: none">package router
+
+import (
+        "github.com/labstack/echo/v4"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/handler"
+)
+
+// Config はルーターの設定。
+type Config struct {
+        AuthorizeHandler  *handler.AuthorizeHandler
+        TokenHandler      *handler.TokenHandler
+        LoginHandler      *handler.LoginHandler
+        LogoutHandler     *handler.LogoutHandler
+        HealthHandler     *handler.HealthHandler
+        DiscoveryHandler  *handler.DiscoveryHandler
+        JWKSHandler       *handler.JWKSHandler
+        UserInfoHandler   *handler.UserInfoHandler
+}
+
+// New はルーターを生成し、ルートを登録する。
+func New(e *echo.Echo, cfg *Config) <span class="cov0" title="0">{
+        e.GET("/health", cfg.HealthHandler.Get)
+
+        e.GET("/.well-known/openid-configuration", cfg.DiscoveryHandler.Get)
+        e.GET("/jwks", cfg.JWKSHandler.Get)
+
+        e.POST("/sessions/login", cfg.LoginHandler.Post)
+        e.POST("/sessions/logout", cfg.LogoutHandler.Post)
+
+        e.GET("/oauth/authorize", cfg.AuthorizeHandler.Get)
+        e.GET("/oauth/authorize/continue", cfg.AuthorizeHandler.GetContinue)
+        e.GET("/oauth/authorize/deny", cfg.AuthorizeHandler.GetDeny)
+        e.POST("/oauth/token", cfg.TokenHandler.Post)
+
+        e.GET("/userinfo", cfg.UserInfoHandler.Get)
+}</span>
+</pre>
+		
+		<pre class="file" id="file33" style="display: none">package authorize
+
+import (
+        "context"
+        "crypto/rand"
+        "crypto/sha256"
+        "encoding/base64"
+        "encoding/hex"
+        "errors"
+        "fmt"
+        "strings"
+        "time"
+
+        "github.com/google/uuid"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
+)
+
+// 認可コードの有効期限（10分）
+const codeExpiryMinutes = 10
+
+var loginChallengeTTL = 10 * time.Minute
+
+var (
+        ErrInvalidRedirectURI    = errors.New("invalid redirect_uri")
+        ErrClientNotFound        = errors.New("client not found")
+        ErrUnsupportedPKCE       = errors.New("PKCE: only S256 is supported")
+        ErrInvalidResponseType   = errors.New("response_type must be code")
+        ErrCodeChallengeRequired = errors.New("code_challenge is required")
+        ErrStateRequired         = errors.New("state is required")
+        ErrInvalidScope          = errors.New("scope is invalid or not allowed for client")
+        ErrChallengeNotFound     = errors.New("login challenge not found or expired")
+        ErrSessionRequired       = errors.New("session required")
+)
+
+// UseCase は認可コード発行のユースケース。
+// Interactor を実装する。
+var _ Interactor = (*UseCase)(nil)
+
+type UseCase struct {
+        authCodeRepo port.AuthCodeRepository
+        clientRepo   port.ClientRepository
+        authReqRepo  port.AuthorizationRequestRepository
+}
+
+// NewUseCase は UseCase を生成する。
+// セッションは触らない。sessionRepo は不要。
+func NewUseCase(
+        authCodeRepo port.AuthCodeRepository,
+        clientRepo port.ClientRepository,
+        authReqRepo port.AuthorizationRequestRepository,
+) *UseCase <span class="cov8" title="1">{
+        return &amp;UseCase{
+                authCodeRepo: authCodeRepo,
+                clientRepo:   clientRepo,
+                authReqRepo:  authReqRepo,
+        }
+}</span>
+
+// ValidateAuthorizeRequest は認可リクエストのパラメータを検証する。
+func (u *UseCase) ValidateAuthorizeRequest(ctx context.Context, in *ValidateAuthorizeInput) error <span class="cov8" title="1">{
+        if in.RedirectURI == "" || in.ClientID == uuid.Nil </span><span class="cov0" title="0">{
+                return ErrInvalidRedirectURI
+        }</span>
+        <span class="cov8" title="1">valid, err := u.clientRepo.ValidateRedirectURI(ctx, in.ClientID, in.RedirectURI)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("validate redirect_uri: %w", err)
+        }</span>
+        <span class="cov8" title="1">if !valid </span><span class="cov8" title="1">{
+                return ErrInvalidRedirectURI
+        }</span>
+        <span class="cov8" title="1">if in.ResponseType != "code" </span><span class="cov8" title="1">{
+                return ErrInvalidResponseType
+        }</span>
+        <span class="cov8" title="1">if in.CodeChallenge == "" </span><span class="cov0" title="0">{
+                return ErrCodeChallengeRequired
+        }</span>
+        <span class="cov8" title="1">if in.CodeChallengeMethod != authcode.CodeChallengeMethodS256 </span><span class="cov0" title="0">{
+                return ErrUnsupportedPKCE
+        }</span>
+        <span class="cov8" title="1">if in.State == "" </span><span class="cov0" title="0">{
+                return ErrStateRequired
+        }</span>
+        <span class="cov8" title="1">scope := in.Scope
+        if scope == "" </span><span class="cov8" title="1">{
+                scope = "openid"
+        }</span>
+        <span class="cov8" title="1">return u.validateScope(ctx, in.ClientID, scope)</span>
+}
+
+// StoredAuthParams は CreateLoginChallenge / GetAndConsumeChallenge の入出力。
+type StoredAuthParams struct {
+        ClientID            string
+        RedirectURI         string
+        ResponseType        string
+        Scope               string
+        State               string
+        Nonce               string
+        CodeChallenge       string
+        CodeChallengeMethod string
+        Prompt              string // login, consent, none
+        LoginURL            string // React ログイン画面の URL（CreateLoginChallenge 入力のみ）
+}
+
+// CreateLoginChallenge は未ログイン時に authorize リクエストを保存し、login_challenge を発行する。
+func (u *UseCase) CreateLoginChallenge(ctx context.Context, params *StoredAuthParams) (challenge, redirectURL string, err error) <span class="cov8" title="1">{
+        challenge, err = generateSecureCode()
+        if err != nil </span><span class="cov0" title="0">{
+                return "", "", fmt.Errorf("generate challenge: %w", err)
+        }</span>
+        <span class="cov8" title="1">req := &amp;port.StoredAuthorizationRequest{
+                ClientID:            params.ClientID,
+                RedirectURI:         params.RedirectURI,
+                ResponseType:        params.ResponseType,
+                Scope:               params.Scope,
+                State:               params.State,
+                Nonce:               params.Nonce,
+                CodeChallenge:       params.CodeChallenge,
+                CodeChallengeMethod: params.CodeChallengeMethod,
+                Prompt:              params.Prompt,
+        }
+        if err := u.authReqRepo.Save(ctx, challenge, req, loginChallengeTTL); err != nil </span><span class="cov0" title="0">{
+                return "", "", fmt.Errorf("save auth request: %w", err)
+        }</span>
+        <span class="cov8" title="1">return challenge, params.LoginURL + "?login_challenge=" + challenge, nil</span>
+}
+
+// GetChallenge は challenge に紐づく認可リクエストを取得する（消費しない）。
+func (u *UseCase) GetChallenge(ctx context.Context, challenge string) (*StoredAuthParams, error) <span class="cov8" title="1">{
+        req, err := u.authReqRepo.Get(ctx, challenge)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("get auth request: %w", err)
+        }</span>
+        <span class="cov8" title="1">if req == nil </span><span class="cov8" title="1">{
+                return nil, ErrChallengeNotFound
+        }</span>
+        <span class="cov8" title="1">return &amp;StoredAuthParams{
+                ClientID:            req.ClientID,
+                RedirectURI:         req.RedirectURI,
+                ResponseType:        req.ResponseType,
+                Scope:               req.Scope,
+                State:               req.State,
+                Nonce:               req.Nonce,
+                CodeChallenge:       req.CodeChallenge,
+                CodeChallengeMethod: req.CodeChallengeMethod,
+                Prompt:              req.Prompt,
+        }, nil</span>
+}
+
+// ConsumeChallenge は challenge を削除する（deny 時用）。
+func (u *UseCase) ConsumeChallenge(ctx context.Context, challenge string) error <span class="cov8" title="1">{
+        return u.authReqRepo.Delete(ctx, challenge)
+}</span>
+
+// GetAndConsumeChallenge は challenge に紐づく認可リクエストを取得し、challenge を削除する（one-time）。
+func (u *UseCase) GetAndConsumeChallenge(ctx context.Context, challenge string) (*StoredAuthParams, error) <span class="cov8" title="1">{
+        req, err := u.authReqRepo.Get(ctx, challenge)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("get auth request: %w", err)
+        }</span>
+        <span class="cov8" title="1">if req == nil </span><span class="cov8" title="1">{
+                return nil, ErrChallengeNotFound
+        }</span>
+        <span class="cov8" title="1">if err := u.authReqRepo.Delete(ctx, challenge); err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("delete challenge: %w", err)
+        }</span>
+        <span class="cov8" title="1">return &amp;StoredAuthParams{
+                ClientID:            req.ClientID,
+                RedirectURI:         req.RedirectURI,
+                ResponseType:        req.ResponseType,
+                Scope:               req.Scope,
+                State:               req.State,
+                Nonce:               req.Nonce,
+                CodeChallenge:       req.CodeChallenge,
+                CodeChallengeMethod: req.CodeChallengeMethod,
+                Prompt:              req.Prompt,
+        }, nil</span>
+}
+
+// IssueCode は認可コードを発行する。
+// セッションは /sessions/login で作成済み。SessionID を authcode に紐づけるだけ。セッションは触らない。
+func (u *UseCase) IssueCode(ctx context.Context, in *IssueCodeInput) (*IssueCodeOutput, error) <span class="cov8" title="1">{
+        // 1. redirect_uri の検証（client 登録済み URI と完全一致）
+        valid, err := u.clientRepo.ValidateRedirectURI(ctx, in.ClientID, in.RedirectURI)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("validate redirect_uri: %w", err)
+        }</span>
+        <span class="cov8" title="1">if !valid </span><span class="cov8" title="1">{
+                return nil, ErrInvalidRedirectURI
+        }</span>
+
+        // 2. response_type=code 固定
+        <span class="cov8" title="1">if in.ResponseType != "code" </span><span class="cov0" title="0">{
+                return nil, ErrInvalidResponseType
+        }</span>
+
+        // 3. code_challenge 必須、code_challenge_method=S256 固定（plain 禁止）
+        <span class="cov8" title="1">if in.CodeChallenge == "" </span><span class="cov0" title="0">{
+                return nil, ErrCodeChallengeRequired
+        }</span>
+        <span class="cov8" title="1">if in.CodeChallengeMethod != authcode.CodeChallengeMethodS256 </span><span class="cov8" title="1">{
+                return nil, ErrUnsupportedPKCE
+        }</span>
+
+        // 4. state 必須
+        <span class="cov8" title="1">if in.State == "" </span><span class="cov0" title="0">{
+                return nil, ErrStateRequired
+        }</span>
+
+        // 5. scope 検証（client 許可 scope 内か）
+        <span class="cov8" title="1">if err := u.validateScope(ctx, in.ClientID, in.Scopes); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        // 6. 認可コードの生成（平文を生成し、ハッシュをDBに保存）
+        <span class="cov8" title="1">plainCode, err := generateSecureCode()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("generate code: %w", err)
+        }</span>
+        <span class="cov8" title="1">codeHash := hashCode(plainCode)
+
+        // 7. 認可コードの作成と保存（session_id を紐付け。セッションは /sessions/login で作成済み）
+        codeExpiresAt := time.Now().Add(codeExpiryMinutes * time.Minute)
+        authCodeEntity := authcode.New(
+                in.UserID,
+                in.ClientID,
+                in.SessionID,
+                codeHash,
+                in.CodeChallenge,
+                in.CodeChallengeMethod,
+                in.RedirectURI,
+                in.Scopes,
+                in.Nonce,
+                codeExpiresAt,
+        )
+
+        if err := u.authCodeRepo.Save(ctx, authCodeEntity); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("save authorization code: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">return &amp;IssueCodeOutput{
+                Code:        plainCode,
+                RedirectURI: in.RedirectURI,
+                State:       in.State,
+        }, nil</span>
+}
+
+// generateSecureCode は暗号学的に安全なランダムコードを生成する。
+func generateSecureCode() (string, error) <span class="cov8" title="1">{
+        b := make([]byte, 32)
+        if _, err := rand.Read(b); err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">return base64.URLEncoding.WithPadding(base64.NoPadding).EncodeToString(b), nil</span>
+}
+
+// hashCode はコードをSHA-256でハッシュ化する。
+func hashCode(code string) string <span class="cov8" title="1">{
+        h := sha256.Sum256([]byte(code))
+        return hex.EncodeToString(h[:])
+}</span>
+
+// validateScope はリクエスト scope が client の許可 scope 内か検証する。
+func (u *UseCase) validateScope(ctx context.Context, clientID uuid.UUID, requestedScope string) error <span class="cov8" title="1">{
+        allowed, err := u.clientRepo.GetAllowedScopes(ctx, clientID)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("get allowed scopes: %w", err)
+        }</span>
+        <span class="cov8" title="1">if len(allowed) == 0 </span><span class="cov0" title="0">{
+                allowed = []string{"openid", "profile", "email"}
+        }</span>
+        <span class="cov8" title="1">allowedSet := make(map[string]bool)
+        for _, s := range allowed </span><span class="cov8" title="1">{
+                allowedSet[s] = true
+        }</span>
+        // リクエスト scope はスペース区切り
+        <span class="cov8" title="1">requested := strings.Fields(requestedScope)
+        for _, s := range requested </span><span class="cov8" title="1">{
+                if !allowedSet[s] </span><span class="cov0" title="0">{
+                        return ErrInvalidScope
+                }</span>
+        }
+        <span class="cov8" title="1">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file34" style="display: none">package login
+
+import (
+        "context"
+        "crypto/rand"
+        "crypto/sha256"
+        "encoding/base64"
+        "encoding/hex"
+        "errors"
+        "fmt"
+        "time"
+
+        "golang.org/x/crypto/bcrypt"
+
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/session"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
+)
+
+var (
+        ErrInvalidCredentials = errors.New("invalid username or password")
+        ErrChallengeNotFound  = errors.New("login challenge not found or expired")
+)
+
+const sessionExpiryHours = 24
+
+// UseCase はログインのユースケース。
+type UseCase struct {
+        userRepo      port.UserRepository
+        sessionRepo   port.SessionRepository
+        authReqRepo   port.AuthorizationRequestRepository
+        serverBaseURL string
+
+        secureToken func() (string, error) // テスト用に差し替え可能（デフォルト: generateSecureToken）
+}
+
+// NewUseCase は UseCase を生成する。
+func NewUseCase(
+        userRepo port.UserRepository,
+        sessionRepo port.SessionRepository,
+        authReqRepo port.AuthorizationRequestRepository,
+        serverBaseURL string,
+) *UseCase <span class="cov8" title="1">{
+        return &amp;UseCase{
+                userRepo:      userRepo,
+                sessionRepo:   sessionRepo,
+                authReqRepo:   authReqRepo,
+                serverBaseURL: serverBaseURL,
+                secureToken:   generateSecureToken,
+        }
+}</span>
+
+// LoginInput はログインの入力。
+type LoginInput struct {
+        LoginChallenge string
+        Username       string
+        Password       string
+        IPAddress      string
+        UserAgent      string
+}
+
+// LoginOutput はログインの出力。
+type LoginOutput struct {
+        NextURL      string
+        SessionToken string
+}
+
+// Login はユーザー認証を行い、セッションを作成して next_url を返す。
+func (u *UseCase) Login(ctx context.Context, in *LoginInput) (*LoginOutput, error) <span class="cov8" title="1">{
+        if in.LoginChallenge == "" || in.Username == "" || in.Password == "" </span><span class="cov0" title="0">{
+                return nil, ErrInvalidCredentials
+        }</span>
+
+        <span class="cov8" title="1">req, err := u.authReqRepo.Get(ctx, in.LoginChallenge)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("get auth request: %w", err)
+        }</span>
+        <span class="cov8" title="1">if req == nil </span><span class="cov0" title="0">{
+                return nil, ErrChallengeNotFound
+        }</span>
+
+        <span class="cov8" title="1">user, passwordHash, err := u.userRepo.FindByUsername(ctx, in.Username)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("find user: %w", err)
+        }</span>
+        <span class="cov8" title="1">if user == nil || passwordHash == "" </span><span class="cov8" title="1">{
+                return nil, ErrInvalidCredentials
+        }</span>
+        <span class="cov8" title="1">if err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(in.Password)); err != nil </span><span class="cov8" title="1">{
+                return nil, ErrInvalidCredentials
+        }</span>
+
+        <span class="cov8" title="1">gen := u.secureToken
+        if gen == nil </span><span class="cov0" title="0">{
+                gen = generateSecureToken
+        }</span>
+        <span class="cov8" title="1">token, err := gen()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("generate token: %w", err)
+        }</span>
+        <span class="cov8" title="1">tokenHash := hashString(token)
+
+        expiresAt := time.Now().Add(sessionExpiryHours * time.Hour)
+        sess := session.New(
+                user.ID(),
+                tokenHash,
+                in.IPAddress,
+                in.UserAgent,
+                1,
+                expiresAt,
+        )
+        if err := u.sessionRepo.Save(ctx, sess); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("save session: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">nextURL := u.serverBaseURL + "/oauth/authorize/continue?login_challenge=" + in.LoginChallenge
+
+        return &amp;LoginOutput{
+                NextURL:      nextURL,
+                SessionToken: token,
+        }, nil</span>
+}
+
+func generateSecureToken() (string, error) <span class="cov8" title="1">{
+        b := make([]byte, 32)
+        if _, err := rand.Read(b); err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">return base64.URLEncoding.WithPadding(base64.NoPadding).EncodeToString(b), nil</span>
+}
+
+func hashString(s string) string <span class="cov8" title="1">{
+        sum := sha256.Sum256([]byte(s))
+        return hex.EncodeToString(sum[:])
+}</span>
+</pre>
+		
+		<pre class="file" id="file35" style="display: none">package logout
+
+import (
+        "context"
+        "crypto/sha256"
+        "encoding/hex"
+        "errors"
+
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
+)
+
+var (
+        ErrSessionNotFound = errors.New("session not found")
+)
+
+// UseCase はログアウトのユースケース。
+// Interactor を実装する。
+var _ Interactor = (*UseCase)(nil)
+
+type UseCase struct {
+        sessionRepo port.SessionRepository
+}
+
+// NewUseCase は UseCase を生成する。
+func NewUseCase(sessionRepo port.SessionRepository) *UseCase <span class="cov8" title="1">{
+        return &amp;UseCase{
+                sessionRepo: sessionRepo,
+        }
+}</span>
+
+// LogoutInput はログアウトの入力（cookie の session token 平文）。
+type LogoutInput struct {
+        SessionToken string
+}
+
+// Logout はセッションを失効させる（この端末だけログアウト）。
+func (u *UseCase) Logout(ctx context.Context, in *LogoutInput) error <span class="cov8" title="1">{
+        tokenHash := hashString(in.SessionToken)
+        sess, err := u.sessionRepo.FindBySessionTokenHash(ctx, tokenHash)
+        if err != nil || sess == nil </span><span class="cov8" title="1">{
+                return ErrSessionNotFound
+        }</span>
+
+        <span class="cov8" title="1">return u.sessionRepo.Revoke(ctx, sess.ID())</span>
+}
+
+func hashString(s string) string <span class="cov8" title="1">{
+        h := sha256.Sum256([]byte(s))
+        return hex.EncodeToString(h[:])
+}</span>
+</pre>
+		
+		<pre class="file" id="file36" style="display: none">package session
+
+import (
+        "context"
+        "crypto/sha256"
+        "encoding/hex"
+        "time"
+
+        "github.com/google/uuid"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
+)
+
+// Resolver はセッションの解決のみを行う（作成・更新はしない）。
+// /oauth/authorize の「ログイン済みか？」判定に使用。
+type Resolver struct {
+        sessionRepo port.SessionRepository
+}
+
+// NewResolver は Resolver を生成する。
+func NewResolver(sessionRepo port.SessionRepository) *Resolver <span class="cov8" title="1">{
+        return &amp;Resolver{sessionRepo: sessionRepo}
+}</span>
+
+// Resolve は sessionToken（Cookie の平文）から有効なセッションを取得し、sessionID と userID を返す。
+func (r *Resolver) Resolve(ctx context.Context, sessionToken string) (sessionID, userID uuid.UUID, ok bool, err error) <span class="cov8" title="1">{
+        if sessionToken == "" </span><span class="cov8" title="1">{
+                return uuid.Nil, uuid.Nil, false, nil
+        }</span>
+        <span class="cov8" title="1">tokenHash := hashString(sessionToken)
+        sess, err := r.sessionRepo.FindBySessionTokenHash(ctx, tokenHash)
+        if err != nil || sess == nil </span><span class="cov8" title="1">{
+                return uuid.Nil, uuid.Nil, false, err
+        }</span>
+        <span class="cov8" title="1">if !sess.IsValid(time.Now()) </span><span class="cov8" title="1">{
+                return uuid.Nil, uuid.Nil, false, nil
+        }</span>
+        <span class="cov8" title="1">return sess.ID(), sess.UserID(), true, nil</span>
+}
+
+func hashString(s string) string <span class="cov8" title="1">{
+        h := sha256.Sum256([]byte(s))
+        return hex.EncodeToString(h[:])
+}</span>
+</pre>
+		
+		<pre class="file" id="file37" style="display: none">package token
+
+import (
+        "context"
+        "crypto/rand"
+        "crypto/sha256"
+        "encoding/base64"
+        "encoding/hex"
+        "errors"
+        "fmt"
+        "time"
+
+        "github.com/google/uuid"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
+)
+
+// アクセストークン有効期限（300秒）
+const accessTokenExpirySeconds = 300
+
+// リフレッシュトークン有効期限（30日）
+const refreshTokenExpiryDays = 30
+
+// ID Token 有効期限（access_token と同程度）
+const idTokenExpirySeconds = 300
+
+var (
+        ErrInvalidCode         = errors.New("invalid authorization code")
+        ErrInvalidClient       = errors.New("invalid client")
+        ErrInvalidRedirectURI  = errors.New("redirect_uri mismatch")
+        ErrInvalidPKCE         = errors.New("invalid code_verifier")
+        ErrInvalidRefreshToken = errors.New("invalid refresh token")
+        ErrTokenExpired        = errors.New("token expired")
+)
+
+// UseCase はトークン発行・更新のユースケース。
+// Interactor を実装する。
+var _ Interactor = (*UseCase)(nil)
+
+type UseCase struct {
+        txRunner     port.TransactionRunner
+        authCodeRepo port.AuthCodeRepository
+        tokenRepo    port.TokenRepository
+        clientRepo   port.ClientRepository
+        sessionRepo  port.SessionRepository
+        jwtSigner    port.JWTSigner
+        issuer       string
+
+        secureToken func() (string, error) // テスト用に差し替え可能（デフォルト: generateSecureToken）
+}
+
+// NewUseCase は UseCase を生成する。
+func NewUseCase(
+        txRunner port.TransactionRunner,
+        authCodeRepo port.AuthCodeRepository,
+        tokenRepo port.TokenRepository,
+        clientRepo port.ClientRepository,
+        sessionRepo port.SessionRepository,
+        jwtSigner port.JWTSigner,
+        issuer string,
+) *UseCase <span class="cov8" title="1">{
+        return &amp;UseCase{
+                txRunner:     txRunner,
+                authCodeRepo: authCodeRepo,
+                tokenRepo:    tokenRepo,
+                clientRepo:   clientRepo,
+                sessionRepo:  sessionRepo,
+                jwtSigner:    jwtSigner,
+                issuer:       issuer,
+                secureToken:  generateSecureToken,
+        }
+}</span>
+
+// ExchangeInput は認可コード交換の入力。
+type ExchangeInput struct {
+        Code         string
+        RedirectURI  string
+        ClientID     uuid.UUID
+        CodeVerifier string
+}
+
+// TokenOutput はトークン発行の出力。
+// RefreshToken は Cookie 用に handler に渡す（JSON body には含めない）。
+type TokenOutput struct {
+        AccessToken  string
+        TokenType    string
+        ExpiresIn    int
+        RefreshToken string // Cookie で返却するため handler に渡す
+        Scope        string
+        IDToken      string
+}
+
+// Exchange は認可コードをトークンに交換する。
+// 1トランザクション内で code ロック→検証→消費→トークン発行を実行し、二重交換を防止する。
+func (u *UseCase) Exchange(ctx context.Context, in *ExchangeInput) (*TokenOutput, error) <span class="cov8" title="1">{
+        // A. grant_type は handler で検証済み
+
+        // B. client 検証（最小: client_id 存在 + redirect_uri 一致）
+        exists, err := u.clientRepo.Exists(ctx, in.ClientID)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("client exists check: %w", err)
+        }</span>
+        <span class="cov8" title="1">if !exists </span><span class="cov8" title="1">{
+                return nil, ErrInvalidClient
+        }</span>
+        <span class="cov8" title="1">ok, err := u.clientRepo.ValidateRedirectURI(ctx, in.ClientID, in.RedirectURI)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("validate redirect uri: %w", err)
+        }</span>
+        <span class="cov8" title="1">if !ok </span><span class="cov8" title="1">{
+                return nil, ErrInvalidRedirectURI
+        }</span>
+
+        <span class="cov8" title="1">var out *TokenOutput
+        err = u.txRunner.Transaction(ctx, func(txCtx context.Context) error </span><span class="cov8" title="1">{
+                // C. auth code 取得（ロック付き）
+                codeHash := hashString(in.Code)
+                authCodeEntity, err := u.authCodeRepo.FindByCodeHashForUpdate(txCtx, codeHash)
+                if err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("find auth code: %w", err)
+                }</span>
+                <span class="cov8" title="1">if authCodeEntity == nil </span><span class="cov8" title="1">{
+                        return ErrInvalidCode
+                }</span>
+
+                // D. code が未使用
+                <span class="cov8" title="1">if authCodeEntity.IsConsumed() </span><span class="cov8" title="1">{
+                        return ErrInvalidCode
+                }</span>
+
+                // E. code 期限切れ
+                <span class="cov8" title="1">now := time.Now()
+                if authCodeEntity.IsExpired(now) </span><span class="cov0" title="0">{
+                        return ErrInvalidCode
+                }</span>
+
+                // F. redirect_uri 一致（超重要）
+                <span class="cov8" title="1">if authCodeEntity.RedirectURI() != in.RedirectURI </span><span class="cov0" title="0">{
+                        return ErrInvalidRedirectURI
+                }</span>
+
+                // G. client_id 一致
+                <span class="cov8" title="1">if authCodeEntity.ClientID() != in.ClientID </span><span class="cov0" title="0">{
+                        return ErrInvalidCode
+                }</span>
+
+                // H. PKCE 検証（S256 only、code_challenge がある場合は code_verifier 必須）
+                <span class="cov8" title="1">if authCodeEntity.CodeChallenge() != "" </span><span class="cov8" title="1">{
+                        if in.CodeVerifier == "" </span><span class="cov8" title="1">{
+                                return ErrInvalidPKCE
+                        }</span>
+                        <span class="cov8" title="1">if authCodeEntity.CodeChallengeMethod() != authcode.CodeChallengeMethodS256 </span><span class="cov8" title="1">{
+                                return ErrInvalidPKCE
+                        }</span>
+                        <span class="cov8" title="1">expectedChallenge := computeCodeChallengeS256(in.CodeVerifier)
+                        if expectedChallenge != authCodeEntity.CodeChallenge() </span><span class="cov8" title="1">{
+                                return ErrInvalidPKCE
+                        }</span>
+                }
+
+                // I. code を使用済みに更新（トランザクション内）
+                <span class="cov8" title="1">rowsAffected, err := u.authCodeRepo.MarkConsumed(txCtx, authCodeEntity.ID())
+                if err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("mark consumed: %w", err)
+                }</span>
+                <span class="cov8" title="1">if rowsAffected != 1 </span><span class="cov8" title="1">{
+                        return ErrInvalidCode
+                }</span>
+
+                // J. トークン発行（session / token_version 取得、JWT、RT 保存）
+                <span class="cov0" title="0">o, err := u.issueTokens(txCtx, authCodeEntity.UserID(), authCodeEntity.ClientID(), authCodeEntity.SessionID(), authCodeEntity.Scopes(), authCodeEntity.Nonce(), authCodeEntity.CreatedAt())
+                if err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov0" title="0">out = o
+                return nil</span>
+        })
+        <span class="cov8" title="1">if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return out, nil</span>
+}
+
+// RefreshInput はリフレッシュトークン交換の入力。
+type RefreshInput struct {
+        RefreshToken string
+        ClientID     uuid.UUID
+}
+
+// Refresh はリフレッシュトークンで新しいトークンを発行する。
+func (u *UseCase) Refresh(ctx context.Context, in *RefreshInput) (*TokenOutput, error) <span class="cov8" title="1">{
+        // 1. リフレッシュトークンを取得
+        tokenHash := hashString(in.RefreshToken)
+        refreshToken, err := u.tokenRepo.FindRefreshTokenByHash(ctx, tokenHash)
+        if err != nil || refreshToken == nil </span><span class="cov0" title="0">{
+                return nil, ErrInvalidRefreshToken
+        }</span>
+
+        <span class="cov8" title="1">if refreshToken.Revoked() </span><span class="cov8" title="1">{
+                return nil, ErrInvalidRefreshToken
+        }</span>
+
+        // 再利用検知（rotated 済み＝盗難の可能性）
+        <span class="cov8" title="1">if refreshToken.Rotated() </span><span class="cov8" title="1">{
+                accessToken, _ := u.tokenRepo.FindAccessTokenByID(ctx, refreshToken.AccessTokenID())
+                if accessToken != nil &amp;&amp; accessToken.SessionID() != uuid.Nil </span><span class="cov8" title="1">{
+                        sid := accessToken.SessionID()
+                        _ = u.sessionRepo.IncrementTokenVersion(ctx, sid)
+                        _ = u.sessionRepo.Revoke(ctx, sid) // 疑わしい＝セッション強制失効
+                }</span>
+                <span class="cov8" title="1">return nil, ErrInvalidRefreshToken</span>
+        }
+
+        <span class="cov8" title="1">if time.Now().After(refreshToken.ExpiresAt()) </span><span class="cov8" title="1">{
+                return nil, ErrTokenExpired
+        }</span>
+
+        // 2. アクセストークンを取得して user_id, client_id, scopes を取得
+        <span class="cov8" title="1">accessToken, err := u.tokenRepo.FindAccessTokenByID(ctx, refreshToken.AccessTokenID())
+        if err != nil || accessToken == nil </span><span class="cov0" title="0">{
+                return nil, ErrInvalidRefreshToken
+        }</span>
+
+        // 3. client_id 一致
+        <span class="cov8" title="1">if accessToken.ClientID() != in.ClientID </span><span class="cov8" title="1">{
+                return nil, ErrInvalidRefreshToken
+        }</span>
+
+        // 4. リフレッシュトークンをローテーション（旧トークン失効）
+        <span class="cov8" title="1">if err := u.tokenRepo.MarkRefreshTokenRotated(ctx, refreshToken.ID()); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("mark refresh token rotated: %w", err)
+        }</span>
+
+        // 5. 旧アクセストークン失効
+        <span class="cov8" title="1">if err := u.tokenRepo.RevokeAccessToken(ctx, accessToken.ID()); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("revoke access token: %w", err)
+        }</span>
+
+        // 6. 新トークン発行（session_id を引き継ぐ、refresh では nonce なし）
+        <span class="cov8" title="1">return u.issueTokens(ctx, accessToken.UserID(), accessToken.ClientID(), accessToken.SessionID(), accessToken.Scopes(), "", time.Now())</span>
+}
+
+// issueTokens はアクセストークン（RS256 JWT）、ID Token、リフレッシュトークンを発行する。
+// nonce が空でない場合のみ ID Token に nonce claim を入れる。authTime は ID Token の auth_time。
+func (u *UseCase) issueTokens(ctx context.Context, userID, clientID, sessionID uuid.UUID, scopes, nonce string, authTime time.Time) (*TokenOutput, error) <span class="cov8" title="1">{
+        gen := u.secureToken
+        if gen == nil </span><span class="cov0" title="0">{
+                gen = generateSecureToken
+        }</span>
+        <span class="cov8" title="1">accessJTI, err := gen()
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("generate access token: %w", err)
+        }</span>
+
+        // token_version を取得（JWT claims に含める）
+        <span class="cov8" title="1">sess, err := u.sessionRepo.FindByID(ctx, sessionID)
+        if err != nil || sess == nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("session not found: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">expiresIn := accessTokenExpirySeconds * time.Second
+        jwtString, err := u.jwtSigner.Sign(userID, sessionID, clientID, sess.TokenVersion(), accessJTI, expiresIn)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("sign jwt: %w", err)
+        }</span>
+
+        // ID Token 発行（openid scope 想定、nonce は authcode から取得）
+        <span class="cov8" title="1">var idToken string
+        if u.issuer != "" </span><span class="cov8" title="1">{
+                idToken, err = u.jwtSigner.SignIDToken(u.issuer, userID.String(), clientID.String(), nonce, authTime, idTokenExpirySeconds*time.Second)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("sign id token: %w", err)
+                }</span>
+        }
+
+        <span class="cov8" title="1">expiresAt := time.Now().Add(expiresIn)
+        accessTokenID, err := u.tokenRepo.SaveAccessToken(ctx, userID, clientID, sessionID, accessJTI, scopes, expiresAt)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("save access token: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">refreshToken, err := gen()
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("generate refresh token: %w", err)
+        }</span>
+        <span class="cov8" title="1">refreshHash := hashString(refreshToken)
+
+        refreshExpiresAt := time.Now().Add(refreshTokenExpiryDays * 24 * time.Hour)
+        _, err = u.tokenRepo.SaveRefreshToken(ctx, accessTokenID, refreshHash, refreshExpiresAt)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("save refresh token: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">return &amp;TokenOutput{
+                AccessToken:  jwtString,
+                TokenType:    "Bearer",
+                ExpiresIn:    accessTokenExpirySeconds,
+                RefreshToken: refreshToken,
+                Scope:        scopes,
+                IDToken:      idToken,
+        }, nil</span>
+}
+
+func hashString(s string) string <span class="cov8" title="1">{
+        h := sha256.Sum256([]byte(s))
+        return hex.EncodeToString(h[:])
+}</span>
+
+func computeCodeChallengeS256(verifier string) string <span class="cov8" title="1">{
+        // S256: BASE64URL(SHA256(verifier))
+        h := sha256.Sum256([]byte(verifier))
+        return base64.URLEncoding.WithPadding(base64.NoPadding).EncodeToString(h[:])
+}</span>
+
+func generateSecureToken() (string, error) <span class="cov8" title="1">{
+        b := make([]byte, 32)
+        if _, err := rand.Read(b); err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">return base64.URLEncoding.WithPadding(base64.NoPadding).EncodeToString(b), nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file38" style="display: none">package userinfo
+
+import (
+        "context"
+        "errors"
+
+        "github.com/google/uuid"
+        "github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/port"
+)
+
+var (
+        ErrInvalidToken = errors.New("invalid access token")
+)
+
+// UseCase はユーザー情報取得のユースケース。
+// Interactor を実装する。
+var _ Interactor = (*UseCase)(nil)
+
+type UseCase struct {
+        tokenRepo   port.TokenRepository
+        userRepo    port.UserRepository
+        sessionRepo port.SessionRepository
+        jwtSigner   port.JWTSigner
+}
+
+// NewUseCase は UseCase を生成する。
+func NewUseCase(tokenRepo port.TokenRepository, userRepo port.UserRepository, sessionRepo port.SessionRepository, jwtSigner port.JWTSigner) *UseCase <span class="cov8" title="1">{
+        return &amp;UseCase{
+                tokenRepo:   tokenRepo,
+                userRepo:    userRepo,
+                sessionRepo: sessionRepo,
+                jwtSigner:   jwtSigner,
+        }
+}</span>
+
+// GetInput はユーザー情報取得の入力。
+type GetInput struct {
+        AccessToken string
+}
+
+// GetOutput はユーザー情報の出力（OIDC UserInfo 形式）。
+type GetOutput struct {
+        Sub            string `json:"sub"`
+        Email          string `json:"email,omitempty"`
+        EmailVerified  bool   `json:"email_verified,omitempty"`
+        PreferredUsername string `json:"preferred_username,omitempty"`
+}
+
+// Get はアクセストークン（JWT）からユーザー情報を取得する。
+func (u *UseCase) Get(ctx context.Context, in *GetInput) (*GetOutput, error) <span class="cov8" title="1">{
+        // 1. JWT 検証（署名・有効期限）
+        claims, err := u.jwtSigner.Verify(in.AccessToken)
+        if err != nil || claims == nil </span><span class="cov8" title="1">{
+                return nil, ErrInvalidToken
+        }</span>
+
+        // 2. access_token の失効チェック（jti で検索）
+        <span class="cov8" title="1">accessToken, err := u.tokenRepo.FindAccessTokenByJTI(ctx, claims.Jti)
+        if err != nil || accessToken == nil </span><span class="cov8" title="1">{
+                return nil, ErrInvalidToken
+        }</span>
+        <span class="cov8" title="1">if accessToken.Revoked() </span><span class="cov8" title="1">{
+                return nil, ErrInvalidToken
+        }</span>
+
+        // 3. Token Version 照合（sid → session → ver）
+        <span class="cov8" title="1">sid, err := uuid.Parse(claims.Sid)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, ErrInvalidToken
+        }</span>
+        <span class="cov8" title="1">sess, err := u.sessionRepo.FindByID(ctx, sid)
+        if err != nil || sess == nil </span><span class="cov0" title="0">{
+                return nil, ErrInvalidToken
+        }</span>
+        <span class="cov8" title="1">if sess.TokenVersion() != claims.Ver </span><span class="cov0" title="0">{
+                return nil, ErrInvalidToken
+        }</span>
+
+        // 4. ユーザー情報取得
+        <span class="cov8" title="1">userID, err := uuid.Parse(claims.Sub)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, ErrInvalidToken
+        }</span>
+        <span class="cov8" title="1">usr, err := u.userRepo.FindByID(ctx, userID)
+        if err != nil || usr == nil </span><span class="cov0" title="0">{
+                return nil, ErrInvalidToken
+        }</span>
+
+        <span class="cov8" title="1">return &amp;GetOutput{
+                Sub:               usr.ID().String(),
+                Email:             usr.Email(),
+                EmailVerified:     usr.EmailVerified(),
+                PreferredUsername: usr.Username(),
+        }, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file39" style="display: none">// クライアントシークレットを bcrypt ハッシュ化するユーティリティ。
+// 使用例: go run ./scripts/hash_client_secret.go your-secret
+package main
+
+import (
+        "fmt"
+        "os"
+
+        "golang.org/x/crypto/bcrypt"
+)
+
+func main() <span class="cov0" title="0">{
+        if len(os.Args) &lt; 2 </span><span class="cov0" title="0">{
+                fmt.Fprintln(os.Stderr, "usage: go run hash_client_secret.go &lt;client_secret&gt;")
+                os.Exit(1)
+        }</span>
+        <span class="cov0" title="0">secret := os.Args[1]
+        hash, err := bcrypt.GenerateFromPassword([]byte(secret), bcrypt.DefaultCost)
+        if err != nil </span><span class="cov0" title="0">{
+                fmt.Fprintf(os.Stderr, "bcrypt error: %v\n", err)
+                os.Exit(1)
+        }</span>
+        <span class="cov0" title="0">fmt.Println(string(hash))</span>
+}
+</pre>
+		
+		<pre class="file" id="file40" style="display: none">// hash_user_password はユーザーのパスワードを bcrypt でハッシュする。
+// 使い方: go run ./scripts/hash_user_password &lt;password&gt;
+package main
+
+import (
+        "fmt"
+        "os"
+
+        "golang.org/x/crypto/bcrypt"
+)
+
+func main() <span class="cov0" title="0">{
+        if len(os.Args) &lt; 2 </span><span class="cov0" title="0">{
+                fmt.Fprintln(os.Stderr, "Usage: go run ./scripts/hash_user_password &lt;password&gt;")
+                os.Exit(1)
+        }</span>
+        <span class="cov0" title="0">password := os.Args[1]
+        hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+        if err != nil </span><span class="cov0" title="0">{
+                fmt.Fprintln(os.Stderr, err)
+                os.Exit(1)
+        }</span>
+        <span class="cov0" title="0">fmt.Println(string(hash))</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

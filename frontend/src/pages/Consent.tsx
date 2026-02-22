@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-
-const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8080";
+import { apiBase } from "../lib/api";
 
 /**
  * OAuth 同意画面。prompt=consent 時に表示。
@@ -15,11 +14,11 @@ export default function Consent() {
   const scopes = useMemo(() => scope.split(/\s+/).filter(Boolean), [scope]);
 
   const onApprove = () => {
-    window.location.href = `${API_BASE}/oauth/authorize/continue?login_challenge=${loginChallenge}&approved=true`;
+    window.location.href = `${apiBase}/oauth/authorize/continue?login_challenge=${loginChallenge}&approved=true`;
   };
 
   const onDeny = () => {
-    window.location.href = `${API_BASE}/oauth/authorize/deny?login_challenge=${loginChallenge}`;
+    window.location.href = `${apiBase}/oauth/authorize/deny?login_challenge=${loginChallenge}`;
   };
 
   if (!loginChallenge) {
@@ -40,7 +39,7 @@ export default function Consent() {
         ))}
       </ul>
       <div style={{ marginTop: 24, display: "flex", gap: 12 }}>
-        <button type="button" onClick={onApprove}>
+        <button data-testid="consent-approve" type="button" onClick={onApprove}>
           許可する
         </button>
         <button type="button" onClick={onDeny} style={{ background: "#ccc" }}>

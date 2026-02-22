@@ -1,0 +1,13 @@
+# 本番用オーバーライド
+# 使用: docker compose -f docker-compose.yml -f compose.prod.yml up -d
+
+services:
+  auth-server:
+    environment:
+      APP_ENV: production
+      # 本番では OAUTH_ISSUER を https にすること（Discovery / ID Token の iss 整合）
+      OAUTH_ISSUER: https://auth.example.com
+      SERVER_BASE_URL: https://auth.example.com
+      LOGIN_URL: https://app.example.com/login
+      CORS_ORIGIN: https://app.example.com
+      CONSENT_URL: https://app.example.com/consent
