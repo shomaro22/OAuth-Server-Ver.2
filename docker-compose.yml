@@ -9,16 +9,24 @@ services:
     ports:
       - "8080:8080"
     environment:
-      APP_ENV: local
-      SERVER_PORT: 8080
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USER: auth_user
-      DB_PASSWORD: auth_pass
-      DB_NAME: auth_db
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      JWT_SECRET: super-secret-key
+      APP_ENV: ${APP_ENV:-local}
+      SERVER_PORT: ${SERVER_PORT:-8080}
+
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USER: ${DB_USER:-auth_user}
+      DB_PASSWORD: ${DB_PASSWORD:-auth_pass}
+      DB_NAME: ${DB_NAME:-auth_db}
+
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+
+      # RS256なので共有シークレットは不要
+      # JWT_SECRET: ${JWT_SECRET}
+
+      # 将来の本番想定: 鍵を外部注入できるようにする
+      JWT_KEY_ID: ${JWT_KEY_ID:-default}
+      JWT_PRIVATE_KEY_PATH: ${JWT_PRIVATE_KEY_PATH:-}
     depends_on:
       - postgres
       - redis
@@ -30,9 +38,9 @@ services:
     image: postgres:16
     container_name: auth-postgres
     environment:
-      POSTGRES_USER: auth_user
-      POSTGRES_PASSWORD: auth_pass
-      POSTGRES_DB: auth_db
+      POSTGRES_USER: ${DB_USER:-auth_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-auth_pass}
+      POSTGRES_DB: ${DB_NAME:-auth_db}
     ports:
       - "5432:5432"
     volumes:
@@ -52,7 +60,6 @@ services:
       - auth-network
     restart: unless-stopped
 
-  # 負荷試験用
   k6:
     image: grafana/k6:latest
     container_name: auth-k6

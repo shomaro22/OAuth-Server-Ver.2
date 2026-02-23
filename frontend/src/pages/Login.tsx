@@ -1,10 +1,17 @@
 import { useMemo, useState } from "react";
-
-const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8080";
+import { useSearchParams } from "react-router-dom";
+import { apiFetch } from "../lib/api";
+import type { ApiError } from "../lib/api";
+import type { LoginResponse } from "../types/oidc";
+import { useAuth } from "../features/auth/AuthContext";
 
 export default function Login() {
-  const params = new URLSearchParams(window.location.search);
-  const loginChallenge = useMemo(() => params.get("login_challenge") ?? "", []);
+  const [searchParams] = useSearchParams();
+  const loginChallenge = useMemo(
+    () => searchParams.get("login_challenge") ?? "",
+    [searchParams]
+  );
+  const { setAuthenticated } = useAuth();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -15,31 +22,29 @@ export default function Login() {
     setErr("");
 
     if (!loginChallenge) {
-      setErr("login_challenge がありません。/oauth/authorize から来てください。");
+      setErr(
+        "login_challenge がありません。/oauth/authorize から来てください。"
+      );
       return;
     }
 
-    const res = await fetch(`${API_BASE}/sessions/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include", // ★これが必須（Cookie受け取り）
-      body: JSON.stringify({
-        login_challenge: loginChallenge,
-        username,
-        password,
-      }),
-    });
+    try {
+      const data = await apiFetch<LoginResponse>("/sessions/login", {
+        method: "POST",
+        body: JSON.stringify({
+          login_challenge: loginChallenge,
+          username,
+          password,
+        }),
+      });
 
-    if (!res.ok) {
-      const text = await res.text().catch(() => "");
-      setErr(`ログイン失敗: ${res.status} ${text}`);
-      return;
+      setAuthenticated(true);
+      // next_url は絶対URL（SERVER_BASE_URL + path）なのでそのまま遷移
+      window.location.href = data.next_url;
+    } catch (e) {
+      const apiErr = e as ApiError;
+      setErr(`ログイン失敗: ${apiErr.status} ${apiErr.message}`);
     }
-
-    const data = (await res.json()) as { next_url: string };
-
-    // next_url は絶対URL（SERVER_BASE_URL + path）なのでそのまま遷移
-    window.location.href = data.next_url;
   };
 
   return (
@@ -51,6 +56,7 @@ export default function Login() {
           <label>Username</label>
           <br />
           <input
+            data-testid="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
@@ -59,15 +65,24 @@ export default function Login() {
           <label>Password</label>
           <br />
           <input
+            data-testid="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 
-        {err && <p style={{ marginTop: 12 }}>{err}</p>}
+        {err && (
+          <p data-testid="login-error" style={{ marginTop: 12 }}>
+            {err}
+          </p>
+        )}
 
-        <button style={{ marginTop: 16 }} type="submit">
+        <button
+          data-testid="login-submit"
+          style={{ marginTop: 16 }}
+          type="submit"
+        >
           Login
         </button>
       </form>

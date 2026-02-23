@@ -74,3 +74,27 @@ func TestAuthorizationCode_IsValid(t *testing.T) {
 		t.Error("IsValid: expected false after Consume")
 	}
 }
+
+func TestReconstruct(t *testing.T) {
+	id := uuid.New()
+	uid := uuid.New()
+	cid := uuid.New()
+	sid := uuid.New()
+	expiresAt := time.Now().Add(time.Hour)
+	createdAt := time.Now()
+
+	code := Reconstruct(id, uid, cid, sid, "hash", "challenge", CodeChallengeMethodS256, "https://example.com/cb", "openid", "n", expiresAt, true, createdAt)
+
+	if code.ID() != id || code.UserID() != uid || code.ClientID() != cid || code.SessionID() != sid {
+		t.Error("Reconstruct: IDs mismatch")
+	}
+	if code.CodeHash() != "hash" || code.CodeChallenge() != "challenge" || code.CodeChallengeMethod() != CodeChallengeMethodS256 {
+		t.Error("Reconstruct: PKCE fields mismatch")
+	}
+	if code.RedirectURI() != "https://example.com/cb" || code.Scopes() != "openid" || code.Nonce() != "n" {
+		t.Error("Reconstruct: URI/scope/nonce mismatch")
+	}
+	if !code.IsConsumed() {
+		t.Error("Reconstruct: consumed should be true")
+	}
+}

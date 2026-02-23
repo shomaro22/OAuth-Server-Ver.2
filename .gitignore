@@ -1,4 +1,4 @@
-# Environment
+# Environment（提出時は .env を消し .env.example を参照）
 .env
 .env.local
 .env.*.local
@@ -8,10 +8,17 @@
 
 # OS
 .DS_Store
+**/.DS_Store
 
 # Dependencies / build
 node_modules/
+**/node_modules/
 frontend/dist/
 
 # E2E で curl が作成する cookie ファイル
 cookies.txt
+**/cookies.txt
+
+# Playwright
+frontend/test-results/
+frontend/playwright-report/

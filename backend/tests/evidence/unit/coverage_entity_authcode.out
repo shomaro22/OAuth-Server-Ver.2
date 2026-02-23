@@ -1,0 +1,19 @@
+mode: set
+github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go:43.22,59.2 1 1
+github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go:62.44,64.2 1 0
+github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go:67.48,69.2 1 0
+github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go:72.50,74.2 1 0
+github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go:77.51,79.2 1 0
+github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go:82.47,84.2 1 0
+github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go:87.52,89.2 1 0
+github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go:92.58,94.2 1 0
+github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go:97.50,99.2 1 0
+github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go:102.45,104.2 1 0
+github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go:107.44,109.2 1 0
+github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go:112.51,114.2 1 0
+github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go:117.51,119.2 1 0
+github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go:122.59,124.2 1 1
+github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go:127.47,129.2 1 1
+github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go:132.39,134.2 1 1
+github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go:138.57,140.2 1 1
+github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/entity/authcode/authorization_code.go:157.22,173.2 1 0

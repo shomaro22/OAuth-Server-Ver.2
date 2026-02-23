@@ -3,6 +3,7 @@ package authorize
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
 	"time"
 
@@ -57,18 +58,169 @@ func (m *mockClientRepo) GetAllowedScopes(ctx context.Context, clientID uuid.UUI
 	return []string{"openid", "profile", "email"}, nil
 }
 
-type mockAuthReqRepo struct{}
+type mockAuthReqRepo struct {
+	getReq    *port.StoredAuthorizationRequest
+	getErr    error
+	deleteErr error
+}
 
 func (m *mockAuthReqRepo) Save(ctx context.Context, challenge string, req *port.StoredAuthorizationRequest, ttl time.Duration) error {
 	return nil
 }
 
 func (m *mockAuthReqRepo) Get(ctx context.Context, challenge string) (*port.StoredAuthorizationRequest, error) {
-	return nil, nil
+	return m.getReq, m.getErr
 }
 
 func (m *mockAuthReqRepo) Delete(ctx context.Context, challenge string) error {
-	return nil
+	return m.deleteErr
+}
+
+func TestUseCase_ValidateAuthorizeRequest_InvalidRedirectURI(t *testing.T) {
+	uc := NewUseCase(&mockAuthCodeRepo{}, &mockClientRepo{valid: false}, &mockAuthReqRepo{})
+
+	err := uc.ValidateAuthorizeRequest(context.Background(), &ValidateAuthorizeInput{
+		ClientID:            uuid.New(),
+		RedirectURI:         "https://evil.com/cb",
+		ResponseType:        "code",
+		CodeChallenge:       "x",
+		CodeChallengeMethod: authcode.CodeChallengeMethodS256,
+		State:               "s",
+	})
+	if err != ErrInvalidRedirectURI {
+		t.Errorf("expected ErrInvalidRedirectURI, got %v", err)
+	}
+}
+
+func TestUseCase_ValidateAuthorizeRequest_InvalidResponseType(t *testing.T) {
+	uc := NewUseCase(&mockAuthCodeRepo{}, &mockClientRepo{valid: true}, &mockAuthReqRepo{})
+
+	err := uc.ValidateAuthorizeRequest(context.Background(), &ValidateAuthorizeInput{
+		ClientID:            uuid.New(),
+		RedirectURI:         "https://example.com/cb",
+		ResponseType:        "token",
+		CodeChallenge:       "x",
+		CodeChallengeMethod: authcode.CodeChallengeMethodS256,
+		State:               "s",
+	})
+	if err != ErrInvalidResponseType {
+		t.Errorf("expected ErrInvalidResponseType, got %v", err)
+	}
+}
+
+func TestUseCase_ValidateAuthorizeRequest_Success(t *testing.T) {
+	uc := NewUseCase(&mockAuthCodeRepo{}, &mockClientRepo{valid: true}, &mockAuthReqRepo{})
+
+	err := uc.ValidateAuthorizeRequest(context.Background(), &ValidateAuthorizeInput{
+		ClientID:            uuid.New(),
+		RedirectURI:         "https://example.com/cb",
+		ResponseType:        "code",
+		CodeChallenge:       "x",
+		CodeChallengeMethod: authcode.CodeChallengeMethodS256,
+		State:               "s",
+	})
+	if err != nil {
+		t.Errorf("expected nil, got %v", err)
+	}
+}
+
+func TestUseCase_CreateLoginChallenge_Success(t *testing.T) {
+	uc := NewUseCase(&mockAuthCodeRepo{}, &mockClientRepo{}, &mockAuthReqRepo{})
+
+	challenge, redirectURL, err := uc.CreateLoginChallenge(context.Background(), &StoredAuthParams{
+		ClientID:            "client-uuid",
+		RedirectURI:         "https://example.com/cb",
+		ResponseType:        "code",
+		Scope:                "openid",
+		State:                "s",
+		LoginURL:             "http://localhost:5173/login",
+	})
+	if err != nil {
+		t.Fatalf("CreateLoginChallenge: %v", err)
+	}
+	if challenge == "" {
+		t.Error("challenge is empty")
+	}
+	if redirectURL == "" || !strings.Contains(redirectURL, "login_challenge=") {
+		t.Errorf("redirectURL invalid: %s", redirectURL)
+	}
+}
+
+func TestUseCase_GetChallenge_Success(t *testing.T) {
+	req := &port.StoredAuthorizationRequest{
+		ClientID: "c1", RedirectURI: "https://example.com/cb", State: "s",
+	}
+	uc := NewUseCase(&mockAuthCodeRepo{}, &mockClientRepo{}, &mockAuthReqRepo{getReq: req})
+
+	got, err := uc.GetChallenge(context.Background(), "ch-1")
+	if err != nil {
+		t.Fatalf("GetChallenge: %v", err)
+	}
+	if got.ClientID != "c1" || got.RedirectURI != "https://example.com/cb" || got.State != "s" {
+		t.Errorf("GetChallenge: output mismatch %+v", got)
+	}
+}
+
+func TestUseCase_GetChallenge_NotFound(t *testing.T) {
+	uc := NewUseCase(&mockAuthCodeRepo{}, &mockClientRepo{}, &mockAuthReqRepo{getReq: nil})
+
+	_, err := uc.GetChallenge(context.Background(), "unknown")
+	if err != ErrChallengeNotFound {
+		t.Errorf("expected ErrChallengeNotFound, got %v", err)
+	}
+}
+
+func TestUseCase_ConsumeChallenge_Success(t *testing.T) {
+	uc := NewUseCase(&mockAuthCodeRepo{}, &mockClientRepo{}, &mockAuthReqRepo{})
+
+	err := uc.ConsumeChallenge(context.Background(), "ch-1")
+	if err != nil {
+		t.Errorf("ConsumeChallenge: %v", err)
+	}
+}
+
+func TestUseCase_ConsumeChallenge_DeleteError(t *testing.T) {
+	uc := NewUseCase(&mockAuthCodeRepo{}, &mockClientRepo{}, &mockAuthReqRepo{deleteErr: errors.New("redis down")})
+
+	err := uc.ConsumeChallenge(context.Background(), "ch-1")
+	if err == nil {
+		t.Error("expected error")
+	}
+}
+
+func TestUseCase_GetAndConsumeChallenge_NotFound(t *testing.T) {
+	uc := NewUseCase(&mockAuthCodeRepo{}, &mockClientRepo{}, &mockAuthReqRepo{getReq: nil})
+
+	_, err := uc.GetAndConsumeChallenge(context.Background(), "unknown")
+	if err != ErrChallengeNotFound {
+		t.Errorf("expected ErrChallengeNotFound, got %v", err)
+	}
+}
+
+func TestUseCase_GetAndConsumeChallenge_DeleteError(t *testing.T) {
+	req := &port.StoredAuthorizationRequest{ClientID: "c", RedirectURI: "https://example.com/cb"}
+	uc := NewUseCase(&mockAuthCodeRepo{}, &mockClientRepo{}, &mockAuthReqRepo{getReq: req, deleteErr: errors.New("redis down")})
+
+	_, err := uc.GetAndConsumeChallenge(context.Background(), "ch-1")
+	if err == nil {
+		t.Error("expected error")
+	}
+}
+
+func TestUseCase_GetAndConsumeChallenge_Success(t *testing.T) {
+	req := &port.StoredAuthorizationRequest{
+		ClientID: "client-1", RedirectURI: "https://example.com/cb",
+		CodeChallenge: "ch", CodeChallengeMethod: "S256", State: "s",
+	}
+	uc := NewUseCase(&mockAuthCodeRepo{}, &mockClientRepo{}, &mockAuthReqRepo{getReq: req})
+
+	out, err := uc.GetAndConsumeChallenge(context.Background(), "ch-123")
+	if err != nil {
+		t.Fatalf("GetAndConsumeChallenge: %v", err)
+	}
+	if out.ClientID != "client-1" || out.RedirectURI != "https://example.com/cb" || out.CodeChallenge != "ch" {
+		t.Errorf("output mismatch: %+v", out)
+	}
 }
 
 func TestUseCase_IssueCode_Success(t *testing.T) {

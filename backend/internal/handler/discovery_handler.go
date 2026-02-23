@@ -41,8 +41,8 @@ func (h *DiscoveryHandler) Get(c echo.Context) error {
 		// クライアント認証（PKCE 前提 + confidential 対応）
 		"token_endpoint_auth_methods_supported": []string{"none", "client_secret_basic"},
 
-		// スコープ・クレーム（実装と一致。UserInfo は sub, email, email_verified, preferred_username を返す）
-		"scopes_supported": []string{"openid", "profile"},
+		// スコープ・クレーム（実装と一致。UserInfo は常に sub, email, email_verified, preferred_username を返す）
+		"scopes_supported": []string{"openid", "profile", "email"},
 		"claims_supported": []string{"sub", "iss", "aud", "exp", "iat", "auth_time", "nonce", "sid", "email", "email_verified", "preferred_username"},
 	})
 }
