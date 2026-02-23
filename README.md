@@ -1,35 +1,46 @@
-# OAuth 2.0 / OIDC 認可サーバー
+# OAuth 2.0 / OpenID Connect 認可サーバー
+
+## 概要
 
 OAuth 2.0 認可コードフロー + PKCE + OpenID Connect を実装した認可サーバー。  
-Backend（Go + Echo）と Frontend（React + Vite）の分離構成。
+Frontend（React）と Backend（Go）を分離し、PostgreSQL と Redis で状態を保持するステートレス構成。
 
-## 構成
+## 技術スタック
 
-| ディレクトリ | 役割 |
-|-------------|------|
-| `backend/` | 認可サーバー API（Go, Echo, PostgreSQL, Redis） |
-| `frontend/` | ログイン・同意 UI（React, Vite） |
-| `docker-compose.yml` | 開発・本番共通の基盤（Postgres, Redis, auth-server） |
-| `compose.prod.yml` | 本番用オーバーライド |
+| 種別 | 技術 |
+|------|------|
+| Frontend | React, TypeScript, Vite, React Router |
+| Backend | Go, Echo |
+| DB | PostgreSQL |
+| Cache | Redis |
+| JWT | RS256（RSA 秘密鍵） |
 
-## ステートレスバックエンド
+## アーキテクチャ
 
-**アプリケーションサーバーは水平スケール可能です。**  
-セッション・トークン・認可リクエストなどの状態はすべて **PostgreSQL / Redis** に保持しており、プロセス内に状態を持ちません。
-
-## 環境変数
-
-提出物には `.env` 実体を含めません。`.env.example` をコピーして `.env` を作成してください。
-
-```bash
-cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env
-# 必要に応じて編集
+```
+Frontend (5173) ──HTTP/API──► Backend (8080) ──► PostgreSQL
+       │                              │
+       └── credentials: include ──────┴──► Redis
 ```
 
-## 起動手順（1本化）
+| レイヤー | 責務 |
+|----------|------|
+| Frontend | ログイン・同意 UI（/login, /consent, /callback） |
+| Backend | 認可 API、セッション、Discovery、JWKS、UserInfo |
+| PostgreSQL | ユーザー、クライアント、セッション、トークン |
+| Redis | 認可リクエスト（login_challenge）の一時保存 |
 
-### 開発（DEV）
+## セキュリティ設計
+
+| 項目 | 方針 |
+|------|------|
+| JWT | RS256、JWKS で公開鍵配布 |
+| PKCE | S256 必須 |
+| セッション | Cookie（HttpOnly, SameSite=Lax） |
+| CORS | 許可 Origin を env で制御 |
+| ステートレス | 状態は Postgres/Redis に保持、水平スケール可能 |
+
+## 実行方法（最短手順）
 
 ```bash
 # 1. DB・Redis 起動
@@ -49,46 +60,61 @@ cd backend && go run ./cmd/server
 cd frontend && npm install && npm run dev
 ```
 
-- Backend: http://localhost:8080  
-- Frontend: http://localhost:5173  
+- Backend: http://localhost:8080
+- Frontend: http://localhost:5173
 
-### 本番（PROD）Docker Compose
+## 環境変数
+
+`.env.example` をコピーして `.env` を作成する。
 
 ```bash
-# 本番用 compose を重ねて起動（OAUTH_ISSUER 等を本番値に）
-docker compose -f docker-compose.yml -f compose.prod.yml up -d
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
 ```
 
-`compose.prod.yml` で本番用の環境変数（`OAUTH_ISSUER` を https に等）を上書きします。  
-開発時は `docker compose up -d` のみで OK。
-
-### 全サービス Docker 起動（開発用）
+## テスト構成
 
 ```bash
-# Backend も Docker で起動する場合
-docker compose up -d
-# Backend: 8080, Postgres: 5432, Redis: 6379
-# Frontend は別途 npm run dev
-```
-
-## テスト・証跡
-
-```bash
-# backend + frontend 起動後、プロジェクトルートから
+# backend + frontend 起動後
 ./scripts/run_all_tests.sh
 ```
 
-証跡は `backend/tests/evidence/` に保存。提出 zip に含めます。
+| 種別 | 証跡パス |
+|------|----------|
+| Unit | `backend/tests/evidence/unit/` |
+| Integration | `backend/tests/evidence/integration/` |
+| E2E | `backend/tests/evidence/e2e/` |
+| Load (k6) | `backend/tests/evidence/load/` |
+| Security | `backend/tests/evidence/security/` |
 
-## 提出用 zip
+## OpenAPI
 
-```bash
-./scripts/create_submission_zip.sh
-# → submission.zip（node_modules / .env / .DS_Store 除外）
+- **ファイル**: [docs/openapi.yaml](docs/openapi.yaml)
+- Swagger Editor で開いて確認可能
+
+## ディレクトリ構成
+
+```
+backend/    認可 API（Go, Echo）
+frontend/   ログイン・同意 UI（React, Vite）
+docs/       OpenAPI 仕様
+scripts/    run_all_tests.sh, create_submission_zip.sh
+k6/         負荷テスト
 ```
 
-## 詳細
+## 提出物
 
-- **Backend**: [backend/README.md](backend/README.md)
-- **Frontend**: [frontend/README.md](frontend/README.md)
-- **提出チェックリスト**: [backend/docs/SUBMISSION_CHECKLIST.md](backend/docs/SUBMISSION_CHECKLIST.md)
+**提出 zip 名: `submission.zip`**
+
+```bash
+./scripts/run_all_tests.sh
+./scripts/create_submission_zip.sh
+# → submission.zip を提出
+```
+
+除外: `.env`, `node_modules/`, `frontend/dist/`, `frontend/test-results/`, `.DS_Store`, `__MACOSX`, `cookies.txt`
+
+---
+
+- [backend/README.md](backend/README.md) - 起動・マイグレーション・seed 詳細
+- [frontend/README.md](frontend/README.md) - ルーティング・テスト詳細

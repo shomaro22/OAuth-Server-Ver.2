@@ -24,7 +24,7 @@ export default function Consent() {
   if (!loginChallenge) {
     return (
       <div style={{ maxWidth: 420, margin: "40px auto" }}>
-        <p>login_challenge がありません。</p>
+        <p data-testid="consent-challenge-error">login_challenge がありません。</p>
       </div>
     );
   }

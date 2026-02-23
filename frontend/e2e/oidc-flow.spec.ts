@@ -29,6 +29,7 @@ test.describe("OIDC flow", () => {
     await page.goto(authUrl.toString(), { waitUntil: "networkidle" });
 
     await expect(page).toHaveURL(/\/login/, { timeout: 15000 });
+    await expect(page.getByRole("heading", { name: "Login" })).toBeVisible();
     await expect(page.getByTestId("username")).toBeVisible({ timeout: 10000 });
     await page.getByTestId("username").fill("testuser");
     await page.getByTestId("password").fill("password123");
@@ -36,12 +37,14 @@ test.describe("OIDC flow", () => {
 
     await page.waitForURL(/\/consent|\/callback/, { timeout: 15000 });
     if (page.url().includes("/consent")) {
+      await expect(page.getByRole("heading", { name: "アプリの許可" })).toBeVisible();
       await expect(page.getByTestId("consent-approve")).toBeVisible({ timeout: 5000 });
       await page.getByTestId("consent-approve").click();
       await page.waitForURL(/\/callback/, { timeout: 15000 });
     }
 
     await expect(page).toHaveURL(/\/callback/);
+    await expect(page.getByText(/認可成功/)).toBeVisible();
     const url = new URL(page.url());
     const code = url.searchParams.get("code");
     expect(code).toBeTruthy();

@@ -72,7 +72,11 @@ export default function Login() {
           />
         </div>
 
-        {err && <p style={{ marginTop: 12 }}>{err}</p>}
+        {err && (
+          <p data-testid="login-error" style={{ marginTop: 12 }}>
+            {err}
+          </p>
+        )}
 
         <button
           data-testid="login-submit"

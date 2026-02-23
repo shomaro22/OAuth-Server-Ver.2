@@ -1,35 +1,46 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import Login from "./pages/Login";
+import Consent from "./pages/Consent";
+import Callback from "./pages/Callback";
+import { RequireAuth } from "./features/auth/RequireAuth";
 
-function App() {
-  const [count, setCount] = useState(0);
-
+function Home() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div style={{ maxWidth: 560, margin: "40px auto", padding: 24 }}>
+      <h1>OAuth Server Frontend</h1>
+      <p>authorize から開始してください。</p>
+      <ul>
+        <li>
+          <a href="/login">/login</a>
+        </li>
+        <li>
+          <a href="/consent">/consent</a>
+        </li>
+        <li>
+          <a href="/callback">/callback</a>
+        </li>
+      </ul>
+    </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/consent"
+          element={
+            <RequireAuth>
+              <Consent />
+            </RequireAuth>
+          }
+        />
+        <Route path="/callback" element={<Callback />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}

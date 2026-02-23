@@ -49,4 +49,5 @@ cd backend
 - [ ] node_modules/ を含めない
 - [ ] .env を含めない（.env.example を置き、README で手順を記載）
 - [ ] frontend/dist/ を含めない（README で再現手順を記載）
-- [ ] .DS_Store / cookies.txt を含めない
+- [ ] frontend/test-results/, frontend/playwright-report/ を含めない
+- [ ] .DS_Store / cookies.txt / __MACOSX を含めない

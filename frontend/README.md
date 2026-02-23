@@ -1,40 +1,19 @@
-# OAuth 認可サーバー Frontend
+# Frontend
 
-React + TypeScript + Vite によるログイン・同意 UI。
-
-## 構成
-
-- **API 層**: `src/lib/api.ts`（`apiFetch` で通信層分離・エラーハンドリング）
-- **状態管理**: `src/features/auth/AuthContext.tsx`（認証状態）
-- **ルートガード**: `src/features/auth/RequireAuth.tsx`（`/consent` はログイン済み必須）
-- **型定義**: `src/types/oidc.ts`（API レスポンス型、any 禁止）
-
-## セットアップ
-
-```bash
-cp .env.example .env
-# VITE_API_BASE を必要に応じて編集
-npm install
-```
+ログイン・同意 UI。React Router で `/`, `/login`, `/consent`, `/callback` を接続。AuthContext で認証状態を管理し、RequireAuth で `/consent` を保護。
 
 ## 起動
 
 ```bash
+cp .env.example .env
+npm install
 npm run dev
 # http://localhost:5173
 ```
 
-## Lint / Format
+## テスト
 
 ```bash
-npm run lint
-npm run format
-npm run format:check
-```
-
-## E2E
-
-```bash
-npm run test:e2e
-# 初回: npx playwright install chromium
+npm run test:run    # Unit（Vitest）
+npm run test:e2e   # E2E（Playwright、初回は npx playwright install chromium）
 ```

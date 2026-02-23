@@ -8,7 +8,7 @@ cd "$(dirname "$0")/.."
 OUT="submission.zip"
 
 echo "=== 提出用 zip 作成 ==="
-echo "除外: node_modules/, .env, .DS_Store, cookies.txt, frontend/dist/"
+echo "除外: node_modules/, .env, .DS_Store, cookies.txt, frontend/dist/, frontend/test-results/, frontend/playwright-report/"
 echo ""
 
 # 既存の zip を削除
@@ -25,6 +25,8 @@ zip -r "$OUT" . \
   -x "*.DS_Store" \
   -x "*cookies.txt" \
   -x "*frontend/dist*" \
+  -x "*frontend/test-results*" \
+  -x "*frontend/playwright-report*" \
   -x "*.zip" \
   -x "*__MACOSX*" \
   -x "*.env.local" \

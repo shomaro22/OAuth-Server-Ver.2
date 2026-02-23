@@ -1,0 +1,489 @@
+openapi: 3.0.3
+info:
+  title: OAuth2.1 / OpenID Connect Authorization Server API
+  version: "1.0.0"
+  description: |
+    OAuth2.1 + OIDC minimal endpoints for Authorization Code Flow (PKCE S256) with RS256-signed JWT.
+    - Authorization endpoint redirects (302) to Login UI when unauthenticated, or back to redirect_uri with code.
+    - Refresh token is cookie-only (HttpOnly/Secure). Not returned in JSON body.
+
+servers:
+  - url: http://localhost:8080
+    description: local
+
+tags:
+  - name: System
+  - name: OIDC
+  - name: OAuth
+  - name: Auth
+
+paths:
+  /health:
+    get:
+      tags: [System]
+      summary: Health check
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+
+  /.well-known/openid-configuration:
+    get:
+      tags: [OIDC]
+      summary: OIDC Discovery
+      responses:
+        "200":
+          description: Discovery document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OIDCDiscovery"
+
+  /jwks:
+    get:
+      tags: [OIDC]
+      summary: JWKS endpoint
+      responses:
+        "200":
+          description: JWKS (public keys)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JWKS"
+
+  /oauth/authorize:
+    get:
+      tags: [OAuth]
+      summary: Authorization endpoint (Authorization Code + PKCE)
+      description: |
+        If user is not authenticated, redirects to Login UI with a login_challenge (or similar).
+        If authenticated and consented, redirects back to redirect_uri with code and state.
+      parameters:
+        - in: query
+          name: response_type
+          required: true
+          schema:
+            type: string
+            enum: [code]
+        - in: query
+          name: client_id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: redirect_uri
+          required: true
+          schema:
+            type: string
+            format: uri
+        - in: query
+          name: scope
+          required: true
+          schema:
+            type: string
+            example: "openid profile"
+        - in: query
+          name: state
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: code_challenge
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: code_challenge_method
+          required: false
+          schema:
+            type: string
+            enum: [S256]
+            default: S256
+        - in: query
+          name: nonce
+          required: false
+          schema:
+            type: string
+      responses:
+        "302":
+          description: |
+            Redirect to Login UI (unauthenticated) OR redirect back to redirect_uri with authorization code.
+          headers:
+            Location:
+              description: Redirect destination
+              schema:
+                type: string
+        "400":
+          description: invalid_request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+
+  /oauth/authorize/continue:
+    get:
+      tags: [OAuth]
+      summary: Continue authorization (after login)
+      description: |
+        Called after successful login to continue authorization using a challenge (e.g., login_challenge).
+        Redirects to consent UI or directly back to redirect_uri with code.
+      parameters:
+        - in: query
+          name: login_challenge
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: state
+          required: false
+          schema:
+            type: string
+      responses:
+        "302":
+          description: Redirect to Consent UI or redirect_uri with code
+          headers:
+            Location:
+              schema:
+                type: string
+        "400":
+          description: invalid_request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+
+  /oauth/authorize/deny:
+    get:
+      tags: [OAuth]
+      summary: Deny authorization (consent denied)
+      description: Redirects back to redirect_uri with error=access_denied (and state if provided).
+      parameters:
+        - in: query
+          name: login_challenge
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: state
+          required: false
+          schema:
+            type: string
+      responses:
+        "302":
+          description: Redirect back to redirect_uri with access_denied
+          headers:
+            Location:
+              schema:
+                type: string
+        "400":
+          description: invalid_request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+
+  /login:
+    post:
+      tags: [Auth]
+      summary: Login
+      description: |
+        Validates credentials and creates/updates a session.
+        Typically used by Login UI. On success, sets a session cookie or returns a redirect instruction depending on your implementation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          description: invalid_credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+        "400":
+          description: validation_error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+
+  /logout:
+    post:
+      tags: [Auth]
+      summary: Logout
+      description: Revokes the current session and clears cookies if applicable.
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+
+  /oauth/token:
+    post:
+      tags: [OAuth]
+      summary: Token endpoint
+      description: |
+        - grant_type=authorization_code: exchanges code + code_verifier for tokens.
+        - grant_type=refresh_token: reads refresh token from HttpOnly cookie and rotates it.
+        Refresh token is cookie-only and is not returned in JSON.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/TokenRequest"
+      responses:
+        "200":
+          description: Token response (refresh token is set as HttpOnly cookie when issued/rotated)
+          headers:
+            Set-Cookie:
+              description: HttpOnly Secure refresh token cookie (rotation)
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+        "400":
+          description: invalid_request / invalid_grant
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+        "401":
+          description: invalid_client (e.g., bad client_secret for confidential clients)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+
+  /userinfo:
+    get:
+      tags: [OIDC]
+      summary: UserInfo endpoint
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: User claims
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserInfo"
+        "401":
+          description: Unauthorized (missing/invalid bearer token)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    OAuthError:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          description: OAuth2 error code
+          example: invalid_request
+        error_description:
+          type: string
+          nullable: true
+          example: "missing required parameter: redirect_uri"
+
+    OIDCDiscovery:
+      type: object
+      required:
+        - issuer
+        - authorization_endpoint
+        - token_endpoint
+        - jwks_uri
+        - response_types_supported
+        - subject_types_supported
+        - id_token_signing_alg_values_supported
+      properties:
+        issuer:
+          type: string
+          example: "http://localhost:8080"
+        authorization_endpoint:
+          type: string
+          example: "http://localhost:8080/oauth/authorize"
+        token_endpoint:
+          type: string
+          example: "http://localhost:8080/oauth/token"
+        jwks_uri:
+          type: string
+          example: "http://localhost:8080/jwks"
+        userinfo_endpoint:
+          type: string
+          nullable: true
+          example: "http://localhost:8080/userinfo"
+        response_types_supported:
+          type: array
+          items:
+            type: string
+          example: ["code"]
+        subject_types_supported:
+          type: array
+          items:
+            type: string
+          example: ["public"]
+        id_token_signing_alg_values_supported:
+          type: array
+          items:
+            type: string
+          example: ["RS256"]
+        code_challenge_methods_supported:
+          type: array
+          items:
+            type: string
+          example: ["S256"]
+        scopes_supported:
+          type: array
+          items:
+            type: string
+          example: ["openid", "profile"]
+
+    JWKS:
+      type: object
+      required: [keys]
+      properties:
+        keys:
+          type: array
+          items:
+            $ref: "#/components/schemas/JWK"
+
+    JWK:
+      type: object
+      required: [kty, kid, use, alg, n, e]
+      properties:
+        kty:
+          type: string
+          example: RSA
+        kid:
+          type: string
+          example: default
+        use:
+          type: string
+          example: sig
+        alg:
+          type: string
+          example: RS256
+        n:
+          type: string
+          description: RSA modulus (base64url)
+        e:
+          type: string
+          description: RSA exponent (base64url)
+
+    LoginRequest:
+      type: object
+      required: [username, password, login_challenge]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+        login_challenge:
+          type: string
+          description: Challenge issued during /oauth/authorize when unauthenticated
+
+    LoginResponse:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+          example: true
+        next:
+          type: string
+          nullable: true
+          description: Optional next URL (e.g., /oauth/authorize/continue?login_challenge=...)
+          example: "/oauth/authorize/continue?login_challenge=abc"
+
+    TokenRequest:
+      type: object
+      required: [grant_type]
+      properties:
+        grant_type:
+          type: string
+          enum: [authorization_code, refresh_token]
+        code:
+          type: string
+          description: Required when grant_type=authorization_code
+        redirect_uri:
+          type: string
+          format: uri
+          description: Required when grant_type=authorization_code
+        code_verifier:
+          type: string
+          description: Required when grant_type=authorization_code
+      description: |
+        application/x-www-form-urlencoded.
+        For refresh_token grant, refresh token is read from HttpOnly cookie; no refresh_token parameter is used.
+
+    TokenResponse:
+      type: object
+      required: [access_token, token_type, expires_in]
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+          example: Bearer
+        expires_in:
+          type: integer
+          example: 300
+        id_token:
+          type: string
+          nullable: true
+          description: Present when openid scope is included
+
+    UserInfo:
+      type: object
+      required: [sub]
+      properties:
+        sub:
+          type: string
+          description: Subject identifier (user id)
+        name:
+          type: string
+          nullable: true
+        preferred_username:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        email_verified:
+          type: boolean
+          nullable: true

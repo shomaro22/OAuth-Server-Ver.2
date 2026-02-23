@@ -18,3 +18,7 @@ frontend/dist/
 # E2E で curl が作成する cookie ファイル
 cookies.txt
 **/cookies.txt
+
+# Playwright
+frontend/test-results/
+frontend/playwright-report/
