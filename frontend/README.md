@@ -1,19 +1,48 @@
-# Frontend
+# Frontend - Authorization UI + Dev OAuth Client
 
-ログイン・同意 UI。React Router で `/`, `/login`, `/consent`, `/callback` を接続。AuthContext で認証状態を管理し、RequireAuth で `/consent` を保護。
+React+TypeScript+Viteで構築された認可サーバーUI。
 
-## 起動
+---
+
+## ページ構成
+
+- /
+- /login
+- /consent
+- /callback
+- /dev/oauth-client（開発専用）
+
+---
+
+## Dev OAuth Client
+
+開発用テストクライアント。
+
+### 機能
+
+- PKCE (S256) 生成（WebCrypto）
+- code_verifierをsessionStorageに保存
+- code → token交換
+- /userinfo呼び出し
+- 状態クリア
+
+---
+
+## 注意事項
+
+Refresh TokenはSecure属性付きのHttpOnly Cookieです。
+
+Secure属性により、HTTP（http://localhost）では送信されません。
+そのため、ブラウザでのrefresh動作確認はできません。
+
+refresh検証はcurlで実施してください。
+
+---
+
+## 起動方法
 
 ```bash
 cp .env.example .env
 npm install
 npm run dev
-# http://localhost:5173
-```
-
-## テスト
-
-```bash
-npm run test:run    # Unit（Vitest）
-npm run test:e2e   # E2E（Playwright、初回は npx playwright install chromium）
 ```

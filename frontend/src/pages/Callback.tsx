@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 /**
  * OAuth 認可後のコールバックページ。
@@ -55,6 +55,14 @@ export default function Callback() {
           <p style={{ marginTop: 16, fontSize: 12 }}>
             gen_pkce.js が出力した curl の <code>code=</code>{" "}
             に上記を貼り付けて実行。
+          </p>
+          <p style={{ marginTop: 12 }}>
+            <Link
+              to={`/dev/oauth-client?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`}
+              style={{ fontSize: 14 }}
+            >
+              Dev クライアントで token 交換を続行 →
+            </Link>
           </p>
         </>
       ) : (

@@ -16,19 +16,22 @@ rm -f "$OUT"
 
 # zip 作成（除外パターン指定）
 zip -r "$OUT" . \
-  -x "*.git*" \
+  -x ".git/*" \
+  -x "*/.git/*" \
   -x "*node_modules*" \
+  -x "node_modules/*" \
   -x "*/.env" \
   -x ".env" \
+  -x "backend/.env" \
+  -x "frontend/.env" \
   -x "*/.DS_Store" \
-  -x "*/.DS_Store" \
-  -x "*.DS_Store" \
-  -x "*cookies.txt" \
+  -x ".DS_Store" \
+  -x "*__MACOSX*" \
+  -x "*cookies.txt*" \
   -x "*frontend/dist*" \
   -x "*frontend/test-results*" \
   -x "*frontend/playwright-report*" \
   -x "*.zip" \
-  -x "*__MACOSX*" \
   -x "*.env.local" \
   -x "*.env.*.local"
 

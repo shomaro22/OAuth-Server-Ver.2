@@ -1,30 +1,29 @@
 # Backend
 
-## 起動
+## 起動方法
 
 ```bash
-# 1. DB・Redis（プロジェクトルートで）
+# プロジェクトルートで
 docker compose up -d postgres redis
 
-# 2. 環境変数
+# 環境変数
 cp .env.example .env
-# DB_PASSWORD 等を docker-compose と揃える
+# backend/.env の DB_PASSWORD=auth_passとなっているか確認
 
-# 3. マイグレーション・seed（初回のみ）
-PGPASSWORD=auth_pass psql -h localhost -U auth_user -d auth_db -f migrations/000_initial.sql
-# 001〜005 も実行
+# マイグレーション・seed（初回のみ）
+./scripts/migrate.sh
 ./scripts/seed_step4.sh password123 http://localhost:5173/callback
 
-# 4. 起動
+# 起動
 go run ./cmd/server
 ```
 
-本番では `OAUTH_ISSUER` を https にすること。
+本番では`OAUTH_ISSUER`をhttpsに設定する。
 
 ## テスト
 
 ```bash
-# プロジェクトルートから（backend + frontend 起動済み）
+# プロジェクトルートから（backend+frontend起動済み）
 ./scripts/run_all_tests.sh
 ```
 
