@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import Consent from "./pages/Consent";
 import Callback from "./pages/Callback";
+import DevOAuthClientPage from "./pages/DevOAuthClientPage";
 import { RequireAuth } from "./features/auth/RequireAuth";
 
 function Home() {
@@ -18,6 +19,9 @@ function Home() {
         </li>
         <li>
           <a href="/callback">/callback</a>
+        </li>
+        <li>
+          <a href="/dev/oauth-client">/dev/oauth-client（開発専用）</a>
         </li>
       </ul>
     </div>
@@ -39,6 +43,7 @@ export default function App() {
           }
         />
         <Route path="/callback" element={<Callback />} />
+        <Route path="/dev/oauth-client" element={<DevOAuthClientPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
