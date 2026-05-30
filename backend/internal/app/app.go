@@ -13,6 +13,7 @@ import (
 	redis "github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 
+	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/bootstrap"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/handler"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/db"
 	"github.com/shomaro22/OAuth-Server-Ver.2/backend/internal/infrastructure/jwt"
@@ -43,6 +44,10 @@ func New() (*App, error) {
 	}
 
 	log.Println("Successfully connected to PostgreSQL (GORM)")
+
+	if err := bootstrap.RunOnStart(gormDB); err != nil {
+		return nil, err
+	}
 
 	return &App{db: gormDB}, nil
 }

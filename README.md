@@ -179,6 +179,10 @@ curl -i -b cookies.txt -X POST http://localhost:8080/oauth/token \
 - `CORS_ORIGIN` = `https://<your-frontend>.vercel.app`
 - `LOGIN_URL` = `https://<your-frontend>.vercel.app/login`
 - `CONSENT_URL` = `https://<your-frontend>.vercel.app/consent`
+- `AUTO_MIGRATE_ON_START` = `true`（起動時に SQL マイグレーション。Render 無料枠向け）
+- `AUTO_SEED_ON_START` = `true`（`testuser` / 固定 OAuth クライアントを upsert。migrate の後に有効化）
+- `AUTO_SEED_PASSWORD` = `password123`（任意）
+- `AUTO_SEED_REDIRECT_URI`（任意。未設定時は `CORS_ORIGIN` + `/callback`）
 
 Render で Go を動かす場合:
 
@@ -190,7 +194,15 @@ Render で Go を動かす場合:
 
 ### 初回 DB セットアップ（Neon 接続後）
 
-ローカルから Neon に向けて実行する例:
+**Render 本番（推奨）**: Environment に以下を追加して再デプロイするだけです。
+
+- `AUTO_MIGRATE_ON_START=true`
+- `AUTO_SEED_ON_START=true`
+- `AUTO_SEED_REDIRECT_URI=https://o-oauth-server-ver-2.vercel.app/callback`（Vercel の URL に合わせる）
+
+ログに `Applied migration:` / `Auto seed complete` が出れば完了です。
+
+**ローカルから手動**する場合:
 
 ```bash
 cd backend
@@ -201,7 +213,7 @@ cp .env.example .env
 ./scripts/seed_step4.sh password123 https://<your-frontend>.vercel.app/callback
 ```
 
-テストユーザー: `testuser` / `password123`
+テストユーザー: `testuser` / `password123`（`AUTO_SEED_PASSWORD` と同じ）
 
 ### GitHub Secret `VITE_API_BASE`
 
