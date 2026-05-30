@@ -173,7 +173,7 @@ curl -i -b cookies.txt -X POST http://localhost:8080/oauth/token \
 ### Backend 環境変数（API の URL・Vercel フロントに合わせる）
 
 - `DB_HOST` / `DB_PORT` / `DB_USER` / `DB_PASSWORD` / `DB_NAME` / `DB_SSLMODE=require`（Neon）
-- `REDIS_HOST` / `REDIS_PORT`（または Upstash の接続情報）
+- `REDIS_ADDR`（例: `red-xxxxx:6379`）。任意で `REDIS_PASSWORD` / `REDIS_DB`
 - `SERVER_BASE_URL` = `https://<api-host>`
 - `OAUTH_ISSUER` = 同上
 - `CORS_ORIGIN` = `https://<your-frontend>.vercel.app`

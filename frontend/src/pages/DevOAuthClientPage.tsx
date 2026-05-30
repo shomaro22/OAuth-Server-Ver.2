@@ -2,7 +2,7 @@
  * 開発専用テストクライアント
  * /dev 配下。提出時は残してもOK。本番用途ではない。
  */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { apiBase } from "../lib/api";
 
 const TOKEN_ENDPOINT = `${apiBase}/oauth/token`;
@@ -78,20 +78,17 @@ async function exchangeToken(code: string, verifier: string): Promise<Record<str
   return json;
 }
 
+function getCallbackParamsFromUrl(): { code: string; state: string } {
+  const qp = new URLSearchParams(window.location.search);
+  return { code: qp.get("code") ?? "", state: qp.get("state") ?? "" };
+}
+
 export default function DevOAuthClientPage() {
-  const [code, setCode] = useState("");
-  const [state, setState] = useState("");
+  const [code, setCode] = useState(() => getCallbackParamsFromUrl().code);
+  const [state, setState] = useState(() => getCallbackParamsFromUrl().state);
   const [token, setToken] = useState<Record<string, unknown> | null>(null);
   const [userinfo, setUserinfo] = useState<Record<string, unknown> | null>(null);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    const qp = new URLSearchParams(window.location.search);
-    const c = qp.get("code") ?? "";
-    const s = qp.get("state") ?? "";
-    if (c) setCode(c);
-    if (s) setState(s);
-  }, []);
 
   const onLogin = async () => {
     setError("");
