@@ -159,33 +159,55 @@ curl -i -b cookies.txt -X POST http://localhost:8080/oauth/token \
 - 環境変数 `VITE_API_BASE` = Render 等の API URL
 - `frontend/vercel.json` で SPA ルーティング設定済み
 
-### Render（backend）推奨
+### 本番構成の例（無料枠向け）
 
-| 項目 | 値 |
-|------|-----|
-| Language | Go |
-| Root Directory | `backend` |
-| Build Command | `go build -o bin/server ./cmd/server` |
-| Start Command | `./bin/server` |
+| 役割 | サービス | 備考 |
+|------|----------|------|
+| Frontend | **Vercel** | Root Directory = `frontend` |
+| Backend API | **Render Web Service** または **Fly.io** | Go は常駐プロセスが必要（Vercel 不可） |
+| PostgreSQL | **Neon** | Render の無料 DB は1つまでのため、勤怠アプリと同様に Neon 推奨 |
+| Redis | **Render Key Value** または **Upstash Redis** | ログインチャレンジ用 |
 
-環境変数（Vercel フロント URL に合わせて設定）:
+> **Render について**: 無料の **PostgreSQL は1インスタンスまで**（Chat App 等で使用中なら、OAuth は **Neon** を使う）。**Web Service** は別途追加できる場合がある（アカウントの枠次第）。
 
-- `DB_*` / `REDIS_HOST` / `REDIS_PORT`
-- `SERVER_BASE_URL` = `https://<api>.onrender.com`
+### Backend 環境変数（API の URL・Vercel フロントに合わせる）
+
+- `DB_HOST` / `DB_PORT` / `DB_USER` / `DB_PASSWORD` / `DB_NAME` / `DB_SSLMODE=require`（Neon）
+- `REDIS_HOST` / `REDIS_PORT`（または Upstash の接続情報）
+- `SERVER_BASE_URL` = `https://<api-host>`
 - `OAUTH_ISSUER` = 同上
 - `CORS_ORIGIN` = `https://<your-frontend>.vercel.app`
 - `LOGIN_URL` = `https://<your-frontend>.vercel.app/login`
 - `CONSENT_URL` = `https://<your-frontend>.vercel.app/consent`
 
-初回デプロイ後、Render Shell 等で:
+Render で Go を動かす場合:
+
+| 項目 | 値 |
+|------|-----|
+| Root Directory | `backend` |
+| Build Command | `go build -o bin/server ./cmd/server` |
+| Start Command | `./bin/server` |
+
+### 初回 DB セットアップ（Neon 接続後）
+
+ローカルから Neon に向けて実行する例:
 
 ```bash
 cd backend
+cp .env.example .env
+# .env に Neon の DB_* を記入
+
 ./scripts/migrate.sh
 ./scripts/seed_step4.sh password123 https://<your-frontend>.vercel.app/callback
 ```
 
-テストユーザー: `testuser` / `password123`（seed スクリプトのパスワードに合わせる）
+テストユーザー: `testuser` / `password123`
+
+### GitHub Secret `VITE_API_BASE`
+
+フロントの API 向き先（**末尾に `/api` は付けない**。本リポジトリはパス直指定）:
+
+- 例: `https://oauth-api-xxxx.onrender.com` または Fly.io の URL
 
 ---
 
