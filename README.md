@@ -130,6 +130,65 @@ curl -i -b cookies.txt -X POST http://localhost:8080/oauth/token \
 
 ---
 
+## CI/CD（GitHub Actions）
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml)
+
+- `backend`: `go vet`・単体テスト
+- `frontend`: ESLint・本番ビルド
+
+[`.github/workflows/deploy-frontend-vercel.yml`](.github/workflows/deploy-frontend-vercel.yml)
+
+- `pull_request`: Vercel Preview デプロイ
+- `main` / `master` push・`workflow_dispatch`: Vercel Production デプロイ
+
+### GitHub Secrets（OAuth-Server-Ver.2 リポジトリ）
+
+| Secret | 説明 |
+|--------|------|
+| `VERCEL_TOKEN` | Vercel Personal Token |
+| `VERCEL_ORG_ID` | `frontend` で `npx vercel link` 後の `orgId` |
+| `VERCEL_PROJECT_ID` | 同上 `projectId`（**OAuth 用に別プロジェクト推奨**） |
+| `VITE_API_BASE` | バックエンド API URL（例: `https://your-api.onrender.com`） |
+
+> attendance-app は `VITE_API_BASE_URL` ですが、本リポジトリは **`VITE_API_BASE`** です。
+
+### Vercel（frontend）
+
+- Root Directory: `frontend`
+- 環境変数 `VITE_API_BASE` = Render 等の API URL
+- `frontend/vercel.json` で SPA ルーティング設定済み
+
+### Render（backend）推奨
+
+| 項目 | 値 |
+|------|-----|
+| Language | Go |
+| Root Directory | `backend` |
+| Build Command | `go build -o bin/server ./cmd/server` |
+| Start Command | `./bin/server` |
+
+環境変数（Vercel フロント URL に合わせて設定）:
+
+- `DB_*` / `REDIS_HOST` / `REDIS_PORT`
+- `SERVER_BASE_URL` = `https://<api>.onrender.com`
+- `OAUTH_ISSUER` = 同上
+- `CORS_ORIGIN` = `https://<your-frontend>.vercel.app`
+- `LOGIN_URL` = `https://<your-frontend>.vercel.app/login`
+- `CONSENT_URL` = `https://<your-frontend>.vercel.app/consent`
+
+初回デプロイ後、Render Shell 等で:
+
+```bash
+cd backend
+./scripts/migrate.sh
+./scripts/seed_step4.sh password123 https://<your-frontend>.vercel.app/callback
+```
+
+テストユーザー: `testuser` / `password123`（seed スクリプトのパスワードに合わせる）
+
+---
+
 ## 詳細
 
 - [backend/README.md](backend/README.md)
