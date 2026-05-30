@@ -46,7 +46,7 @@ jobs:
           npm i -g vercel@latest
           mkdir -p .vercel
           printf '{"orgId":"%s","projectId":"%s"}\n' "$VERCEL_ORG_ID" "$VERCEL_PROJECT_ID" > .vercel/project.json
-          vercel deploy dist --yes --token="$VERCEL_TOKEN"
+          vercel deploy --yes --token="$VERCEL_TOKEN"
 
   deploy-production:
     name: Vercel Production Deploy (frontend)
@@ -77,4 +77,4 @@ jobs:
           npm i -g vercel@latest
           mkdir -p .vercel
           printf '{"orgId":"%s","projectId":"%s"}\n' "$VERCEL_ORG_ID" "$VERCEL_PROJECT_ID" > .vercel/project.json
-          vercel deploy dist --prod --yes --token="$VERCEL_TOKEN"
+          vercel deploy --prod --yes --token="$VERCEL_TOKEN"
