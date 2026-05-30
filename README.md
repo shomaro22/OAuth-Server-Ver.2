@@ -3,7 +3,7 @@
 OAuth 2.0認可コードフロー+PKCE (S256)+OpenID Connectを実装した認可サーバー。  
 Frontend（React）とBackend（Go）を分離し、JWTベースで、状態はDB/Redisに保持。
 
-**本番（フロント）**: https://o-auth-server-ver-2.vercel.app
+**本番（フロント）**: https://oauth-server-ver-2.vercel.app
 
 ---
 
@@ -166,9 +166,9 @@ curl -i -b cookies.txt -X POST http://localhost:8080/oauth/token \
 - `DB_HOST` / `DB_PORT` / `DB_USER` / `DB_PASSWORD` / `DB_NAME` / `DB_SSLMODE=require`（Neon）
 - `REDIS_ADDR`（例: `red-xxxxx:6379`）。任意で `REDIS_PASSWORD` / `REDIS_DB`
 - `SERVER_BASE_URL` / `OAUTH_ISSUER` = バックエンド API の URL
-- `CORS_ORIGIN` = `https://o-auth-server-ver-2.vercel.app`
-- `LOGIN_URL` = `https://o-auth-server-ver-2.vercel.app/login`
-- `CONSENT_URL` = `https://o-auth-server-ver-2.vercel.app/consent`
+- `CORS_ORIGIN` = `https://oauth-server-ver-2.vercel.app`
+- `LOGIN_URL` = `https://oauth-server-ver-2.vercel.app/login`
+- `CONSENT_URL` = `https://oauth-server-ver-2.vercel.app/consent`
 - `AUTO_MIGRATE_ON_START` = `true`（起動時に SQL マイグレーション。Render 無料枠向け）
 - `AUTO_SEED_ON_START` = `true`（`testuser` / 固定 OAuth クライアントを upsert。migrate の後に有効化）
 - `AUTO_SEED_PASSWORD` = `password123`（任意）
@@ -188,7 +188,7 @@ Render で Go を動かす場合:
 
 - `AUTO_MIGRATE_ON_START=true`
 - `AUTO_SEED_ON_START=true`
-- `AUTO_SEED_REDIRECT_URI=https://o-auth-server-ver-2.vercel.app/callback`
+- `AUTO_SEED_REDIRECT_URI=https://oauth-server-ver-2.vercel.app/callback`
 
 ログに `Applied migration:` / `Auto seed complete` が出れば完了です。
 
@@ -200,7 +200,7 @@ cp .env.example .env
 # .env に Neon の DB_* を記入
 
 ./scripts/migrate.sh
-./scripts/seed_step4.sh password123 https://o-auth-server-ver-2.vercel.app/callback
+./scripts/seed_step4.sh password123 https://oauth-server-ver-2.vercel.app/callback
 ```
 
 テストユーザー: `testuser` / `password123`（`AUTO_SEED_PASSWORD` と同じ）
