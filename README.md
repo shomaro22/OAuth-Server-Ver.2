@@ -3,6 +3,8 @@
 OAuth 2.0認可コードフロー+PKCE (S256)+OpenID Connectを実装した認可サーバー。  
 Frontend（React）とBackend（Go）を分離し、JWTベースで、状態はDB/Redisに保持。
 
+**本番（フロント）**: https://o-auth-server-ver-2.vercel.app
+
 ---
 
 ## 前提条件
@@ -144,41 +146,29 @@ curl -i -b cookies.txt -X POST http://localhost:8080/oauth/token \
 
 ### GitHub Secrets（OAuth-Server-Ver.2 リポジトリ）
 
-| Secret | 説明 |
-|--------|------|
-| `VERCEL_TOKEN` | Vercel Personal Token |
-| `VERCEL_ORG_ID` | `frontend` で `npx vercel link` 後の `orgId` |
-| `VERCEL_PROJECT_ID` | 同上 `projectId`（**OAuth 用に別プロジェクト推奨**） |
-| `VITE_API_BASE` | バックエンド API URL（例: `https://your-api.onrender.com`） |
+| Secret              | 説明                                                        |
+| ------------------- | ----------------------------------------------------------- |
+| `VERCEL_TOKEN`      | Vercel Personal Token                                       |
+| `VERCEL_ORG_ID`     | `frontend` で `npx vercel link` 後の `orgId`                |
+| `VERCEL_PROJECT_ID` | 同上 `projectId`（**OAuth 用に別プロジェクト推奨**）        |
+| `VITE_API_BASE`     | バックエンド API の URL（Render 等。README には記載しない） |
 
 > attendance-app は `VITE_API_BASE_URL` ですが、本リポジトリは **`VITE_API_BASE`** です。
 
 ### Vercel（frontend）
 
 - Root Directory: `frontend`
-- 環境変数 `VITE_API_BASE` = Render 等の API URL
+- 環境変数 `VITE_API_BASE` = バックエンド API の URL
 - `frontend/vercel.json` で SPA ルーティング設定済み
-
-### 本番構成の例（無料枠向け）
-
-| 役割 | サービス | 備考 |
-|------|----------|------|
-| Frontend | **Vercel** | Root Directory = `frontend` |
-| Backend API | **Render Web Service** または **Fly.io** | Go は常駐プロセスが必要（Vercel 不可） |
-| PostgreSQL | **Neon** | Render の無料 DB は1つまでのため、勤怠アプリと同様に Neon 推奨 |
-| Redis | **Render Key Value** または **Upstash Redis** | ログインチャレンジ用 |
-
-> **Render について**: 無料の **PostgreSQL は1インスタンスまで**（Chat App 等で使用中なら、OAuth は **Neon** を使う）。**Web Service** は別途追加できる場合がある（アカウントの枠次第）。
 
 ### Backend 環境変数（API の URL・Vercel フロントに合わせる）
 
 - `DB_HOST` / `DB_PORT` / `DB_USER` / `DB_PASSWORD` / `DB_NAME` / `DB_SSLMODE=require`（Neon）
 - `REDIS_ADDR`（例: `red-xxxxx:6379`）。任意で `REDIS_PASSWORD` / `REDIS_DB`
-- `SERVER_BASE_URL` = `https://<api-host>`
-- `OAUTH_ISSUER` = 同上
-- `CORS_ORIGIN` = `https://<your-frontend>.vercel.app`
-- `LOGIN_URL` = `https://<your-frontend>.vercel.app/login`
-- `CONSENT_URL` = `https://<your-frontend>.vercel.app/consent`
+- `SERVER_BASE_URL` / `OAUTH_ISSUER` = バックエンド API の URL
+- `CORS_ORIGIN` = `https://o-auth-server-ver-2.vercel.app`
+- `LOGIN_URL` = `https://o-auth-server-ver-2.vercel.app/login`
+- `CONSENT_URL` = `https://o-auth-server-ver-2.vercel.app/consent`
 - `AUTO_MIGRATE_ON_START` = `true`（起動時に SQL マイグレーション。Render 無料枠向け）
 - `AUTO_SEED_ON_START` = `true`（`testuser` / 固定 OAuth クライアントを upsert。migrate の後に有効化）
 - `AUTO_SEED_PASSWORD` = `password123`（任意）
@@ -186,11 +176,11 @@ curl -i -b cookies.txt -X POST http://localhost:8080/oauth/token \
 
 Render で Go を動かす場合:
 
-| 項目 | 値 |
-|------|-----|
-| Root Directory | `backend` |
-| Build Command | `go build -o bin/server ./cmd/server` |
-| Start Command | `./bin/server` |
+| 項目           | 値                                    |
+| -------------- | ------------------------------------- |
+| Root Directory | `backend`                             |
+| Build Command  | `go build -o bin/server ./cmd/server` |
+| Start Command  | `./bin/server`                        |
 
 ### 初回 DB セットアップ（Neon 接続後）
 
@@ -198,7 +188,7 @@ Render で Go を動かす場合:
 
 - `AUTO_MIGRATE_ON_START=true`
 - `AUTO_SEED_ON_START=true`
-- `AUTO_SEED_REDIRECT_URI=https://o-oauth-server-ver-2.vercel.app/callback`（Vercel の URL に合わせる）
+- `AUTO_SEED_REDIRECT_URI=https://o-auth-server-ver-2.vercel.app/callback`
 
 ログに `Applied migration:` / `Auto seed complete` が出れば完了です。
 
@@ -210,16 +200,14 @@ cp .env.example .env
 # .env に Neon の DB_* を記入
 
 ./scripts/migrate.sh
-./scripts/seed_step4.sh password123 https://<your-frontend>.vercel.app/callback
+./scripts/seed_step4.sh password123 https://o-auth-server-ver-2.vercel.app/callback
 ```
 
 テストユーザー: `testuser` / `password123`（`AUTO_SEED_PASSWORD` と同じ）
 
 ### GitHub Secret `VITE_API_BASE`
 
-フロントの API 向き先（**末尾に `/api` は付けない**。本リポジトリはパス直指定）:
-
-- 例: `https://oauth-api-xxxx.onrender.com` または Fly.io の URL
+フロントの API 向き先（**末尾に `/api` は付けない**。本リポジトリはパス直指定）。値は Render 等のダッシュボードで確認し、Secrets に登録する。
 
 ---
 
