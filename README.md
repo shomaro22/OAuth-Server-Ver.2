@@ -3,7 +3,14 @@
 OAuth 2.0認可コードフロー+PKCE (S256)+OpenID Connectを実装した認可サーバー。  
 Frontend（React）とBackend（Go）を分離し、JWTベースで、状態はDB/Redisに保持。
 
-**本番（フロント）**: https://oauth-server-ver-2.vercel.app
+## 本番デモ
+
+| ページ | URL |
+| ------ | --- |
+| フロント | https://oauth-server-ver-2.vercel.app |
+| OAuth テストクライアント | https://oauth-server-ver-2.vercel.app/dev/oauth-client |
+
+Vercel プロジェクト名: `oauth-server`（ドメイン: `oauth-server-ver-2.vercel.app`）
 
 ---
 
